@@ -1,0 +1,25 @@
+{
+  "name": "agent-publishing",
+  "description": "Guided onboarding skills for publishing Microsoft 365 Copilot agents (declarative, custom engine, Copilot Studio multitenant) to the Microsoft Commercial Marketplace, with optional monetization via a linked SaaS offer. Built on Git-Ape.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Mamoru Kuroda",
+    "url": "https://github.com/MamoruKuroda"
+  },
+  "homepage": "https://github.com/MamoruKuroda/marketplace-skills",
+  "repository": "https://github.com/MamoruKuroda/marketplace-skills",
+  "license": "MIT",
+  "keywords": [
+    "microsoft-365",
+    "copilot",
+    "agent",
+    "marketplace",
+    "declarative-agent",
+    "custom-engine-agent",
+    "copilot-studio",
+    "saas-offer",
+    "monetization",
+    "partner-center"
+  ],
+  "skills": "skills/"
+}
