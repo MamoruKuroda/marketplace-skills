@@ -39,7 +39,14 @@ Out of scope (for now): Cowork plugins, Copilot connectors/plugins, org-catalog-
 
 ## Install
 
-From the [`marketplace-skills`](https://github.com/MamoruKuroda/marketplace-skills) marketplace:
+First install Git-Ape (this plugin builds on it):
+
+```bash
+copilot plugin marketplace add Azure/git-ape
+copilot plugin install git-ape@git-ape
+```
+
+Then, from the [`marketplace-skills`](https://github.com/MamoruKuroda/marketplace-skills) marketplace:
 
 ```bash
 copilot plugin marketplace add MamoruKuroda/marketplace-skills
@@ -52,8 +59,13 @@ Or install this plugin directly:
 copilot plugin install MamoruKuroda/marketplace-skills:plugins/agent-publishing
 ```
 
-Recommended companions: Git-Ape and its prerequisites (Azure CLI, GitHub CLI, Microsoft 365 Agents
-Toolkit CLI / `atk`).
+Verify, then start your first interview:
+
+```text
+copilot plugin list          # shows agent-publishing@marketplace-skills
+copilot
+> /triage-agent-type I'm a startup building a declarative HR policy agent and I want to charge for it.
+```
 
 ## Skills
 
