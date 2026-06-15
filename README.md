@@ -1,5 +1,7 @@
 # marketplace-skills
 
+> 日本語版は [README.ja.md](README.ja.md) を参照してください。
+
 A [GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli)
 **plugin marketplace**: skills that guide publishing solutions to the
 **Microsoft Commercial Marketplace**.
