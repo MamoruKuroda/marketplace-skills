@@ -1,7 +1,7 @@
 # marketplace-skills
 
 [GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli) の
-**プラグイン マーケットプレイス**です。**Microsoft Commercial Marketplace** への公開作業をガイドするスキルを提供します。
+**プラグイン用マーケットプレイス**です。**Microsoft Commercial Marketplace** への公開作業をガイドするスキルを提供します。
 
 > このドキュメントは日本語版です。正本は英語版 [README.md](README.md) です。内容に差異がある場合は英語版を優先します。
 
@@ -17,7 +17,7 @@
 
 ## インストール
 
-このリポジトリ自体が Copilot CLI のプラグイン マーケットプレイスです（`.github/plugin/marketplace.json` を含みます）。使い方は2通りあります。
+このリポジトリ自体が Copilot CLI のプラグイン用マーケットプレイスです（`.github/plugin/marketplace.json` を含みます）。使い方は2通りあります。
 
 ### A. マーケットプレイスを登録してからプラグインをインストール
 
@@ -41,4 +41,4 @@ copilot plugin list
 
 ## ライセンス
 
-MIT。[`LICENSE`](LICENSE) を参照してください。
+デュアル ライセンスです。コード・構成は **MIT**（[`LICENSE-CODE`](LICENSE-CODE)）、ドキュメント・コンテンツは **Creative Commons Attribution 4.0（CC-BY-4.0）**（[`LICENSE`](LICENSE)）。著作権は Mamoru Kuroda。

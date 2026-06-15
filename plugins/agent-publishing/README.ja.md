@@ -121,4 +121,4 @@ copilot plugin install MamoruKuroda/marketplace-skills:plugins/agent-publishing
 
 ## ライセンス
 
-MIT。リポジトリの [`LICENSE`](../../LICENSE) を参照してください。
+デュアル ライセンスです。コード・構成は **MIT**（[`LICENSE-CODE`](../../LICENSE-CODE)）、ドキュメント・コンテンツは **Creative Commons Attribution 4.0（CC-BY-4.0）**（[`LICENSE`](../../LICENSE)）。著作権は Mamoru Kuroda。

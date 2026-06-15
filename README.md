@@ -45,4 +45,6 @@ copilot plugin list
 
 ## License
 
-MIT. See [`LICENSE`](LICENSE).
+Dual-licensed: **MIT** for code/configuration ([`LICENSE-CODE`](LICENSE-CODE)) and
+**Creative Commons Attribution 4.0 (CC-BY-4.0)** for documentation/content ([`LICENSE`](LICENSE)).
+Copyright Mamoru Kuroda.
