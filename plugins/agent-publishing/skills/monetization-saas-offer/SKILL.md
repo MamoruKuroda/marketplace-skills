@@ -1,6 +1,6 @@
 ---
 name: monetization-saas-offer
-description: "(Backend B) Provisions the linked SaaS offer transaction plane that monetizes a Microsoft 365 Copilot agent: Entra multitenant app, SaaS fulfillment endpoint + landing page, licensing/entitlement DB, and optional metering. Delegates to azure-saas-skills + @git-ape. Invoked only when monetize == true."
+description: "(Backend B) Provisions the linked SaaS offer transaction plane that monetizes a Microsoft 365 Copilot agent: Entra multitenant app, SaaS fulfillment endpoint + landing page, licensing/entitlement DB, and optional metering. Self-contained, grounded in Microsoft Learn; delegates the actual Azure deployment to @git-ape. Invoked only when monetize == true."
 argument-hint: "Pricing model (entitlement/usage), license management (publisher/Microsoft), env. Reads/writes publishing-ledger.json backend.monetization."
 user-invocable: false
 last_updated: "2026-06-13"
@@ -14,7 +14,7 @@ monetized declarative OR custom engine OR Copilot Studio agent.
 
 > When this runs: `monetize == true`. Requires enrollment in BOTH the Microsoft 365 and Copilot
 > program (publish the agent) and the Microsoft Marketplace program (monetize). Never deploys
-> without explicit confirmation; Azure work is delegated to `@git-ape` + `azure-saas-skills`.
+> without explicit confirmation; the actual Azure provisioning is delegated to `@git-ape`.
 
 ## What a linked SaaS offer requires
 
@@ -31,17 +31,31 @@ monetized declarative OR custom engine OR Copilot Studio agent.
 - Usage-based: metered dimensions.
 - Combination.
 
-## Delegation map
+## Build steps (self-contained; actual Azure deploy delegated to @git-ape)
 
-| Capability | Delegate to |
+Provision the following yourself, grounded in the Microsoft Learn references below. Hand the
+infrastructure-as-code deployment to `@git-ape` (security gate, cost estimate, audit trail). Do not
+depend on any third-party skill set for the SaaS plumbing.
+
+1. **Multitenant Entra ID app registration** — register an app with "any org directory" sign-in for
+   SSO and the SaaS fulfillment token exchange.
+2. **Landing page + fulfillment webhook** — stand up the landing page (token resolution) and the
+   webhook endpoint that receives subscription lifecycle events. Wire it to the SaaS fulfillment APIs.
+3. **Licensing / entitlement store** — choose publisher-managed (your own DB) or Microsoft-managed
+   licenses, and provision the store accordingly.
+4. **Metering** — only for usage-based pricing: emit usage events to the Marketplace metering service.
+5. **WAF baseline** — tenant isolation, IaC, Key Vault, CI/CD, encryption, compliance.
+
+| Capability | How |
 | --- | --- |
-| Multitenant SaaS baseline / landing zone | `azure-saas-skills`: `multi-tenant_SaaS`, `isv-landing-zone-foundation` |
-| **SaaS fulfillment API + metering** | `azure-saas-skills`: `fulfillment-and-metering` |
-| Tenant isolation model | `azure-saas-skills`: `tenant-isolation-models` |
+| Multitenant SaaS baseline / landing zone | Author IaC (ARM/Bicep) and deploy via `@git-ape` |
+| **SaaS fulfillment API + metering** | Implement against the SaaS fulfillment APIs (see references); deploy via `@git-ape` |
+| Tenant isolation model | Decide per WAF guidance; encode in IaC |
 | IaC deploy (App Service / DB / Key Vault / Entra) | `@git-ape` (security gate, cost estimate, audit) |
-| Offer-type / pricing decisions | `azure-saas-skills`: `marketplace-offer-types`, `onboard-to-marketplace` |
+| Offer-type / pricing decisions | Use the Partner Center references below |
 
-This skill orchestrates those; it does not re-implement SaaS plumbing.
+This skill owns the decisions and the Partner Center technical-config values; `@git-ape` performs
+the Azure deployment.
 
 ## Shared-resources contract
 
@@ -77,4 +91,4 @@ submitting the SaaS offer (and linking it to the agent) is done by the human in 
 - SaaS fulfillment APIs: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/pc-saas-fulfillment-apis
 - SaaS offer technical configuration: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/create-new-saas-offer-technical
 - Startups guide (SaaS agent on Marketplace): https://learn.microsoft.com/en-us/startups/build/ai/agents/intro-marketplace-agents
-- azure-saas-skills: https://github.com/dawright22/azure-saas-skills
+- Git-Ape (delegated Azure deployment): https://azure.github.io/git-ape/

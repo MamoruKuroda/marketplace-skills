@@ -8,8 +8,8 @@
 
 A [Git-Ape](https://github.com/Azure/git-ape) plugin that guides employees and partners through
 publishing **Microsoft 365 Copilot agents** to the **Microsoft Commercial Marketplace**, with
-optional monetization via a **linked SaaS offer**. The SaaS backend is delegated to
-[`azure-saas-skills`](https://github.com/dawright22/azure-saas-skills) and `@git-ape`.
+optional monetization via a **linked SaaS offer**. The actual Azure deployment of any backend is
+delegated to `@git-ape`.
 
 ## Scope
 
@@ -76,7 +76,7 @@ copilot
 | `path-custom-engine-atk` | Scaffold a custom engine agent + (A) execution backend |
 | `path-copilot-studio` | Guide Copilot Studio multitenant publishing |
 | `backend-agent-runtime` | (A) Provision the agent's runtime (custom engine only) → `@git-ape` |
-| `monetization-saas-offer` | (B) Provision the linked SaaS offer backend → `azure-saas-skills` + `@git-ape` |
+| `monetization-saas-offer` | (B) Provision the linked SaaS offer backend (self-contained) → deploy via `@git-ape` |
 | `validate-package` | Local manifest / RAI / certification checks |
 | `submit-readiness` | Program enrollment + blocking submission-readiness checklist |
 
@@ -117,9 +117,9 @@ copilot
 
 Same as above, plus before `submit-readiness`:
 - `monetization-saas-offer` provisions the **linked SaaS offer** backend (Entra multitenant app,
-  SaaS fulfillment endpoint, licensing DB, optional metering) by delegating to `azure-saas-skills`
-  and `@git-ape`. Requires enrolling in the **Microsoft Marketplace** program in addition to the
-  **Microsoft 365 and Copilot** program.
+  SaaS fulfillment endpoint, licensing DB, optional metering) — defined in the skill itself and
+  deployed via `@git-ape`. Requires enrolling in the **Microsoft Marketplace** program in addition
+  to the **Microsoft 365 and Copilot** program.
 - Custom engine agents additionally run `backend-agent-runtime` (`atk provision` / `atk deploy`)
   to stand up the agent's own runtime on Azure.
 

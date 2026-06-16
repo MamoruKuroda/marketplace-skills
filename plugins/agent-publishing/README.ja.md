@@ -2,7 +2,7 @@
 
 > **実験的（EXPERIMENTAL）プロジェクトです。** 本番運用向けの製品ではありません。提出可能な状態のパッケージとチェックリストを準備するためのガイド付きスキル集であり、Partner Center への提出を代行することはなく、明示的な承認なしに Azure リソースをデプロイすることもありません。
 
-[Git-Ape](https://github.com/Azure/git-ape) のプラグインです。社員やパートナーが **Microsoft 365 Copilot エージェント**を **Microsoft Commercial Marketplace** に公開する作業を、対話形式でガイドします。**リンクした SaaS オファー**による収益化（任意）にも対応します。SaaS バックエンドの構築は [`azure-saas-skills`](https://github.com/dawright22/azure-saas-skills) と `@git-ape` に委譲します。
+[Git-Ape](https://github.com/Azure/git-ape) のプラグインです。社員やパートナーが **Microsoft 365 Copilot エージェント**を **Microsoft Commercial Marketplace** に公開する作業を、対話形式でガイドします。**リンクした SaaS オファー**による収益化（任意）にも対応します。バックエンドの実際の Azure デプロイは `@git-ape` に委譲します。
 
 > このドキュメントは日本語版です。正本は英語版 [README.md](README.md) です。内容に差異がある場合は英語版を優先します。
 
@@ -69,7 +69,7 @@ copilot
 | `path-custom-engine-atk` | カスタムエンジン エージェントの scaffold ＋ (A) 実行バックエンド |
 | `path-copilot-studio` | Copilot Studio マルチテナント公開のガイド |
 | `backend-agent-runtime` | (A) エージェント実行ランタイムを Azure に構築（カスタムエンジンのみ）→ `@git-ape` |
-| `monetization-saas-offer` | (B) リンクした SaaS オファーのバックエンドを構築 → `azure-saas-skills` ＋ `@git-ape` |
+| `monetization-saas-offer` | (B) リンクした SaaS オファーのバックエンドを構築（スキル内で自己完結）→ `@git-ape` でデプロイ |
 | `validate-package` | manifest スキーマ／ルール、Store テストケースのローカル検証 |
 | `submit-readiness` | プログラム登録の確認と、提出前チェックリスト（ブロッキング ゲート） |
 
@@ -105,7 +105,7 @@ copilot
 
 上記に加えて、`submit-readiness` の前に次を実行します。
 
-- `monetization-saas-offer` が **リンクした SaaS オファー**のバックエンド（Entra マルチテナント アプリ、SaaS フルフィルメント エンドポイント、ライセンス DB、必要に応じてメータリング）を、`azure-saas-skills` と `@git-ape` に委譲して構築します。**Microsoft 365 and Copilot プログラム**に加えて **Microsoft Marketplace プログラム**への登録が必要です。
+- `monetization-saas-offer` が **リンクした SaaS オファー**のバックエンド（Entra マルチテナント アプリ、SaaS フルフィルメント エンドポイント、ライセンス DB、必要に応じてメータリング）を、スキル内で定義し `@git-ape` でデプロイします。**Microsoft 365 and Copilot プログラム**に加えて **Microsoft Marketplace プログラム**への登録が必要です。
 - カスタムエンジン エージェントの場合は、さらに `backend-agent-runtime`（`atk provision`／`atk deploy`）を実行し、エージェント自身のランタイムを Azure に構築します。
 
 ## 自動化できる範囲と手動が必要な範囲
