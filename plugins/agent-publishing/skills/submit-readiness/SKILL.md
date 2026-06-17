@@ -1,9 +1,9 @@
 ---
 name: submit-readiness
-description: "Blocking pre-submission gate for Microsoft Commercial Marketplace. Verifies program enrollment, legal/privacy/test-instructions, and Responsible AI readiness, then emits a Launch Gate report and the exact manual Partner Center steps. Marketplace submission has no API and is always manual."
+description: "Blocking pre-submission gate for Microsoft Commercial Marketplace. Verifies program enrollment, legal/privacy/test-instructions, and Responsible AI readiness, then emits a Launch Gate report and a copy-paste Partner Center submission worksheet pre-filled from the ledger. Marketplace submission has no reliable API for this app type and is always done by a human."
 argument-hint: "Reads publishing-ledger.json. Needs publisher legal entity, privacy policy URL, EULA, support URL, and test credentials/instructions."
 user-invocable: true
-last_updated: "2026-06-13"
+last_updated: "2026-06-18"
 ---
 
 # Submit Readiness (Marketplace Gate)
@@ -63,19 +63,50 @@ Emit a report with:
 
 Append the report to `publishing-ledger.json` `audit[]`.
 
-## Manual submission steps (guide only)
+## L4 output: Partner Center submission worksheet (the deliverable)
 
-When the gate is PASS, present these portal steps (do not attempt to automate):
-1. Sign in to Partner Center > Marketplace offers > **Microsoft 365 and Copilot**.
-2. **+ New offer** > "Apps and agents for Microsoft 365 and Copilot".
-3. Name the offer (match the manifest); associate the enrolled publisher.
-4. Product setup (Entra/SSO, additional purchase, lead management as applicable).
-5. **Packages**: upload the validated `appPackage.<env>.zip`.
-6. Properties: categories (prefer "AI Apps and Agents"), industries.
-7. Legal & support: Terms/EULA, Privacy Policy, Support docs links.
-8. Marketplace listing per language; availability/markets.
-9. **Certification notes**: paste reviewer test instructions (and a PDF if complex).
-10. Review and publish; respond to validation feedback until approved (typically iterative).
+When the gate is PASS (or PASS-with-warnings), generate a **copy-paste submission worksheet**: the
+official 10 steps, each **pre-filled from `publishing-ledger.json`**, with a per-field status so the
+user knows exactly what to paste where and what is still missing. Do **not** attempt to submit.
+
+For every field: mark `✅ ready` (value resolved and, where checkable, verified — e.g. URL not 404),
+or `❌ TODO` (missing) with a one-line instruction. Surface any `❌` as blockers at the top.
+
+Produce the worksheet in this shape (fill the bracketed values from the ledger):
+
+```text
+# Partner Center Submission Worksheet — <offerName>
+Portal: https://partner.microsoft.com/dashboard  →  Marketplace offers → Microsoft 365 and Copilot
+
+Blockers (resolve before submitting):
+- <list each ❌ field, or "none">
+
+Step 1  Offer type ........ "Apps and agents for Microsoft 365 and Copilot"      ✅
+Step 2  Offer name ........ <offerName>                                          [✅/❌]
+Step 3  Publisher ......... <publisherDisplayName>  (must match Partner Center)  [✅/❌]
+Step 3  Entra/SSO ......... tenantId <tenantId>                                  [✅/❌]
+Step 4  Product setup ..... additional purchase? <yes/no>; lead mgmt? <…>        [✅/❌]
+Step 5  Package (.zip) .... <path to appPackage.<env>.zip>  (validate-package PASS) [✅/❌]
+Step 6  Categories ........ AI Apps and Agents (+ up to 2 more)                  [✅/❌]
+Step 7  Terms of Use URL .. <termsUrl>                                          [✅ verified/❌]
+Step 7  Privacy Policy URL  <privacyUrl>                                        [✅ verified/❌]
+Step 7  Support URL ....... <supportUrl>                                        [✅ verified/❌]
+Step 8  Markets/availability <…>                                                [✅/❌]
+Step 9  Certification notes (reviewer test steps):
+        <test account / license key / SSO fallback — paste verbatim>            [✅/❌]
+Step 10 Review & publish → respond to validation feedback until approved.
+
+Monetization (if monetize == true):
+- Linked SaaS offer status: <backend.monetization.status>
+- Marketplace program enrolled: <yes/no>
+- SaaS technical config: landing page <…>, webhook <…>, Entra app <entraAppId>
+```
+
+Append the worksheet (and PASS/BLOCKED status) to `publishing-ledger.json` `audit[]`.
+
+> The user takes this worksheet to the Partner Center portal and submits manually. Submission,
+> certification, Responsible AI review, and Go-live are performed by Microsoft / the human — never by
+> this skill. See [the 10-step submission guide](https://learn.microsoft.com/en-us/partner-center/marketplace-offers/add-in-submission-guide).
 
 ## References (verify before quoting)
 

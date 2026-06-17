@@ -91,7 +91,7 @@ copilot
 | `backend-agent-runtime` | (A) エージェント実行ランタイムを Azure に構築（カスタムエンジンのみ）→ `@git-ape` |
 | `monetization-saas-offer` | (B) リンクした SaaS オファーのバックエンドを構築（スキル内で自己完結）→ `@git-ape` でデプロイ |
 | `validate-package` | manifest スキーマ／ルール、Store テストケースのローカル検証 |
-| `submit-readiness` | プログラム登録の確認と、提出前チェックリスト（ブロッキング ゲート） |
+| `submit-readiness` | プログラム登録の確認、ブロッキング チェックリスト、Partner Center 提出ワークシート（コピペ用）の生成 |
 
 ## 使い方の例
 
@@ -118,7 +118,7 @@ copilot
    atk validate --env dev --manifest-file ./appPackage/manifest.json --validate-method validation-rules
    atk validate --env dev --package-file ./appPackage/build/appPackage.dev.zip --validate-method test-cases
    ```
-4. `submit-readiness` がブロッキング チェックリスト（法務・プライバシー・テスト手順・Responsible AI）を実行し、Launch Gate レポートと Partner Center の手動提出手順を出力します。
+4. `submit-readiness` がブロッキング チェックリスト（法務・プライバシー・テスト手順・Responsible AI）を実行し、Launch Gate レポートと、**Partner Center 提出ワークシート（10ステップを台帳の値で事前入力したコピペ用）**を出力します。
 5. **最後はご自身で** Partner Center ポータルから提出し、審査フィードバックに対応します。
 
 ## 一連の流れ（宣言型／カスタムエンジン・収益化する場合）

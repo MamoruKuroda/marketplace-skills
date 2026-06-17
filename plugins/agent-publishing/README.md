@@ -103,7 +103,7 @@ copilot
 | `backend-agent-runtime` | (A) Provision the agent's runtime (custom engine only) → `@git-ape` |
 | `monetization-saas-offer` | (B) Provision the linked SaaS offer backend (self-contained) → deploy via `@git-ape` |
 | `validate-package` | Local manifest / RAI / certification checks |
-| `submit-readiness` | Program enrollment + blocking submission-readiness checklist |
+| `submit-readiness` | Program enrollment + blocking checklist + a copy-paste Partner Center submission worksheet |
 
 > Status: all eight skills are in place. The declarative end-to-end path
 > (`triage-agent-type` → `path-declarative-atk` → `validate-package` → `submit-readiness`) is the
@@ -135,7 +135,7 @@ copilot
    atk validate --env dev --manifest-file ./appPackage/manifest.json --validate-method validation-rules
    atk validate --env dev --package-file ./appPackage/build/appPackage.dev.zip --validate-method test-cases
    ```
-4. `submit-readiness` runs the blocking checklist (legal/privacy/test-instructions/RAI) and emits a Launch Gate report + the manual Partner Center steps.
+4. `submit-readiness` runs the blocking checklist (legal/privacy/test-instructions/RAI) and emits a Launch Gate report plus a **copy-paste Partner Center submission worksheet** (the 10 steps pre-filled from the ledger).
 5. **You** submit in the Partner Center portal and respond to review feedback.
 
 ## End-to-end walkthrough (declarative or custom engine, monetized)
