@@ -37,6 +37,31 @@ Out of scope (for now): Cowork plugins, Copilot connectors/plugins, org-catalog-
 | P3 microsoft | guiding a partner (demo/edu) | `/triage-agent-type` → any path |
 | P4 lowcode-maker | low-code/GUI | `/triage-agent-type` → Copilot Studio |
 
+## Requirements
+
+What you need depends on **how far you want to go**. Start small (L1) and add tools as you progress.
+
+| Level | What you can do | Client | Extra tools | Accounts |
+| --- | --- | --- | --- | --- |
+| **L1 Guidance** | Triage, readiness checklist, Partner Center submission worksheet | VS Code Copilot Chat (or Copilot CLI) | — | GitHub Copilot |
+| **L2 Packaging** | Scaffold / validate / package a declarative agent | VS Code | Node.js LTS, `atk` (`@microsoft/m365agentstoolkit-cli`) | + Microsoft 365 tenant (sideload/validate) |
+| **L3 Azure deploy** | Custom engine runtime / linked SaaS offer backend | **VS Code** (Azure MCP) | + Azure CLI (`az`), **git-bash on Windows**, `gh`, `jq`, `git` | + Azure subscription |
+| **L4 Submission** | Submit to Marketplace using the generated worksheet | Browser | — | + Partner Center (Microsoft 365 & Copilot **and** Microsoft Marketplace programs) |
+
+**Hard constraints**
+
+- **Git-Ape's Azure deployment targets VS Code.** Its Azure access uses the Azure MCP server,
+  configured in VS Code settings ([Azure setup](https://azure.github.io/git-ape/docs/getting-started/azure-setup)).
+  For L3, prefer VS Code Copilot Chat.
+- **Windows + L3 requires a Bash-compatible shell (git-bash).** Git-Ape states other shells are
+  untested. (Many developers already have git-bash for GitHub workflows.)
+- **VS Code Copilot Chat needs `chat.plugins.enabled`**, which is managed by your organization admin.
+- L4 (Marketplace submission and review) is always **manual** — this plugin produces a copy-paste
+  submission worksheet, but a human submits in Partner Center.
+
+> Just exploring? **L1 needs only a Copilot login.** You can run the triage interview and generate
+> checklists without installing `atk`, Azure CLI, or a subscription.
+
 ## Install
 
 First install Git-Ape (this plugin builds on it):
