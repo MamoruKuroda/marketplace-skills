@@ -61,6 +61,11 @@ Bottom line: use **Copilot CLI for L1** (and quick sign-in-free packaging), and 
 | **L3 Azure deploy** | Custom engine runtime / linked SaaS offer backend | **VS Code** (Azure MCP) | + Azure CLI (`az`), **git-bash on Windows**, `gh`, `jq`, `git` | + Azure subscription |
 | **L4 Submission** | Submit to Marketplace using the generated worksheet | Browser | — | + Partner Center (Microsoft 365 & Copilot **and** Microsoft Marketplace programs) |
 
+> **Setup boundary:** **L1 needs zero setup** (just a Copilot login — run triage and generate the
+> checklist/worksheet with nothing installed). **Each level above L1 adds tools** — L2 adds Node.js +
+> `atk`, L3 adds Azure CLI + git-bash + an Azure subscription. You only install what the level you
+> actually reach requires; nothing up front.
+
 **Hard constraints**
 
 - **Git-Ape's Azure deployment targets VS Code.** Its Azure access uses the Azure MCP server,

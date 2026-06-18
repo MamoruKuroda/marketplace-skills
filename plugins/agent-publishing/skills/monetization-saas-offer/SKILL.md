@@ -3,7 +3,7 @@ name: monetization-saas-offer
 description: "(Backend B) Provisions the linked SaaS offer transaction plane that monetizes a Microsoft 365 Copilot agent: Entra multitenant app, SaaS fulfillment endpoint + landing page, licensing/entitlement DB, and optional metering. Self-contained, grounded in Microsoft Learn; delegates the actual Azure deployment to @git-ape. Invoked only when monetize == true."
 argument-hint: "Pricing model (entitlement/usage), license management (publisher/Microsoft), env. Reads/writes publishing-ledger.json backend.monetization."
 user-invocable: true
-last_updated: "2026-06-13"
+last_updated: "2026-06-18"
 ---
 
 # Backend B: Monetization via Linked SaaS Offer
@@ -15,6 +15,12 @@ monetized declarative OR custom engine OR Copilot Studio agent.
 > When this runs: `monetize == true`. Requires enrollment in BOTH the Microsoft 365 and Copilot
 > program (publish the agent) and the Microsoft Marketplace program (monetize). Never deploys
 > without explicit confirmation; the actual Azure provisioning is delegated to `@git-ape`.
+
+> **Preview disclaimer (read first).** This backend depends on Microsoft features that are in
+> **preview** (linked SaaS offer monetization for Microsoft 365 Copilot agents, and parts of the
+> Marketplace/Partner Center flow). Steps, UI, and eligibility can change without notice. **Do not
+> rely on this skill as the single source of truth** — re-verify each step against the linked Microsoft
+> Learn docs at run time, and treat this as guidance alongside the official docs, not a replacement.
 
 ## Collect tenant context (just-in-time)
 

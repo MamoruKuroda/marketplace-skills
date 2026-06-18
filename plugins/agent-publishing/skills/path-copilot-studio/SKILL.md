@@ -3,7 +3,7 @@ name: path-copilot-studio
 description: "Guides publishing a multitenant custom agent built with Copilot Studio to the Microsoft 365 Copilot and Teams channel and, via Partner Center, to the Microsoft Commercial Marketplace (preview). Mostly GUI; this skill guides and gates rather than automates."
 argument-hint: "Copilot Studio agent details, target audience, monetization intent. Reads publishing-ledger.json."
 user-invocable: true
-last_updated: "2026-06-13"
+last_updated: "2026-06-18"
 ---
 
 # Path: Copilot Studio Multitenant Custom Agent
@@ -15,6 +15,12 @@ and org-share only reach the org catalog and are out of scope here.
 > Precondition: `publishing-ledger.json` with `agentType == "copilot-studio"`.
 > Copilot Studio authoring/publishing is largely a GUI flow — this skill provides ordered guidance
 > and a readiness gate, not full automation.
+
+> **Preview disclaimer (read first).** This path depends on Microsoft features that are in **preview**
+> (Copilot Studio multitenant publishing to Partner Center / Commercial Marketplace). Steps, UI, and
+> eligibility can change without notice. **Do not rely on this skill as the single source of truth** —
+> re-verify each step against the linked Microsoft Learn docs at run time, and treat this as guidance
+> alongside the official docs, not a replacement for them.
 
 ## Reachability check (gate)
 
