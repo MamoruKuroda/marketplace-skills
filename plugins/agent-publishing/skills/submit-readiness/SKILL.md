@@ -22,6 +22,12 @@ items, then produces a Launch Gate report and a step-by-step manual submission g
 > **Go-live**, and no end-to-end guide is published yet — so the API value is essentially configure/draft
 > automation. This skill keeps the manual portal flow as the primary, reliable path.
 
+## Collect tenant context (just-in-time)
+
+Triage does not collect tenant info. Before building the worksheet, read `publishing-ledger.json`
+`tenant`; if `publisherDisplayName` or `offerName` is empty, ask the user now and write them back to
+the ledger. Explain they must match Partner Center. Never assume; never store secrets.
+
 ## Program enrollment (verify first)
 
 | Program | When required | Purpose |

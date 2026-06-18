@@ -16,6 +16,13 @@ monetized declarative OR custom engine OR Copilot Studio agent.
 > program (publish the agent) and the Microsoft Marketplace program (monetize). Never deploys
 > without explicit confirmation; the actual Azure provisioning is delegated to `@git-ape`.
 
+## Collect tenant context (just-in-time)
+
+Triage does not collect tenant info. Read `publishing-ledger.json` `tenant.tenantId`; if it's empty
+or `<TBD>`, ask the user for the target Entra tenant ID now (needed for the multitenant Entra app
+registration and the `@git-ape` deployment target) and write it back to the ledger. Never assume;
+never store secrets.
+
 ## What a linked SaaS offer requires
 
 1. **Multitenant Microsoft Entra ID app registration** (SSO, "any org directory").

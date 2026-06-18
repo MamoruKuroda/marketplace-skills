@@ -65,19 +65,19 @@ SharePoint agent), explain the limitation and offer the nearest reaching alterna
   Requires enrolling in BOTH the M365 & Copilot program and the Microsoft Marketplace program.
 - `no` → free download; only the M365 & Copilot program is needed.
 
-### Q5 — Tenant context (optional at triage; collected early, not required to route)
+### Tenant context — NOT collected here (collected just-in-time downstream)
 
-Routing does **not** depend on tenant info. Collect it now only because later stages need it and to
-avoid hardcoding it there:
-- **publisher display name / offer name** → used by `submit-readiness` to pre-fill the Partner Center
-  submission worksheet.
-- **target Entra tenant ID** → used later by `monetization-saas-offer` (multitenant Entra app
-  registration) and `@git-ape` (which subscription/tenant to deploy into). **Not needed for a
-  free/non-monetized declarative agent until submission.**
+Triage asks only what routing needs: **persona, marketplace intent, agent_type, monetize** (Q1–Q4).
+It does **not** ask for tenant ID, publisher name, or offer name — those are not needed to route, and
+asking for them up front is confusing.
 
-Ask for: target Entra tenant ID, publisher display name, intended offer name — and **explain why**
-when asking. If the user doesn't know a value yet, write a `<TBD: ...>` placeholder and continue;
-the later skill will prompt again. Never assume values; never store secrets.
+Initialize the ledger's `tenant` fields as empty/placeholder. Each downstream skill that actually
+needs a value collects it just-in-time and writes it to the ledger:
+- `submit-readiness` → publisher display name, offer name (for the submission worksheet).
+- `monetization-saas-offer` → target Entra tenant ID (multitenant Entra app registration).
+- `backend-agent-runtime` / `@git-ape` → target subscription/tenant for deployment.
+
+Never assume values; never store secrets.
 
 ## Routing table (agent_type x monetize)
 
