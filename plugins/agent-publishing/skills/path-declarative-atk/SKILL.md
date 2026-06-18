@@ -3,7 +3,7 @@ name: path-declarative-atk
 description: "Scaffolds, validates, and packages a declarative Microsoft 365 Copilot agent with the Microsoft 365 Agents Toolkit CLI (atk), producing a submission-ready app package. Routed to when agentType == declarative."
 argument-hint: "App name, programming language, knowledge sources and actions. Reads publishing-ledger.json from triage."
 user-invocable: true
-last_updated: "2026-06-13"
+last_updated: "2026-06-18"
 ---
 
 # Path: Declarative Agent (Microsoft 365 Agents Toolkit)
@@ -68,9 +68,30 @@ Actively guide the user (don't just say "edit the files"):
    > "You are an HR policy assistant for <company>. Answer questions about leave, expenses, working
    > hours, and code of conduct using ONLY the connected HR policy documents. If the answer isn't in
    > the policies, say so and point to HR. Be concise and cite the policy section."
-2. **Add knowledge** so answers are grounded: connect the source documents (SharePoint/OneDrive site,
-   Graph connector, or uploaded files) via the declarative agent's `capabilities`/knowledge scopes.
-   Without knowledge, the agent only has the base model — not the org's policies.
+2. **Add knowledge (decide grounding now — pick one of three).** Ask the user which fits, using
+   the ledger intent to phrase the question. This is the single biggest driver of whether the agent
+   feels real, so do not skip it.
+
+   **A. "I already have a source" (the real path — default for most makers).**
+   Wire the existing source into the declarative agent's `capabilities`/knowledge scopes:
+   SharePoint/OneDrive site or folder, a Graph connector, or uploaded files. Confirm the agent
+   can see it, then continue to validation.
+
+   **B. "I want to see it work end-to-end first" (PoC / first-timers).**
+   Generate ONE throwaway sample document *derived from the ledger intent* (HR intent → a 1-page
+   sample HR policy; IT intent → a 1-page sample IT FAQ — never a fixed canned file), save it under
+   `knowledge/sample-<topic>.md`, wire it as the knowledge source, and let the user experience a
+   grounded answer. **Stamp it clearly: "SAMPLE — replace with real content before packaging/publish."**
+   Add a TODO in the ledger audit so it is not shipped by accident.
+
+   **C. "Knowledge-free on purpose" (advanced / actions-only).**
+   Proceed, but apply the "Runs but empty" warning below so the user is not surprised.
+
+   > **"Runs but empty" warning (applies to C, and to A/B until a source is actually attached).**
+   > With good `instructions` but NO knowledge attached, the agent installs and behaves in-character
+   > (introduces itself correctly, refuses off-topic asks) but **every factual question returns
+   > "I couldn't find that in the connected documents."** This is expected and correct — not a bug —
+   > because there is no data to ground on. Real answers require at least one knowledge source.
 3. **Add conversation starters** that match the purpose (e.g. "How do I request annual leave?",
    "What's the expense approval limit?").
 4. Update the **Microsoft 365 app manifest** (`manifest.json`) name/description and the `color.png`
@@ -79,9 +100,9 @@ Actively guide the user (don't just say "edit the files"):
 
 > Note: API plugins are supported as actions within declarative agents.
 >
-> **Gate:** before moving to packaging, confirm the `instructions` are purpose-specific (not the
-> template default) and at least one knowledge source is attached (unless the user explicitly wants a
-> knowledge-free agent). If still the template default, warn the user and offer to author it now.
+> **Gate:** before packaging, confirm (1) `instructions` are purpose-specific (not the template
+> default), and (2) the knowledge decision A/B/C was made explicitly. If B, confirm the sample is
+> flagged "replace before publish." If C, confirm the user accepted the "Runs but empty" behavior.
 
 ### 3. Validate (delegate to `validate-package`)
 Run the shared `validate-package` skill, which executes (note: `--env` is required to resolve

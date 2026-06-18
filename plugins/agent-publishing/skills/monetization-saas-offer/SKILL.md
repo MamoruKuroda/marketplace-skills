@@ -16,6 +16,12 @@ monetized declarative OR custom engine OR Copilot Studio agent.
 > program (publish the agent) and the Microsoft Marketplace program (monetize). Never deploys
 > without explicit confirmation; the actual Azure provisioning is delegated to `@git-ape`.
 
+> **Preview disclaimer (read first).** This backend depends on Microsoft features that are in
+> **preview** (linked SaaS offer monetization for Microsoft 365 Copilot agents, and parts of the
+> Marketplace/Partner Center flow). Steps, UI, and eligibility can change without notice. **Do not
+> rely on this skill as the single source of truth** — re-verify each step against the linked Microsoft
+> Learn docs at run time, and treat this as guidance alongside the official docs, not a replacement.
+
 A **transactable** offer ("Sell through Microsoft") is one in which **Microsoft facilitates the
 exchange of money for a software license on the publisher's behalf**, and Microsoft bills using the
 pricing model the publisher chose. ([plan-saas-offer], [plans-pricing]) Integrating with the SaaS
