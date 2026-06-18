@@ -21,6 +21,14 @@ package AND a deployed Azure runtime (the execution backend, A).
 - Azure subscription + a service principal for headless provisioning (CI) or `az login`.
 - Decision: model/orchestrator (e.g., Microsoft 365 Agents SDK) and hosting (App Service / Functions / Bot).
 
+### Account guard (M365 + Azure)
+
+Do not assume any account is "already signed in," and never trigger a silent sign-in. Before steps
+needing auth: for **M365** (`atk install`/sideload, `atk publish`) run `atk auth list` and **confirm
+with the user which account/tenant to use** (avoid an accidental corporate/WAM identity); for
+**Azure** (`atk provision`/`atk deploy`) confirm the target subscription/tenant. Sign-in-free steps
+(`atk new`, `atk package`, `atk validate --validate-method validation-rules`) need no prompt.
+
 ## Pipeline
 
 ### 1. Scaffold

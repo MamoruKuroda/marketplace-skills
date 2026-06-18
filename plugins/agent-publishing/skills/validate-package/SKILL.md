@@ -42,6 +42,11 @@ atk validate --env <env> --output-folder ./appPackage/build
 - `--env <env>` is REQUIRED: the manifest contains `${{...}}` placeholders resolved per environment
   (verified in dry run — omitting `--env` fails with "Missing required input: env").
 - Run `validation-rules` against the manifest early; run `test-cases` against the built `.zip`.
+- **Account guard:** `validation-rules` needs no sign-in. `test-cases` calls the Developer Portal and
+  requires an M365 account — before running it, do `atk auth list`, **confirm with the user which
+  account/tenant to use** (don't assume "already signed in"), and don't force a silent WAM sign-in.
+  If a specific/test tenant or browser-only flow is required, use the browser Developer Portal
+  validation tool (`https://dev.teams.microsoft.com/validation`) with that tenant instead.
 
 ## Behavior
 

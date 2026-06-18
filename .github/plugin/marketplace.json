@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Skills for publishing solutions to the Microsoft Commercial Marketplace. Agents today; SaaS, containers, and managed applications planned.",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "category": "marketplace",
     "tags": ["microsoft", "marketplace", "partner-center", "copilot", "git-ape"]
   },
@@ -14,7 +14,7 @@
     {
       "name": "agent-publishing",
       "description": "Publish and monetize Microsoft 365 Copilot agents (declarative, custom engine, Copilot Studio multitenant) on the Microsoft Commercial Marketplace.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "source": "./plugins/agent-publishing"
     }
   ]

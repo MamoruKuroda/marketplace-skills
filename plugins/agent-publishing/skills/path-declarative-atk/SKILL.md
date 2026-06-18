@@ -22,6 +22,22 @@ app package (`.zip`) that is ready for the manual Partner Center submission.
 - `atk doctor` passes.
 - A Microsoft 365 tenant with sideloading enabled (for local test/install).
 
+### Microsoft 365 account guard (read before any sign-in-requiring step)
+
+**Do not assume an account is "already signed in," and never trigger a silent sign-in.** `atk doctor`
+reporting OK does not establish which identity will be used. Before any step that needs M365 auth
+(`atk validate --validate-method test-cases`, `atk install`/sideload, `atk publish`):
+
+1. Run `atk auth list` and show the user the currently signed-in M365 account (if any).
+2. **Ask the user which account/tenant to use for this run**, and confirm it matches their intended
+   (often a dedicated test) tenant — not a corporate identity picked by accident.
+3. On Windows, `atk auth login m365` uses the OS WAM account picker. If the user requires a
+   browser-only / specific-tenant flow, do **not** force it through WAM — pause and let the user sign
+   in deliberately, or use the browser-based Developer Portal validation tool instead
+   (`https://dev.teams.microsoft.com/validation`) with their chosen tenant.
+4. **Sign-in-free steps** (`atk new`, `atk package`, `atk validate --validate-method validation-rules`)
+   need no account and can proceed without this prompt.
+
 ## Pipeline (all CLI steps are automatable)
 
 ### 1. Scaffold
