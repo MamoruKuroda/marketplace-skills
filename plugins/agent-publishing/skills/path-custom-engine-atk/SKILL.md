@@ -2,7 +2,7 @@
 name: path-custom-engine-atk
 description: "Scaffolds, provisions, deploys, validates, and packages a custom engine Microsoft 365 Copilot agent with the Agents Toolkit CLI (atk). Routed to when agentType == custom-engine. Delegates the agent's Azure runtime to backend-agent-runtime."
 argument-hint: "App name, language, model/orchestrator choice, hosting target. Reads publishing-ledger.json."
-user-invocable: false
+user-invocable: true
 last_updated: "2026-06-13"
 ---
 

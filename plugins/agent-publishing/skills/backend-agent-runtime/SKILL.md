@@ -2,7 +2,7 @@
 name: backend-agent-runtime
 description: "(Backend A) Provisions and deploys the custom engine agent's own Azure runtime via atk provision/deploy, optionally delegating richer topologies to @git-ape. Invoked only when agentType == custom-engine."
 argument-hint: "Hosting target, env name, Azure service principal. Reads/writes publishing-ledger.json backend.execution."
-user-invocable: false
+user-invocable: true
 last_updated: "2026-06-13"
 ---
 

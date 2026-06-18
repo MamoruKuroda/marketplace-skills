@@ -2,7 +2,7 @@
 name: monetization-saas-offer
 description: "(Backend B) Provisions the linked SaaS offer transaction plane that monetizes a Microsoft 365 Copilot agent: Entra multitenant app, SaaS fulfillment endpoint + landing page, licensing/entitlement DB, and optional metering. Self-contained, grounded in Microsoft Learn; delegates the actual Azure deployment to @git-ape. Invoked only when monetize == true."
 argument-hint: "Pricing model (entitlement/usage), license management (publisher/Microsoft), env. Reads/writes publishing-ledger.json backend.monetization."
-user-invocable: false
+user-invocable: true
 last_updated: "2026-06-13"
 ---
 

@@ -2,7 +2,7 @@
 name: path-declarative-atk
 description: "Scaffolds, validates, and packages a declarative Microsoft 365 Copilot agent with the Microsoft 365 Agents Toolkit CLI (atk), producing a submission-ready app package. Routed to when agentType == declarative."
 argument-hint: "App name, programming language, knowledge sources and actions. Reads publishing-ledger.json from triage."
-user-invocable: false
+user-invocable: true
 last_updated: "2026-06-13"
 ---
 
