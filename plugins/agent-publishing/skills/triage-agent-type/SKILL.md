@@ -60,9 +60,10 @@ SharePoint agent), explain the limitation and offer the nearest reaching alterna
 
 ### Q4 — Monetization → monetize
 "Do you plan to charge customers for this agent?"
-- `yes` → a **linked SaaS offer** backend (B) is required: Entra multitenant app,
-  SaaS fulfillment API endpoint, licensing/entitlement DB, optional metering.
-  Requires enrolling in BOTH the M365 & Copilot program and the Microsoft Marketplace program.
+- `yes` → a **linked SaaS offer** backend (B) is required: Entra multitenant app, plus a
+  SaaS fulfillment landing page + connection webhook backed by a subscription-state store
+  (required); entitlement and metering are optional. Requires enrolling in BOTH the
+  M365 & Copilot program and the Microsoft Marketplace program.
 - `no` → free download; only the M365 & Copilot program is needed.
 
 ### Tenant context — NOT collected here (collected just-in-time downstream)
