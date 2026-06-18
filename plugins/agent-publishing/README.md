@@ -41,6 +41,19 @@ Out of scope (for now): Cowork plugins, Copilot connectors/plugins, org-catalog-
 
 What you need depends on **how far you want to go**. Start small (L1) and add tools as you progress.
 
+### Choosing a client (VS Code recommended)
+
+Engineers build in an editor, and the Microsoft 365 Agents Toolkit / Azure sign-in is **GUI-integrated
+in VS Code** (account picker, browser OAuth, status-bar identity) — a smoother experience than the
+CLI, which on Windows falls back to the OS WAM dialog and makes test-tenant sign-in awkward. So:
+
+| Client | L1 Guidance | L2 Packaging | L3 Azure deploy |
+| --- | --- | --- | --- |
+| **VS Code Copilot Chat** (recommended) | ✅ | ✅ GUI sign-in | ✅ Azure MCP, GUI sign-in |
+| **Copilot CLI** | ✅ fully self-contained | ⚠️ limited — works for sign-in-free steps (`new`/`package`/validation-rules); steps needing M365/Azure sign-in hit the WAM dialog | ❌ not recommended |
+
+Bottom line: use **Copilot CLI for L1** (and quick sign-in-free packaging), and **VS Code for L2–L3**.
+
 | Level | What you can do | Client | Extra tools | Accounts |
 | --- | --- | --- | --- | --- |
 | **L1 Guidance** | Triage, readiness checklist, Partner Center submission worksheet | VS Code Copilot Chat (or Copilot CLI) | — | GitHub Copilot |

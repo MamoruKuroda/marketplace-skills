@@ -53,13 +53,35 @@ atk new \
   + actions over Copilot's own model/orchestrator; no custom runtime).
 - Use `atk list templates` to confirm available capabilities for the installed version.
 
-### 2. Author the agent
-Edit the scaffolded files (do not invent paths — read what `atk new` generated):
-- The declarative agent manifest (instructions, conversation starters, knowledge scopes).
-- The Microsoft 365 app manifest (`manifest.json`) + `color.png` (192x192) + `outline.png` (32x32).
-- For actions, add an API plugin: `atk add action` (and `atk add auth-config` if the API needs auth).
+### 2. Author the agent (DO THIS BEFORE PACKAGING — the scaffold is a blank template)
+
+`atk new` produces a **generic template**: the `instructions` only say "you are a declarative agent…",
+there are no knowledge sources, and no conversation starters. **If you package as-is, you ship a
+generic Copilot that ignores the intended purpose** (e.g. an "HR policy Q&A" agent that answers like
+plain Copilot). Always tailor it first, grounded in the intent recorded in `publishing-ledger.json`.
+
+Actively guide the user (don't just say "edit the files"):
+
+1. **Rewrite `instructions`** (in `appPackage/instruction.txt` → built into `declarativeAgent.json`)
+   to the agent's real purpose. Propose a concrete draft from the ledger's offer name/intent. Example
+   for an HR policy Q&A agent:
+   > "You are an HR policy assistant for <company>. Answer questions about leave, expenses, working
+   > hours, and code of conduct using ONLY the connected HR policy documents. If the answer isn't in
+   > the policies, say so and point to HR. Be concise and cite the policy section."
+2. **Add knowledge** so answers are grounded: connect the source documents (SharePoint/OneDrive site,
+   Graph connector, or uploaded files) via the declarative agent's `capabilities`/knowledge scopes.
+   Without knowledge, the agent only has the base model — not the org's policies.
+3. **Add conversation starters** that match the purpose (e.g. "How do I request annual leave?",
+   "What's the expense approval limit?").
+4. Update the **Microsoft 365 app manifest** (`manifest.json`) name/description and the `color.png`
+   (192x192) / `outline.png` (32x32) icons.
+5. For actions, add an API plugin: `atk add action` (and `atk add auth-config` if the API needs auth).
 
 > Note: API plugins are supported as actions within declarative agents.
+>
+> **Gate:** before moving to packaging, confirm the `instructions` are purpose-specific (not the
+> template default) and at least one knowledge source is attached (unless the user explicitly wants a
+> knowledge-free agent). If still the template default, warn the user and offer to author it now.
 
 ### 3. Validate (delegate to `validate-package`)
 Run the shared `validate-package` skill, which executes (note: `--env` is required to resolve
