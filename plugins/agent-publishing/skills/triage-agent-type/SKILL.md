@@ -3,7 +3,7 @@ name: triage-agent-type
 description: "Entry point. Determines persona, agent type, and monetization intent, then routes to the correct publishing path and records decisions in publishing-ledger.json."
 argument-hint: "Describe your agent idea, who you are (startup/partner/Microsoft/maker), and whether you plan to charge for it."
 user-invocable: true
-last_updated: "2026-06-12"
+last_updated: "2026-06-18"
 ---
 
 # Triage: Agent Type & Publishing Path
@@ -65,9 +65,19 @@ SharePoint agent), explain the limitation and offer the nearest reaching alterna
   Requires enrolling in BOTH the M365 & Copilot program and the Microsoft Marketplace program.
 - `no` → free download; only the M365 & Copilot program is needed.
 
-### Q5 — Tenant context (no hardcoding)
-Collect, never assume: target Entra tenant ID, publisher display name, intended offer name.
-These are written to the ledger; secrets are never stored.
+### Q5 — Tenant context (optional at triage; collected early, not required to route)
+
+Routing does **not** depend on tenant info. Collect it now only because later stages need it and to
+avoid hardcoding it there:
+- **publisher display name / offer name** → used by `submit-readiness` to pre-fill the Partner Center
+  submission worksheet.
+- **target Entra tenant ID** → used later by `monetization-saas-offer` (multitenant Entra app
+  registration) and `@git-ape` (which subscription/tenant to deploy into). **Not needed for a
+  free/non-monetized declarative agent until submission.**
+
+Ask for: target Entra tenant ID, publisher display name, intended offer name — and **explain why**
+when asking. If the user doesn't know a value yet, write a `<TBD: ...>` placeholder and continue;
+the later skill will prompt again. Never assume values; never store secrets.
 
 ## Routing table (agent_type x monetize)
 
@@ -81,11 +91,20 @@ Backends:
 - (A) backend-agent-runtime → only when agent_type == custom-engine.
 - (B) monetization-saas-offer → only when monetize == yes (independent of agent_type).
 
-## Deliverables
+## Deliverables (make the output tangible to the user)
 
-- A populated `publishing-ledger.json` (schema below) at the repo/workspace root.
-- A one-paragraph routing summary telling the user which path skill runs next and why.
-- A list of prerequisites to confirm before the next skill (persona-dependent).
+1. **The ledger file** — write `publishing-ledger.json` to the current working directory, then tell
+   the user explicitly: the **full path** where it was written, that it's the hand-off file for the
+   next skill, and a short summary of its key fields (persona / agentType / monetize / route). Invite
+   them to open it. Do not leave the deliverable invisible.
+2. **Routing summary** — a short table/paragraph: which path skill runs next and why, and whether
+   execution backend (A) / monetization backend (B) are needed.
+3. **Next action (be explicit)** — tell the user the exact next command to run, namespaced for the
+   client. In Copilot CLI that is `/agent-publishing:<next-skill>` (plugin skills are namespaced as
+   `/<plugin-name>:<skill-name>`). For example, for a declarative agent:
+   `/agent-publishing:path-declarative-atk`.
+4. **Prerequisites** — what to confirm before the next skill (persona-dependent), with any `<TBD>`
+   ledger values flagged so the user knows what's still needed.
 
 ## publishing-ledger.json (schema)
 
@@ -97,7 +116,7 @@ Backends:
   "marketplaceIntent": "marketplace | org-only",
   "agentType": "declarative | custom-engine | copilot-studio",
   "monetize": true,
-  "tenant": { "tenantId": "<guid>", "publisherDisplayName": "", "offerName": "" },
+  "tenant": { "tenantId": "<guid or '<TBD>'>", "publisherDisplayName": "", "offerName": "" },
   "route": {
     "pathSkill": "path-declarative-atk | path-custom-engine-atk | path-copilot-studio",
     "needsExecutionBackend": false,
