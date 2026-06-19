@@ -1,7 +1,7 @@
 {
   "name": "partner-center-onboarding",
   "description": "Guided troubleshooting for Microsoft Partner Center account verification when publishing Microsoft 365 Copilot agents to the Microsoft Commercial Marketplace. Converges identity/roles, legal-entity & publisher identity (tenant equality NOT required; publisher verification = PGA association), business-existence, and process-visibility friction into one verified, publish-ready account state. Handles term drift (Publisher Verification badge vs business verification, MPN/Partner One ID, Account admin vs Owner/Manager/Developer). Authored as portable Agent Skills (SKILL.md) usable in GitHub Copilot CLI and packageable for Microsoft 365 Copilot Cowork.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "Mamoru Kuroda",
     "url": "https://github.com/MamoruKuroda"
