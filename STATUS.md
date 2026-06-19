@@ -9,32 +9,33 @@
 
 | WS | Theme | Phase | State | Issue | Next action |
 |----|-------|-------|-------|-------|-------------|
-| core | Plugin core (8 skills) | published v0.1.5 | ✅ live | — | — |
+| core | Plugin core (agent-publishing, 8 skills) | published v0.1.5 | ✅ live | — | — |
 | B | Declarative knowledge end-to-end verify | docs fix merged | ✅ usable-complete | #3 | optional: attach a real (non-sample) source — or nothing |
-| A | SaaS Tier-1 fulfillment backend | decisions made → building | 🟡 building | #5 | Azure sign-in (in progress) → deploy SaaS Accelerator → A1 free fulfillment checks |
+| A | SaaS Tier-1 fulfillment backend | live dry-run done + documented | ✅ Tier-1 (A1) complete | #5 | optional: live L2 emulator run; otherwise done |
+| PC | partner-center-onboarding (account verification) | published v0.2.0 | ✅ live | — | optional refinements |
 
 State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 🔴 broken
 
 ## Open PRs / Issues
 
-- #5 (WS-A) — **open, building** (3 decisions resolved in-session; see below)
-- #3 (WS-B) — **open**, done met; venue for the STATUS.md ops-rule agreement
-- Closed: #2 (SaaS 3-layer design → PR #1) · PR #1 · PR #4 (declarative docs fix)
+- All PRs merged (#1, #4, #6, #7, #8, #9, #10). No open PRs.
+- #3 (WS-B) / #5 (WS-A) — open as coordination venues; the work is complete.
+- Closed: #2 (SaaS 3-layer design → PR #1).
 
-## WS-A decisions (resolved 2026-06-19, in-session)
+## WS-A outcome (Tier-1, done 2026-06-19)
 
-- **Pricing model = flat rate** (metering-capable; per-user was rejected because metering is flat-rate-only). Tier-1 state store therefore needs no `quantity` branch; no `ChangeQuantity` webhooks.
-- **Azure identity + subscription = pinned** (IDs kept session-local, not posted publicly), region **East US 2**.
-- **Build route = (a) deploy the Microsoft SaaS Accelerator** (MIT-licensed, actively maintained) via its own installer; `@git-ape` onboarding is **optional** for route (a).
-
-> **A1 / A2 are the WS-A done-split** (not WS-B): **A1** = landing+webhook deployed & reachable 24/7, webhook validated with synthetic/replayed events + state store updated (free, local). **A2** = real purchase via a paid DEV offer (opt-in, incurs invoices). Tier-1 "done" = A1.
+- **Pricing model = flat rate** (metering-capable; per-user rejected because metering is flat-rate-only). No `quantity` branch / no `ChangeQuantity` in the Tier-1 state store.
+- **Build route = (a) Microsoft SaaS Accelerator** (MIT, maintained) via its own installer; `@git-ape` optional for route (a). Route (b) hand-rolled IaC kept as the alternative.
+- **Live dry-run:** full plane deployed in **West US 3** (VNet, Azure SQL, Key Vault, App Service B1, Admin+Customer apps, multitenant Entra app), L1 verified (landing 200, webhook-no-JWT 400, admin 500=config-pending), then **fully torn down** (no residual cost).
+- **A1/A2 done-split:** A1 = reachability + synthetic verify via the SaaS API Emulator (free); A2 = real paid DEV-offer purchase (opt-in). **Tier-1 "done" = A1.**
+- `.NET 8` (LTS, EOL 2026-11-10) intentional; framework upgrades left to upstream (target .NET 10 LTS).
 
 ## Milestones (history)
 
-- 2026-06-19 — WS-A decisions locked (flat rate / Azure pinned East US 2 / route = Microsoft SaaS Accelerator); build started.
+- 2026-06-19 — **WS-A Tier-1 complete**: SaaS Accelerator deployed+verified+torn down; skill documents both routes, the 3-roles/3-tokens model, the A1 ladder, route-(a) prereqs + cost note (PR #7, #9).
+- 2026-06-19 — **partner-center-onboarding** shipped: `troubleshoot-account-verification` (4-condition convergence, triage A–D, escalation/role-owner forks) (PR #8, #10).
 - 2026-06-19 — WS-B declarative path **usable-complete**: triage → scaffold → author → wire knowledge (`OneDriveAndSharePoint`/`items_by_url`) → grounded answer + citation, with license/formatting traps documented (PR #4).
-- 2026-06-19 — SaaS skill **3-layer rewrite** merged (fulfillment / pricing+licensing / tax separation; state table mandatory; metering = flat-rate-only) (PR #1).
-- 2026-06-19 — Repo conventions added (`CONTRIBUTING.md`, PR template).
+- 2026-06-19 — SaaS skill **3-layer rewrite** (fulfillment / pricing+licensing / tax; state table mandatory; metering = flat-rate-only) + repo conventions (`CONTRIBUTING.md`, PR template) (PR #1).
 - (earlier) — Plugin published v0.1.5: 8 skills, repo-as-marketplace, real-install verified; declarative L1/L2 verified hands-on.
 
 ---
