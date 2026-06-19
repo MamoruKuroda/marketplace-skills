@@ -1,6 +1,6 @@
 ---
 name: monetization-saas-offer
-description: "(Backend B) Provisions the linked SaaS offer transaction plane that monetizes a Microsoft 365 Copilot agent: Entra multitenant app, SaaS fulfillment landing page + connection webhook, subscription-state store, entitlement, and optional metering. Self-contained, grounded in Microsoft Learn; delegates the actual Azure deployment to @git-ape. Invoked only when monetize == true."
+description: "(Backend B) Provisions the linked SaaS offer transaction plane that monetizes a Microsoft 365 Copilot agent: Entra multitenant app, SaaS fulfillment landing page + connection webhook, subscription-state store, entitlement, and optional metering. Grounded in Microsoft Learn; deploys via the Microsoft SaaS Accelerator (recommended Tier-1 route) or hand-rolled IaC through @git-ape. Invoked only when monetize == true."
 argument-hint: "Pricing model (flat rate / per user; metering optional, flat rate only), license management (publisher / Microsoft), env. Reads/writes publishing-ledger.json backend.monetization."
 user-invocable: true
 last_updated: "2026-06-19"
@@ -82,6 +82,105 @@ The publisher has 30 days to resolve a `PendingFulfillmentStart` asset or it is 
 
 > No pricing, payout, withholding, or tax logic belongs in this layer.
 
+### Architecture at a glance + the 3 tokens (developer view)
+
+A deployed Tier-1 backend (e.g. the SaaS Accelerator) is "a sample that runs" until you can see
+*what the moving parts are and which token does what*. The diagram below is the orientation; the
+two clarifications under it are the parts developers most often get wrong.
+
+```mermaid
+sequenceDiagram
+    participant B as Buyer
+    participant MP as Microsoft Marketplace<br/>(Fulfillment API v2)
+    participant LP as Landing Page<br/>(web app)
+    participant WH as Connection Webhook<br/>(/api/AzureWebhook)
+    participant DB as Subscription State Store<br/>(e.g. Azure SQL)
+    participant EN as Entra multitenant App
+
+    Note over B,MP: 1. Purchase
+    B->>MP: Buy the SaaS offer
+    MP-->>B: Redirect to Landing Page with ?token=<marketplace-token>
+    B->>LP: Open landing page
+    LP->>EN: 2. Sign the buyer in (OIDC SSO)
+    Note over LP,EN: 3. Separately, acquire the backend's own<br/>access token (client credentials)
+    LP->>MP: Resolve(marketplace-token)  [S2S token]
+    MP-->>LP: subscriptionId / plan / purchaser
+    LP->>MP: Activate(subscriptionId, planId)
+    MP-->>LP: 200 (billing starts)
+    LP->>DB: Persist subscription = Subscribed
+    Note over MP,WH: 4. Lifecycle (later, async)
+    MP->>WH: POST ChangePlan / Suspend / Unsubscribe (Bearer JWT)
+    WH->>EN: Validate the JWT (issued by Entra)
+    WH->>MP: Get Operation (confirm authenticity)
+    WH->>DB: Update subscription state
+    WH-->>MP: HTTP 200 within 10s
+```
+
+**Clarification 1 — the multitenant Entra app plays THREE roles** (one app, three jobs; conflating
+them is the usual source of bugs):
+1. **Buyer SSO** on the landing page (OIDC sign-in, any work/school or personal account).
+2. **Service-to-service auth** for the backend to call the **Fulfillment/Operations API** (client
+   credentials → an Entra access token).
+3. **Webhook caller validation** — the JWT Microsoft sends on each webhook call is an Entra token;
+   the backend validates it before acting.
+
+**Clarification 2 — there are THREE different tokens; do not confuse them:**
+
+| Token | Who issues it | Who holds/sends it | Purpose |
+| --- | --- | --- | --- |
+| `marketplace-token` (purchase id token) | Microsoft Marketplace | arrives as `?token=` on the landing page | opaque identifier passed to **Resolve** to look up the subscription |
+| Backend **Entra access token** | Microsoft Entra (client credentials) | the backend service | **S2S** auth to call Fulfillment/Operations API (never from the web page) |
+| Buyer **SSO token** | Microsoft Entra (OIDC) | the buyer's browser session | authenticates the human on the landing page |
+
+> The landing page and webhook are the only public surfaces; the Fulfillment/Operations API is
+> called **only** from the backend with the S2S token. The state store is what makes the webhook's
+> job (keep state in sync) possible.
+
+### Verifying Tier-1 fulfillment (A1, free)
+
+You cannot fully exercise Resolve/Activate with a *real* `marketplace-token` without a paid
+purchase. Verify at the level the dry-run allows:
+
+- **L1 (reachability / liveness, instant):** the landing page returns HTTP 200; the webhook rejects
+  an unauthenticated/invalid POST (e.g. HTTP 400/401) — proving the endpoint is live and its
+  validation path is wired.
+- **L2 (synthetic end-to-end, free — the real A1 check):** point the official **SaaS API Emulator**
+  ([saas-api-emulator]) at the backend to issue a synthetic `marketplace-token` and drive
+  Resolve → Activate → webhook, then confirm the **subscription row appears/updates in the state
+  store**. No real purchase, no charge.
+- **L3 (real purchase, paid, opt-in):** a DEV-offer test purchase yields a real token (cancel within
+  72h for a next-month refund). Not required for Tier-1 "done".
+
+### Route (a) environment prerequisites & cost (from a real dry-run)
+
+> **Cost note:** route (a) deploys **always-on billable Azure resources** (App Service Plan B1,
+> Azure SQL, Key Vault, plus a VNet) — unlike the free fulfillment-API plumbing, these bill
+> continuously while deployed. For a same-day A1 spike that's a few dollars, but a deploy-and-forget
+> backend keeps charging. **Tear down the resource group when not in use;** A1 verification does not
+> require leaving it running.
+
+Standing up the Accelerator's `deployment/Deploy.ps1` surfaced prerequisites the upstream README
+does not list. Confirm these before deploying:
+
+1. **.NET 8 SDK** installed (the script aborts if `dotnet --version` isn't 8.x; `global.json` pins 8.0.x).
+2. **`dotnet-ef`** global tool (`dotnet tool install --global dotnet-ef`) — used to generate the DB schema.
+3. **PowerShell 7.x (pwsh), not Windows PowerShell 5.1.** Under `$ErrorActionPreference='Stop'`, the
+   script's az pre-checks (e.g. `az keyvault show` on a not-yet-created RG) raise a terminating
+   `NativeCommandError` in 5.1; pwsh 7 tolerates the non-zero exit.
+4. **DB schema apply:** the script's `Invoke-Sqlcmd` (SqlServer module) can throw a `TdsParser`
+   type-initializer error under pwsh 7. Workaround: apply `script.sql` with **go-sqlcmd**
+   (`sqlcmd --authentication-method ActiveDirectoryDefault -i script.sql`) using your `az login` context.
+5. **App Service quota is subscription/region/time-specific** — it is **not** a fixed regional fact.
+   Some subscriptions show `Total VMs = 0` for App Service in a given region (in this dry-run, that
+   was East US 2 and Japan East), so B1 creation fails there. **Verify your own quota** (e.g.
+   `az vm list-usage -l <region>`) and pick a region with capacity rather than assuming any specific
+   region works or fails. In this run, West US 3 had capacity.
+6. **SQL Server provisioning is also region-gated and time-varying** — `RegionDoesNotAllowProvisioning`
+   can occur (in this run, East US and West US 2). **Check current SQL availability for your target
+   region** and choose one that allows **both** App Service and SQL. In this run, West US 3 allowed both.
+
+
+
 ---
 
 ## Layer 2 — Pricing / Licensing (commercial)
@@ -144,11 +243,37 @@ Tiers are additive. They live in Layers 1–2; Layer 3 is never code.
 WAF 5-pillar baseline still applies to the deployed backend: tenant isolation, IaC, Key Vault, CI/CD,
 encryption, compliance.
 
-## Build & delegation (self-contained; Azure deploy delegated to @git-ape)
+## Build & delegation (two routes — Accelerator recommended for Tier-1)
 
-Provision the Layer 1–2 artifacts yourself, grounded in the Microsoft Learn references below. Author
-the infrastructure-as-code and hand the **deployment** to `@git-ape` (security gate, cost estimate,
-audit trail). Do not depend on any third-party skill set for the SaaS plumbing.
+There are two ways to stand up the Tier-1 backend. **Route (a) is the recommended shortest path;**
+route (b) is the hand-rolled, fully self-contained path. Pick one.
+
+### Route (a) — Microsoft SaaS Accelerator (recommended for Tier-1)
+
+Deploy the **Microsoft Commercial Marketplace SaaS Accelerator**
+([`Azure/Commercial-Marketplace-SaaS-Accelerator`](https://github.com/Azure/Commercial-Marketplace-SaaS-Accelerator),
+MIT, community-supported) using **its own official installer** (`deployment/Deploy.ps1`). One
+install lays down the full Tier-1 plane: **landing page + connection webhook + subscription state
+DB (Azure SQL) + an admin/publisher portal**, and it registers the multitenant Entra app for you —
+no Partner Center offer is required to stand it up. This is the **fastest route to a working
+Tier-1**. ([saas-accelerator])
+
+- Targets **.NET 8 (LTS, EOL 2026-11-10)**; leave framework upgrades to upstream. **If you run
+  this in production past 2026-11, confirm the Accelerator has moved to .NET 10 LTS** before
+  relying on it. (.NET 8 here is an intentional LTS choice, not stale code.) ([dotnet-lifecycle])
+- `@git-ape` onboarding is **optional** for route (a) (the Accelerator ships its own installer).
+  Note the trade-off: bypassing `@git-ape` skips its **security gate / cost estimate / audit
+  trail** — acceptable for an A1 spike, but reconsider routing the deploy through `@git-ape` (or
+  an equivalent governance gate) for production.
+- A1 (free) verification: you can exercise Resolve / Activate / webhook **without a real purchase
+  token** using the official **[Commercial-Marketplace-SaaS-API-Emulator](https://github.com/microsoft/Commercial-Marketplace-SaaS-API-Emulator)**
+  (Fulfillment API emulator). ([saas-api-emulator])
+
+### Route (b) — hand-rolled IaC, deployed via @git-ape (self-contained)
+
+Provision the Layer 1–2 artifacts yourself, grounded in the Microsoft Learn references below.
+Author the infrastructure-as-code and hand the **deployment** to `@git-ape` (security gate, cost
+estimate, audit trail). Do not depend on any third-party skill set for the SaaS plumbing.
 
 | Capability | How |
 | --- | --- |
@@ -158,8 +283,8 @@ audit trail). Do not depend on any third-party skill set for the SaaS plumbing.
 | IaC deploy (App Service / DB / Key Vault / Entra) | `@git-ape` (security gate, cost estimate, audit) |
 | Offer-type / pricing decisions | Use the Partner Center references (Layer 2) |
 
-This skill owns the decisions and the Partner Center technical-config values; `@git-ape` performs the
-Azure deployment.
+Either route: this skill owns the decisions and the Partner Center technical-config values; the
+Azure deployment is performed by the Accelerator installer (a) or by `@git-ape` (b).
 
 ## Shared-resources contract
 
@@ -213,6 +338,13 @@ Tax / payment layer:
 
 Delegated Azure deployment (not a Microsoft Learn source):
 - Git-Ape: https://azure.github.io/git-ape/
+
+Tier-1 build route (a) — Accelerator (not Microsoft Learn sources):
+- [saas-accelerator]: https://github.com/Azure/Commercial-Marketplace-SaaS-Accelerator (MIT; latest release 8.2.1; last updated 2026-06-10; targets .NET 8)
+- [saas-api-emulator]: https://github.com/microsoft/Commercial-Marketplace-SaaS-API-Emulator (Fulfillment API emulator for token-free A1 testing)
+
+Framework lifecycle:
+- [dotnet-lifecycle]: https://learn.microsoft.com/en-us/lifecycle/products/microsoft-net-and-net-core (.NET 8 LTS, EOL 2026-11-10; .NET 10 LTS to 2028-11-14)
 
 Not re-verified this session (do not cite as confirmed until fetched):
 - monetize-addins-through-microsoft-commercial-marketplace, artificial-intelligence-app-agent-publish-release, startups/build/ai/agents/intro-marketplace-agents — 未検証.

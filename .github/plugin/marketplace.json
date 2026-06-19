@@ -16,6 +16,12 @@
       "description": "Publish and monetize Microsoft 365 Copilot agents (declarative, custom engine, Copilot Studio multitenant) on the Microsoft Commercial Marketplace.",
       "version": "0.1.5",
       "source": "./plugins/agent-publishing"
+    },
+    {
+      "name": "partner-center-onboarding",
+      "description": "Troubleshoot Microsoft Partner Center account verification (identity, legal-entity/tenant, business-existence, process visibility) for publishing Microsoft 365 Copilot agents.",
+      "version": "0.2.0",
+      "source": "./plugins/partner-center-onboarding"
     }
   ]
 }
