@@ -82,6 +82,105 @@ The publisher has 30 days to resolve a `PendingFulfillmentStart` asset or it is 
 
 > No pricing, payout, withholding, or tax logic belongs in this layer.
 
+### Architecture at a glance + the 3 tokens (developer view)
+
+A deployed Tier-1 backend (e.g. the SaaS Accelerator) is "a sample that runs" until you can see
+*what the moving parts are and which token does what*. The diagram below is the orientation; the
+two clarifications under it are the parts developers most often get wrong.
+
+```mermaid
+sequenceDiagram
+    participant B as Buyer
+    participant MP as Microsoft Marketplace<br/>(Fulfillment API v2)
+    participant LP as Landing Page<br/>(web app)
+    participant WH as Connection Webhook<br/>(/api/AzureWebhook)
+    participant DB as Subscription State Store<br/>(e.g. Azure SQL)
+    participant EN as Entra multitenant App
+
+    Note over B,MP: 1. Purchase
+    B->>MP: Buy the SaaS offer
+    MP-->>B: Redirect to Landing Page with ?token=<marketplace-token>
+    B->>LP: Open landing page
+    LP->>EN: 2. Sign the buyer in (OIDC SSO)
+    Note over LP,EN: 3. Separately, acquire the backend's own<br/>access token (client credentials)
+    LP->>MP: Resolve(marketplace-token)  [S2S token]
+    MP-->>LP: subscriptionId / plan / purchaser
+    LP->>MP: Activate(subscriptionId, planId)
+    MP-->>LP: 200 (billing starts)
+    LP->>DB: Persist subscription = Subscribed
+    Note over MP,WH: 4. Lifecycle (later, async)
+    MP->>WH: POST ChangePlan / Suspend / Unsubscribe (Bearer JWT)
+    WH->>EN: Validate the JWT (issued by Entra)
+    WH->>MP: Get Operation (confirm authenticity)
+    WH->>DB: Update subscription state
+    WH-->>MP: HTTP 200 within 10s
+```
+
+**Clarification 1 — the multitenant Entra app plays THREE roles** (one app, three jobs; conflating
+them is the usual source of bugs):
+1. **Buyer SSO** on the landing page (OIDC sign-in, any work/school or personal account).
+2. **Service-to-service auth** for the backend to call the **Fulfillment/Operations API** (client
+   credentials → an Entra access token).
+3. **Webhook caller validation** — the JWT Microsoft sends on each webhook call is an Entra token;
+   the backend validates it before acting.
+
+**Clarification 2 — there are THREE different tokens; do not confuse them:**
+
+| Token | Who issues it | Who holds/sends it | Purpose |
+| --- | --- | --- | --- |
+| `marketplace-token` (purchase id token) | Microsoft Marketplace | arrives as `?token=` on the landing page | opaque identifier passed to **Resolve** to look up the subscription |
+| Backend **Entra access token** | Microsoft Entra (client credentials) | the backend service | **S2S** auth to call Fulfillment/Operations API (never from the web page) |
+| Buyer **SSO token** | Microsoft Entra (OIDC) | the buyer's browser session | authenticates the human on the landing page |
+
+> The landing page and webhook are the only public surfaces; the Fulfillment/Operations API is
+> called **only** from the backend with the S2S token. The state store is what makes the webhook's
+> job (keep state in sync) possible.
+
+### Verifying Tier-1 fulfillment (A1, free)
+
+You cannot fully exercise Resolve/Activate with a *real* `marketplace-token` without a paid
+purchase. Verify at the level the dry-run allows:
+
+- **L1 (reachability / liveness, instant):** the landing page returns HTTP 200; the webhook rejects
+  an unauthenticated/invalid POST (e.g. HTTP 400/401) — proving the endpoint is live and its
+  validation path is wired.
+- **L2 (synthetic end-to-end, free — the real A1 check):** point the official **SaaS API Emulator**
+  ([saas-api-emulator]) at the backend to issue a synthetic `marketplace-token` and drive
+  Resolve → Activate → webhook, then confirm the **subscription row appears/updates in the state
+  store**. No real purchase, no charge.
+- **L3 (real purchase, paid, opt-in):** a DEV-offer test purchase yields a real token (cancel within
+  72h for a next-month refund). Not required for Tier-1 "done".
+
+### Route (a) environment prerequisites & cost (from a real dry-run)
+
+> **Cost note:** route (a) deploys **always-on billable Azure resources** (App Service Plan B1,
+> Azure SQL, Key Vault, plus a VNet) — unlike the free fulfillment-API plumbing, these bill
+> continuously while deployed. For a same-day A1 spike that's a few dollars, but a deploy-and-forget
+> backend keeps charging. **Tear down the resource group when not in use;** A1 verification does not
+> require leaving it running.
+
+Standing up the Accelerator's `deployment/Deploy.ps1` surfaced prerequisites the upstream README
+does not list. Confirm these before deploying:
+
+1. **.NET 8 SDK** installed (the script aborts if `dotnet --version` isn't 8.x; `global.json` pins 8.0.x).
+2. **`dotnet-ef`** global tool (`dotnet tool install --global dotnet-ef`) — used to generate the DB schema.
+3. **PowerShell 7.x (pwsh), not Windows PowerShell 5.1.** Under `$ErrorActionPreference='Stop'`, the
+   script's az pre-checks (e.g. `az keyvault show` on a not-yet-created RG) raise a terminating
+   `NativeCommandError` in 5.1; pwsh 7 tolerates the non-zero exit.
+4. **DB schema apply:** the script's `Invoke-Sqlcmd` (SqlServer module) can throw a `TdsParser`
+   type-initializer error under pwsh 7. Workaround: apply `script.sql` with **go-sqlcmd**
+   (`sqlcmd --authentication-method ActiveDirectoryDefault -i script.sql`) using your `az login` context.
+5. **App Service quota is subscription/region/time-specific** — it is **not** a fixed regional fact.
+   Some subscriptions show `Total VMs = 0` for App Service in a given region (in this dry-run, that
+   was East US 2 and Japan East), so B1 creation fails there. **Verify your own quota** (e.g.
+   `az vm list-usage -l <region>`) and pick a region with capacity rather than assuming any specific
+   region works or fails. In this run, West US 3 had capacity.
+6. **SQL Server provisioning is also region-gated and time-varying** — `RegionDoesNotAllowProvisioning`
+   can occur (in this run, East US and West US 2). **Check current SQL availability for your target
+   region** and choose one that allows **both** App Service and SQL. In this run, West US 3 allowed both.
+
+
+
 ---
 
 ## Layer 2 — Pricing / Licensing (commercial)
