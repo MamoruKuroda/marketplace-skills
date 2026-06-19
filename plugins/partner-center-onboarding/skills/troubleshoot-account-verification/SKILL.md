@@ -1,29 +1,23 @@
 ---
 name: troubleshoot-account-verification
 description: |
-  Troubleshoots Microsoft Partner Center *account verification* friction when an
-  ISV/partner is trying to publish a Microsoft 365 Copilot agent to the Microsoft
-  Commercial Marketplace. Converges four common failure classes — identity/roles,
-  legal-entity & publisher identity, business-existence evidence, and process
-  visibility — into one verified, publish-ready account state, and routes each symptom
-  to the condition that unblocks it. Use when the user says things like: "I can't sign
-  in to Partner Center", "I didn't get the verification code", "コードが届かない",
-  "what roles do I need", "Account admin でいい?", "Global Admin but can't assign
-  roles", "ロールを割り当てられない", "which tenant should I register the app in",
-  "does the app tenant have to be the same as Partner Center", "テナントは同じ必要が
-  ある?", "should the app be multitenant / supported account types", "is my Microsoft
-  App ID the Application (client) ID", "app registration ID", "Publisher Verification /
-  発行元の確認 / 青バッジ is stuck", "publisher domain doesn't match", "employment
-  verification", "MPN / Partner One ID / MAICPP ID", "who should be the primary contact
-  / 誰のアカウントで申請", "the 'Microsoft 365 and Copilot' tab doesn't appear / program
-  enrollment", "how long does verification take", "審査が長い / 差し戻された", or "what
-  stage is my submission at". It guides preparation only — it never signs in, assigns
-  roles, edits Entra, or submits on the user's behalf, and never asks for passwords or
-  verification codes.
+  Troubleshoots Microsoft Partner Center *account verification* friction when an ISV or
+  partner is publishing a Microsoft 365 Copilot agent to the Microsoft Commercial
+  Marketplace. Converges identity & roles, legal-entity & publisher identity, business
+  existence, and process visibility into one verified, publish-ready account state. Use
+  when the user is stuck on Partner Center sign-in or verification codes, which roles are
+  needed (Owner/Manager/Developer vs "Account admin"), "Global Admin but can't assign
+  roles", which tenant to register the app in or whether it must match Partner Center,
+  the Microsoft App ID vs Application (client) ID, Publisher Verification, MPN / Partner
+  One ID / MAICPP, the primary contact, the "Microsoft 365 and Copilot" tab not
+  appearing, or how long verification takes (also Japanese: コードが届かない /
+  ロールを割り当てられない / 審査が長い). Guidance only: never signs in, assigns roles, edits
+  Entra, or submits, and never asks for passwords or codes.
+user-invocable: true
 license: MIT
 metadata:
   author: Mamoru Kuroda
-  version: "0.2.0"
+  version: "0.2.1"
   last_updated: "2026-06-19"
 ---
 
@@ -275,5 +269,5 @@ in Cowork), relying on the natural-language triggers in the description above.
 - Distribution options for Copilot extensibility: https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/publish
 - App submission guide (10 steps, 4–6 week timeline): https://learn.microsoft.com/en-us/partner-center/marketplace-offers/add-in-submission-guide
 - Open a developer (Office) account in Partner Center: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/open-a-developer-account
-- Why publish (Microsoft 365 and Copilot program): https://learn.microsoft.com/en-us/partner-center/marketplace/why-publish
+- Why publish (Microsoft 365 and Copilot program): https://learn.microsoft.com/en-us/partner-center/marketplace-offers/why-publish
 - Cowork plugin development (package format): https://learn.microsoft.com/en-us/microsoft-365/copilot/cowork/cowork-plugin-development
