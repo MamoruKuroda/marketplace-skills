@@ -12,6 +12,7 @@
 | プラグイン | 役割 |
 | --- | --- |
 | [`agent-publishing`](plugins/agent-publishing/README.ja.md) | Microsoft 365 Copilot エージェント（宣言型／カスタムエンジン／Copilot Studio マルチテナント）の公開・収益化 |
+| [`partner-center-onboarding`](plugins/partner-center-onboarding/README.ja.md) | Partner Center アカウント検証（識別／ロール、テナント、会社実在、状況可視化）のトラブルシュート |
 
 今後の予定: `saas-publishing`、`container-publishing`、`managed-app-publishing`。
 

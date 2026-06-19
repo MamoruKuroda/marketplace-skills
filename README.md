@@ -15,6 +15,7 @@ A [GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/agents/about-
 | Plugin | Purpose |
 | --- | --- |
 | [`agent-publishing`](plugins/agent-publishing) | Publish & monetize Microsoft 365 Copilot agents (declarative, custom engine, Copilot Studio multitenant) |
+| [`partner-center-onboarding`](plugins/partner-center-onboarding) | Troubleshoot Partner Center account verification (identity/roles, tenant, business existence, process visibility) |
 
 Planned: `saas-publishing`, `container-publishing`, `managed-app-publishing`.
 
