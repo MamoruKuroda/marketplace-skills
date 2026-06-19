@@ -23,8 +23,8 @@ ISV・パートナーが **Microsoft 365 Copilot エージェント**を **Micro
 | # | 条件 | 完了の判定 |
 | --- | --- | --- |
 | 1 | **識別とロール** | 正しい人が、公開／ユーザー管理ができるロールでサインインできる |
-| 2 | **法人とテナント** | アプリを登録した Entra テナント＝Partner Center のテナント、Microsoft App ID＝Entra アプリ（クライアント）ID、発行元の法的情報が整合 |
-| 3 | **会社の実在証明** | 発行元／在籍の検証完了、Microsoft 365 and Copilot プログラムに登録、MAICPP／MPN ID と第一連絡先が揃う |
+| 2 | **法人と発行元アイデンティティ** | Microsoft App ID＝Entra アプリ（クライアント）ID、発行元の法的情報が整合。Partner Center とのテナント一致は**不要**（発行元確認の青バッジは「アプリ登録テナントが Partner Global Account に関連付け」） |
+| 3 | **会社の実在証明** | 法人／在籍の検証完了、Microsoft 365 and Copilot プログラムに登録、Partner One ID（MAICPP、旧 MPN）と第一連絡先が揃う |
 | 4 | **状況の可視化** | 保存→公開→送信の順序、4〜6週間の所要、詰まったら Support Request でエスカレーション、が分かる |
 
 4つのつまずき分類は**同じ答えへ向かう triage（振り分け）の軸**であり、別々のゴールではありません。

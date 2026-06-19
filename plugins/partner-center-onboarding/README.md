@@ -25,8 +25,8 @@ conditions:
 | # | Condition | Done when |
 | --- | --- | --- |
 | 1 | **Identity & roles** | Right person signs in with a role that can publish/manage users |
-| 2 | **Legal entity & tenant** | App's Entra tenant = Partner Center tenant; Microsoft App ID = Entra app (client) ID; publisher legal info consistent |
-| 3 | **Business existence** | Publisher/employment verification done; enrolled in Microsoft 365 & Copilot program; MAICPP/MPN ID and primary contact present |
+| 2 | **Legal entity & publisher identity** | Microsoft App ID = Entra app (client) ID; publisher legal info consistent; tenant equality with Partner Center **not** required (publisher-verification badge = app tenant associated with the Partner Global Account) |
+| 3 | **Business existence** | Business/employment verification done; enrolled in Microsoft 365 & Copilot program; Partner One ID (MAICPP, formerly MPN) and primary contact present |
 | 4 | **Process visibility** | Knows the save→publish→submit order, the 4–6 week timeline, and how to escalate (Support Request) |
 
 The four common failure classes are **triage axes into the same answer**, not separate

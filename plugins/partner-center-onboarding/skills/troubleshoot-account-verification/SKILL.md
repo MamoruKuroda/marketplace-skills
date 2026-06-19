@@ -4,18 +4,26 @@ description: |
   Troubleshoots Microsoft Partner Center *account verification* friction when an
   ISV/partner is trying to publish a Microsoft 365 Copilot agent to the Microsoft
   Commercial Marketplace. Converges four common failure classes — identity/roles,
-  legal-entity & tenant binding, business-existence evidence, and process visibility —
-  into one verified, publish-ready account state, and routes each symptom to the block
-  that unblocks it. Use when the user says things like "I can't sign in to Partner
-  Center", "I didn't get the verification code", "what roles do I need", "the tenant
-  doesn't match", "Publisher Verification is stuck", "is my Microsoft App ID correct",
-  "Global Admin but can't assign roles", "how long does verification take", or "what
+  legal-entity & publisher identity, business-existence evidence, and process
+  visibility — into one verified, publish-ready account state, and routes each symptom
+  to the condition that unblocks it. Use when the user says things like: "I can't sign
+  in to Partner Center", "I didn't get the verification code", "コードが届かない",
+  "what roles do I need", "Account admin でいい?", "Global Admin but can't assign
+  roles", "ロールを割り当てられない", "which tenant should I register the app in",
+  "does the app tenant have to be the same as Partner Center", "テナントは同じ必要が
+  ある?", "should the app be multitenant / supported account types", "is my Microsoft
+  App ID the Application (client) ID", "app registration ID", "Publisher Verification /
+  発行元の確認 / 青バッジ is stuck", "publisher domain doesn't match", "employment
+  verification", "MPN / Partner One ID / MAICPP ID", "who should be the primary contact
+  / 誰のアカウントで申請", "the 'Microsoft 365 and Copilot' tab doesn't appear / program
+  enrollment", "how long does verification take", "審査が長い / 差し戻された", or "what
   stage is my submission at". It guides preparation only — it never signs in, assigns
-  roles, or submits on the user's behalf.
+  roles, edits Entra, or submits on the user's behalf, and never asks for passwords or
+  verification codes.
 license: MIT
 metadata:
   author: Mamoru Kuroda
-  version: "0.1.0"
+  version: "0.2.0"
   last_updated: "2026-06-19"
 ---
 
@@ -29,6 +37,23 @@ Microsoft 365 Copilot agent to the Microsoft Commercial Marketplace.
 > behalf. Every portal action is performed by the user. Never ask for or store passwords,
 > verification codes, or secrets.
 
+## Operating contract (MUST — every invocation)
+
+Run all four of these **every time**, including single-shot / non-interactive (`-p`) runs.
+**Do not stall waiting for input.**
+
+1. **Classify** the user's situation into Condition 1–4 directly from their message (the moment
+   of being stuck is usually one sentence). Only if it is genuinely ambiguous, ask **one** routing
+   question; otherwise proceed.
+2. **Diagnose** in the matching condition's section below.
+3. **Always output** the **4-condition status checklist** (✅ / ⛔ / ❓ for all four conditions)
+   and the **single next action**.
+4. **Always write `verification-ledger.json`** to the current working directory, then print its
+   full path and a one-line summary.
+
+If you must assume something to proceed, **state the assumption** rather than stopping to ask.
+These four outputs are mandatory in every response — never skip the checklist or the ledger.
+
 ## Design: converge from the endpoint
 
 There is exactly **one** goal state. All friction, regardless of the symptom or the path the
@@ -40,38 +65,47 @@ classes below are *triage axes into one answer*, not four separate destinations.
 | # | Condition (done = ✅) | Met when |
 | --- | --- | --- |
 | **1. Identity & roles** | The right person can sign in with the right role | User signs in to Partner Center with a work (Microsoft Entra) account, and holds a role that can do the intended task (publish / manage users) |
-| **2. Legal entity & tenant** | The publisher's tenant and app identity line up | The Microsoft Entra tenant used to register the app is the **same tenant** as the Partner Center account; publisher legal name/address are consistent; the app's **Microsoft App ID = the Entra application (client) ID** |
+| **2. Legal entity & publisher identity** | The publisher identity and the app identity line up | Publisher legal name/address are consistent; the app's **Microsoft App ID = the Entra application (client) ID**; tenant *equality* with Partner Center is **not** required — if the verified-publisher badge is wanted, the app-registration tenant is **associated with the Partner Global Account (PGA)** |
 | **3. Business existence** | The org is verified as real | Publisher/employment verification is complete; account enrolled in the **Microsoft 365 and Copilot program**; legal/primary-contact info present; **MAICPP / MPN (Partner) ID** available where required |
 | **4. Process visibility** | The user knows where they are and how to move | The user knows the current stage, the save→publish→submit order, the typical timeline, and how to escalate (Support Request) when the UI itself is broken |
 
-> Always present this 4-row checklist with the user's current ✅ / ⛔ / ❓ status. It is the
-> shared "definition of done" for every path through this skill.
+## Terminology — canonical terms & disambiguation (do this first)
 
-## Triage — one question routes to the blocking condition
+Real users' wording drifts, and some terms are genuinely two different things. Before answering,
+map the user's words to the **canonical term**, restate it briefly, and **if a term is ambiguous,
+ask exactly one disambiguating question** before proceeding (then continue without stopping for
+anything already clear).
 
-Ask **one** question, then jump to the matching block. Stop early; don't run blocks the user
-isn't blocked on.
+| User may say (alias) | Canonical term | One-line meaning |
+| --- | --- | --- |
+| Publisher Verification, 発行元確認, 青バッジ, verified badge | **Entra publisher verification** (app badge) **vs** **Partner Center business verification** (org/account) | Two different things — confirm which: the app's blue *verified-publisher* badge (Condition 2) or your organization/account being verified & enrolled (Condition 3) |
+| MPN ID, MPN, パートナー ID | **Partner One ID** (under **MAICPP**, formerly MPN) | Your partner-program identifier |
+| Account admin (used as a *publishing* role) | dev-program **Owner / Manager / Developer** | "Account Admin" is a **MAICPP** role, not the role that publishes an agent |
+| Microsoft App ID, app registration ID | **Application (client) ID** | The Entra app registration's client ID (not object ID / enterprise-app ID) |
+| same tenant, 同じテナント, tenant match | app tenant **associated with the PGA** | Not "= Partner Center tenant"; tenant equality is **not** required, multitenant association is |
+| MAICPP, CPP, AI Cloud Partner program | **Microsoft AI Cloud Partner Program** | Formerly Microsoft Partner Network (MPN) |
+| PGA | **Partner Global Account** | Top-level account a MAICPP/CPP membership hangs under |
 
-> "Where are you stuck right now?"
-> - **A** — *Can't sign in, no verification code, or 'you don't have permission / can't assign roles.'* → Block 1 (Identity & roles)
-> - **B** — *'Tenant doesn't match', unsure which tenant to register the app in, or 'is my Microsoft App ID right'.* → Block 2 (Legal entity & tenant)
-> - **C** — *Publisher Verification / Attestation / legal info / partner (MPN) ID is incomplete or rejected.* → Block 3 (Business existence)
-> - **D** — *Submitted/saved but don't know the status, the order of steps, or how long it takes.* → Block 4 (Process visibility)
+## Triage — classify from the user's one sentence
 
-Map the user's own words to A–D from these real-world phrasings (do not require them to know the
-category names):
+The moment of being stuck is usually expressible in one sentence. **Classify it into Condition
+1–4 from the phrasings below** (don't require the user to know the category names). Per the
+Operating contract, proceed directly; only ask a routing question if it is truly ambiguous.
 
-| User says… | Class |
-| --- | --- |
-| "コードが来ない / can't sign in / 招待されたが入れない" | A |
-| "Global Admin なのに Role を付与できない" | A → see **escalation fork** |
-| "誰のアカウントで申請するの / who should be the contact" | A → see **role-owner fork** |
-| "Entra のテナントは Partner Center と同じ？ / tenant mismatch" | B |
-| "Microsoft App ID は Application ID で合ってる？" | B |
-| "Publisher Verification が進まない / MPN ID とは" | C |
-| "保存と送信どっちが先 / 審査はいつ始まる / how long" | D |
+| User says… | Condition | Note |
+| --- | --- | --- |
+| "コードが届かない / can't sign in / 招待されたが入れない" | 1 | |
+| "what roles do I need / Account admin でいい?" | 1 | publishing = Owner/Manager/Developer |
+| "Global Admin なのに Role を付与できない / ロールを割り当てられない" | 1 | see **role-cause → SR fork** |
+| "誰のアカウントで申請 / who should be the primary contact" | 1 | see **role-owner fork** |
+| "Entra のテナントは Partner Center と同じ必要? / which tenant / multitenant?" | 2 | tenant equality NOT required |
+| "Microsoft App ID は Application (client) ID で合ってる?" | 2 | |
+| "発行元の確認 / Publisher Verification / 青バッジ / publisher domain" | 2 or 3 | **disambiguate** (badge vs org verification) |
+| "MPN / Partner One ID / MAICPP とは / employment verification" | 3 | |
+| "'Microsoft 365 and Copilot' タブが出ない / program enrollment" | 3 | |
+| "保存と送信どっちが先 / 審査はいつ始まる / 審査が長い / 差し戻された / how long" | 4 | |
 
-## Block 1 — Identity & roles
+## Condition 1 — Identity & roles
 
 **Goal:** the right person signs in with a role that can do the task.
 
@@ -99,53 +133,84 @@ category names):
    programs the assigner must be an **Owner or Manager**; for commercial programs a Global Admin /
    User Management Admin / Account Admin.
 
-### Escalation fork — "Global Admin but can't assign roles"
+### Role-cause → Support Request fork — "admin but can't assign roles" (rule out the spec cause FIRST)
 
-If the user has a top-level admin role yet the **role-assignment UI fails** (a known issue on
-some **older Partner Center accounts**): this is no longer a permissions problem — it's a portal
-defect. Route to **Block 4 → Support Request**. The fix path is a Microsoft **Support Request**,
-not more permission changes.
+When the user is a top-level admin yet "can't assign roles", resolve in this **order** — do not
+jump straight to "portal defect":
+
+1. **First rule out the most common, by-design cause.** Assigning roles in a **developer program**
+   (Microsoft 365 & Copilot / Marketplace) requires the assigner to be an **Owner or Manager** of
+   that program — being **Global Admin alone is not sufficient** for developer-program role
+   assignment (Global Admin governs commercial programs like MAICPP/CSP). Confirm the assigner
+   holds Owner/Manager in the correct program context, and that they're on the developer-program
+   user-management screen, before concluding anything is broken.
+2. **Only if** the assigner already holds the correct role **and** the assignment UI still fails
+   (a known issue on some **older Partner Center accounts**) is it a portal defect → raise a
+   **Microsoft Support Request** (see Condition 4). Capture what was tried so the SR is actionable.
 
 ### Role-owner fork — "who should do this / who has the top role"
 
 If the blocker is *who* to ask: the user (or their admin) can look up role holders and the
-**primary/first contact** in Partner Center → Settings → Account Settings (User management;
-and Legal info → Partner tab → primary contact). Identify that person and have them perform the
-role assignment or sign-in. This skill identifies *who*; it does not contact them.
+**primary/first contact** in Partner Center → **Settings → Account Settings → User management**
+(and **Legal info → Partner tab → primary contact**). Identify that person and have them perform
+the role assignment or sign-in. This skill identifies *who*; it does not contact them.
 
-## Block 2 — Legal entity & tenant binding
+## Condition 2 — Legal entity & publisher identity
 
-**Goal:** the app's tenant and identity line up with the verified publisher.
+**Goal:** the publisher identity and the app identity line up. (Tenant *equality* with Partner
+Center is **not** required.)
 
-1. **Same-tenant rule.** The Microsoft Entra tenant where the app is **registered** must be the
-   **same tenant** as the Partner Center account used to publish. A mismatch is a common, silent
-   blocker — the app won't be recognized as the publisher's. Have the user confirm the tenant ID
-   on both sides matches before proceeding.
-2. **App ID identity.** The **Microsoft App ID** requested during submission is the **Application
+1. **Tenant equality is NOT required.** A Copilot agent published to Marketplace is a
+   **multitenant** app; the Microsoft Entra tenant where the app is **registered** does **not**
+   have to be the same tenant as the Partner Center account. If a tool, a partner, or a colleague
+   insists the tenants "must be identical", that is almost always a misread of **publisher
+   verification** (next point) — clarify rather than forcing tenant equality.
+2. **Entra publisher verification (the blue "verified" badge) — only if you want it.** To earn the
+   verified-publisher badge for the app, the Entra tenant where the app is registered must be
+   **associated with your Partner Global Account (PGA)** — *not necessarily the same tenant*;
+   multitenant association is supported. Also required: the app's **publisher domain** must match
+   the domain used to verify your MAICPP/CPP account (and **cannot be `*.onmicrosoft.com`**), and
+   the user must hold the required roles in **both** Microsoft Entra and Partner Center. This is an
+   *app publisher-identity* feature, distinct from the *organization/account* verification in
+   Condition 3.
+3. **App ID identity.** The **Microsoft App ID** requested during submission is the **Application
    (client) ID** of the Microsoft Entra app registration — confirm they're using that exact value,
    not the object ID or an enterprise-app ID.
-3. **Publisher legal consistency.** Publisher legal name and address should be consistent across
+4. **Publisher legal consistency.** Publisher legal name and address should be consistent across
    the Entra tenant, the Partner Center account, and the app manifest's developer/publisher fields.
    The publisher chosen for an offer must be enrolled in the Microsoft 365 and Copilot program and
    **cannot be changed after the offer is created** — get this right up front.
 
-## Block 3 — Business existence evidence
+> Out of scope: **monetization / SaaS-offer** tenant and Entra-app configuration (linked SaaS
+> offer, SaaS fulfillment app registration, metering) is **not** part of account verification.
+> If the user asks about those, point them to the `agent-publishing` plugin's
+> `monetization-saas-offer` skill instead of answering here. Do not pull SaaS-fulfillment rules
+> into account-verification advice.
+
+## Condition 3 — Business existence evidence
 
 **Goal:** the organization is verified as a real, enrolled publisher.
+
+> Two different "verifications" share the name — keep them apart. **Entra publisher verification**
+> (the blue badge; PGA-associated app tenant + publisher domain — see Condition 2) is about your
+> *app's* publisher identity. **Partner Center business / identity & employment verification**
+> (this condition) is about your *organization and account* being a real, enrolled publisher.
+> Being stuck on one does not mean being stuck on the other; if the user says "Publisher
+> Verification", confirm which they mean first.
 
 1. **Program enrollment.** Publishing a Copilot agent requires enrollment in the **Microsoft 365
    and Copilot program** (open an Office/developer account in Partner Center). Without it, the
    "Microsoft 365 and Copilot" tab / offer types won't appear.
-2. **Publisher / employment verification.** Complete any publisher-verification and
-   employment-verification steps Microsoft prompts for. These prove the org and the user's
-   association with it.
-3. **Partner (MPN / MAICPP) ID.** Where a partner ID is required, locate the **MPN ID** (now under
-   the **Microsoft AI Cloud Partner Program / MAICPP**) in Partner Center. Confirm the exact label
-   in-portal against the references — naming has changed over time (MPN → Cloud Partner Program).
+2. **Publisher / employment verification.** Complete any business/identity and employment
+   verification steps Microsoft prompts for. These prove the org and the user's association with it.
+3. **Partner (MPN / Partner One ID under MAICPP).** Where a partner ID is required, locate the
+   **Partner One ID** — the identifier under the **Microsoft AI Cloud Partner Program (MAICPP**,
+   formerly **MPN)** — in Partner Center. Confirm the exact label in-portal against the references;
+   naming has changed over time (MPN → MAICPP; "MPN ID" → "Partner One ID").
 4. **Legal info & primary contact.** Ensure Settings → Account Settings → **Legal info → Partner
    tab → primary contact** is filled; reviewers and verification rely on it.
 
-## Block 4 — Process visibility
+## Condition 4 — Process visibility
 
 **Goal:** the user knows the current stage, the order of operations, and how to move.
 
@@ -162,9 +227,12 @@ role assignment or sign-in. This skill identifies *who*; it does not contact the
    forward is a **Microsoft Support Request from Partner Center**, not repeated retries. Capture
    what was tried so the SR is actionable.
 
-## Deliverables
+## Deliverables (mandatory — see Operating contract)
 
-1. **Status checklist** — the 4-condition table with ✅ / ⛔ / ❓ per condition.
+Produce **all three on every invocation**, even single-shot / `-p`, even if you had to assume the
+class:
+
+1. **Status checklist** — the 4-condition table with ✅ / ⛔ / ❓ for **all four** conditions.
 2. **Diagnosis & next action** — which condition is blocking, and the single next step the user
    should take in the portal (or "raise an SR").
 3. **`verification-ledger.json`** — write to the current working directory as the hand-off file
@@ -178,14 +246,14 @@ role assignment or sign-in. This skill identifies *who*; it does not contact the
   "createdAt": "<ISO-8601>",
   "goal": "verified-publish-ready-partner-center-account",
   "conditions": {
-    "identityAndRoles":  { "status": "blocked|in-progress|met|unknown", "note": "" },
-    "legalEntityTenant": { "status": "blocked|in-progress|met|unknown", "note": "" },
-    "businessExistence": { "status": "blocked|in-progress|met|unknown", "note": "" },
-    "processVisibility": { "status": "blocked|in-progress|met|unknown", "note": "" }
+    "identityAndRoles":         { "status": "blocked|in-progress|met|unknown", "note": "" },
+    "legalEntityPublisherId":   { "status": "blocked|in-progress|met|unknown", "note": "" },
+    "businessExistence":        { "status": "blocked|in-progress|met|unknown", "note": "" },
+    "processVisibility":        { "status": "blocked|in-progress|met|unknown", "note": "" }
   },
-  "triage": { "reportedClass": "A|B|C|D", "fork": "none|escalation|role-owner" },
+  "triage": { "reportedClass": "1|2|3|4", "fork": "none|role-cause-sr|role-owner" },
   "escalation": { "supportRequestNeeded": false, "reason": "" },
-  "context": { "tenantIdMatches": "yes|no|unknown", "program": "m365-and-copilot", "partnerIdKnown": "yes|no|unknown" },
+  "context": { "tenantAssociatedWithPGA": "yes|no|n/a|unknown", "program": "m365-and-copilot", "partnerIdKnown": "yes|no|unknown" },
   "audit": []
 }
 ```
@@ -203,7 +271,8 @@ in Cowork), relying on the natural-language triggers in the description above.
 ## References (authoritative; verify before quoting — names/labels drift)
 
 - Partner Center roles & permissions: https://learn.microsoft.com/en-us/partner-center/account-settings/permissions-overview
-- Distribution options for Copilot extensibility: https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/publish
+- Entra publisher verification (blue badge; PGA association, publisher domain): https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview
+- Distribution options for Copilot extensibility: https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/publish
 - App submission guide (10 steps, 4–6 week timeline): https://learn.microsoft.com/en-us/partner-center/marketplace-offers/add-in-submission-guide
 - Open a developer (Office) account in Partner Center: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/open-a-developer-account
 - Why publish (Microsoft 365 and Copilot program): https://learn.microsoft.com/en-us/partner-center/marketplace/why-publish
