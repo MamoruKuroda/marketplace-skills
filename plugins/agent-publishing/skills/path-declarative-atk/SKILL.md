@@ -3,7 +3,7 @@ name: path-declarative-atk
 description: "Scaffolds, validates, and packages a declarative Microsoft 365 Copilot agent with the Microsoft 365 Agents Toolkit CLI (atk), producing a submission-ready app package. Routed to when agentType == declarative."
 argument-hint: "App name, programming language, knowledge sources and actions. Reads publishing-ledger.json from triage."
 user-invocable: true
-last_updated: "2026-06-18"
+last_updated: "2026-06-19"
 ---
 
 # Path: Declarative Agent (Microsoft 365 Agents Toolkit)
@@ -21,6 +21,12 @@ app package (`.zip`) that is ready for the manual Partner Center submission.
 - `atk` CLI: `npm install -g @microsoft/m365agentstoolkit-cli` (v1.1.x+; verify with `atk -v`).
 - `atk doctor` passes.
 - A Microsoft 365 tenant with sideloading enabled (for local test/install).
+- The tenant must have an **M365 Copilot license** (or Copilot Studio pay-as-you-go billing /
+  Copilot Credits) for an agent with any capability beyond Web search — for example
+  SharePoint/OneDrive knowledge grounding. **Sideloading alone is not sufficient to *use* a
+  knowledge-grounded agent:** without a license it installs and behaves in-character but every
+  grounded answer comes back empty (looks identical to a wiring bug). ([prerequisites],
+  [optimize-content-retrieval])
 
 ### Microsoft 365 account guard (read before any sign-in-requiring step)
 
@@ -73,16 +79,29 @@ Actively guide the user (don't just say "edit the files"):
    feels real, so do not skip it.
 
    **A. "I already have a source" (the real path — default for most makers).**
-   Wire the existing source into the declarative agent's `capabilities`/knowledge scopes:
-   SharePoint/OneDrive site or folder, a Graph connector, or uploaded files. Confirm the agent
-   can see it, then continue to validation.
+   Wire the existing source as an entry in the **`capabilities`** array of
+   `declarativeAgent.json` (knowledge is not a top-level field; each capability type appears at
+   most once). For SharePoint/OneDrive, use the **`OneDriveAndSharePoint`** capability with
+   **`items_by_url`** (an **absolute resource URL** — e.g.
+   `https://contoso.sharepoint.com/Shared%20Documents/hr-policies` — **NOT** a `/:t:/g/...`
+   sharing link) or `items_by_sharepoint_ids`. Best practice is to point at the **specific
+   file(s)** rather than the folder for better retrieval (you can list up to 20 files); a
+   folder/site URL also works. Confirm the agent can see it, then continue to validation.
+   ([declarative-agent-manifest-1.7], [optimize-content-retrieval])
 
    **B. "I want to see it work end-to-end first" (PoC / first-timers).**
    Generate ONE throwaway sample document *derived from the ledger intent* (HR intent → a 1-page
-   sample HR policy; IT intent → a 1-page sample IT FAQ — never a fixed canned file), save it under
-   `knowledge/sample-<topic>.md`, wire it as the knowledge source, and let the user experience a
-   grounded answer. **Stamp it clearly: "SAMPLE — replace with real content before packaging/publish."**
-   Add a TODO in the ledger audit so it is not shipped by accident.
+   sample HR policy; IT intent → a 1-page sample IT FAQ — never a fixed canned file) and
+   **stamp it "SAMPLE — replace with real content before packaging/publish."** Then wire it the
+   **same way as A**: the `EmbeddedKnowledge` capability (local in-package files) is **not yet
+   available**, so you must **upload the sample to SharePoint/OneDrive and reference it via
+   `OneDriveAndSharePoint` `items_by_url`** — B converges onto A's mechanism. Authoring rules for
+   the sample (so grounding is not silently empty): **plain prose, NO tables or special
+   formatting** (Copilot does not parse tables in SharePoint content), keep each file
+   **≤ ~36,000 characters** when referenced by site/folder URL. Tip: give each trial a **unique
+   filename** and embed a **unique canary value** (e.g. a "document reference code") so a grounded
+   answer can be proven to come from THIS file. Add a TODO in the ledger audit so the sample is not
+   shipped by accident. ([declarative-agent-manifest-1.7], [optimize-content-retrieval])
 
    **C. "Knowledge-free on purpose" (advanced / actions-only).**
    Proceed, but apply the "Runs but empty" warning below so the user is not surprised.
@@ -92,6 +111,13 @@ Actively guide the user (don't just say "edit the files"):
    > (introduces itself correctly, refuses off-topic asks) but **every factual question returns
    > "I couldn't find that in the connected documents."** This is expected and correct — not a bug —
    > because there is no data to ground on. Real answers require at least one knowledge source.
+   >
+   > **Empty-grounding triage checklist** (when a knowledge source IS attached but answers are still
+   > empty, work these in order — the cause is usually one of these, not a manifest bug):
+   > (a) is a knowledge source actually attached in `capabilities`?
+   > (b) does the tenant have an **M365 Copilot license / metered usage**? (sideload alone is not enough)
+   > (c) has the content been **indexed** yet? (a brand-new SharePoint upload can lag and look empty)
+   > (d) has **table/special formatting** been stripped from the source? (Copilot does not parse tables)
 3. **Add conversation starters** that match the purpose (e.g. "How do I request annual leave?",
    "What's the expense approval limit?").
 4. Update the **Microsoft 365 app manifest** (`manifest.json`) name/description and the `color.png`
@@ -146,3 +172,9 @@ atk install --file-path ./appPackage/build/appPackage.<env>.zip
 - App package anatomy: https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/agents-are-apps
 - Declarative agents overview: https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/agents-overview
 - CI/CD templates: https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/use-cicd-template
+- [declarative-agent-manifest-1.7] (capabilities array, `OneDriveAndSharePoint` `items_by_url`,
+  `EmbeddedKnowledge` "not yet available", license note): https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/declarative-agent-manifest-1.7
+- [optimize-content-retrieval] (reference specific files; ≤36,000 chars for site/folder URL refs;
+  remove tables/special formatting; license note): https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/optimize-content-retrieval
+- [prerequisites] (M365 Copilot license / Copilot Studio metered usage required to ground on
+  organizational data): https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/prerequisites

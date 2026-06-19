@@ -57,7 +57,7 @@ Bottom line: use **Copilot CLI for L1** (and quick sign-in-free packaging), and 
 | Level | What you can do | Client | Extra tools | Accounts |
 | --- | --- | --- | --- | --- |
 | **L1 Guidance** | Triage, readiness checklist, Partner Center submission worksheet | VS Code Copilot Chat (or Copilot CLI) | — | GitHub Copilot |
-| **L2 Packaging** | Scaffold / validate / package a declarative agent | VS Code | Node.js LTS, `atk` (`@microsoft/m365agentstoolkit-cli`) | + Microsoft 365 tenant (sideload/validate) |
+| **L2 Packaging** | Scaffold / validate / package a declarative agent | VS Code | Node.js LTS, `atk` (`@microsoft/m365agentstoolkit-cli`) | + Microsoft 365 tenant (sideload/validate). **To *use* a knowledge-grounded agent, the tenant also needs an M365 Copilot license (or Copilot Studio metered usage) — sideload alone installs but returns empty answers.** |
 | **L3 Azure deploy** | Custom engine runtime / linked SaaS offer backend | **VS Code** (Azure MCP) | + Azure CLI (`az`), **git-bash on Windows**, `gh`, `jq`, `git` | + Azure subscription |
 | **L4 Submission** | Submit to Marketplace using the generated worksheet | Browser | — | + Partner Center (Microsoft 365 & Copilot **and** Microsoft Marketplace programs) |
 
