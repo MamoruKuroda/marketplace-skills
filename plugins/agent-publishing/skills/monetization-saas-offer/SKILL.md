@@ -1,6 +1,6 @@
 ---
 name: monetization-saas-offer
-description: "(Backend B) Provisions the linked SaaS offer transaction plane that monetizes a Microsoft 365 Copilot agent: Entra multitenant app, SaaS fulfillment landing page + connection webhook, subscription-state store, entitlement, and optional metering. Self-contained, grounded in Microsoft Learn; delegates the actual Azure deployment to @git-ape. Invoked only when monetize == true."
+description: "(Backend B) Provisions the linked SaaS offer transaction plane that monetizes a Microsoft 365 Copilot agent: Entra multitenant app, SaaS fulfillment landing page + connection webhook, subscription-state store, entitlement, and optional metering. Grounded in Microsoft Learn; deploys via the Microsoft SaaS Accelerator (recommended Tier-1 route) or hand-rolled IaC through @git-ape. Invoked only when monetize == true."
 argument-hint: "Pricing model (flat rate / per user; metering optional, flat rate only), license management (publisher / Microsoft), env. Reads/writes publishing-ledger.json backend.monetization."
 user-invocable: true
 last_updated: "2026-06-19"
@@ -144,11 +144,37 @@ Tiers are additive. They live in Layers 1–2; Layer 3 is never code.
 WAF 5-pillar baseline still applies to the deployed backend: tenant isolation, IaC, Key Vault, CI/CD,
 encryption, compliance.
 
-## Build & delegation (self-contained; Azure deploy delegated to @git-ape)
+## Build & delegation (two routes — Accelerator recommended for Tier-1)
 
-Provision the Layer 1–2 artifacts yourself, grounded in the Microsoft Learn references below. Author
-the infrastructure-as-code and hand the **deployment** to `@git-ape` (security gate, cost estimate,
-audit trail). Do not depend on any third-party skill set for the SaaS plumbing.
+There are two ways to stand up the Tier-1 backend. **Route (a) is the recommended shortest path;**
+route (b) is the hand-rolled, fully self-contained path. Pick one.
+
+### Route (a) — Microsoft SaaS Accelerator (recommended for Tier-1)
+
+Deploy the **Microsoft Commercial Marketplace SaaS Accelerator**
+([`Azure/Commercial-Marketplace-SaaS-Accelerator`](https://github.com/Azure/Commercial-Marketplace-SaaS-Accelerator),
+MIT, community-supported) using **its own official installer** (`deployment/Deploy.ps1`). One
+install lays down the full Tier-1 plane: **landing page + connection webhook + subscription state
+DB (Azure SQL) + an admin/publisher portal**, and it registers the multitenant Entra app for you —
+no Partner Center offer is required to stand it up. This is the **fastest route to a working
+Tier-1**. ([saas-accelerator])
+
+- Targets **.NET 8 (LTS, EOL 2026-11-10)**; leave framework upgrades to upstream. **If you run
+  this in production past 2026-11, confirm the Accelerator has moved to .NET 10 LTS** before
+  relying on it. (.NET 8 here is an intentional LTS choice, not stale code.) ([dotnet-lifecycle])
+- `@git-ape` onboarding is **optional** for route (a) (the Accelerator ships its own installer).
+  Note the trade-off: bypassing `@git-ape` skips its **security gate / cost estimate / audit
+  trail** — acceptable for an A1 spike, but reconsider routing the deploy through `@git-ape` (or
+  an equivalent governance gate) for production.
+- A1 (free) verification: you can exercise Resolve / Activate / webhook **without a real purchase
+  token** using the official **[Commercial-Marketplace-SaaS-API-Emulator](https://github.com/microsoft/Commercial-Marketplace-SaaS-API-Emulator)**
+  (Fulfillment API emulator). ([saas-api-emulator])
+
+### Route (b) — hand-rolled IaC, deployed via @git-ape (self-contained)
+
+Provision the Layer 1–2 artifacts yourself, grounded in the Microsoft Learn references below.
+Author the infrastructure-as-code and hand the **deployment** to `@git-ape` (security gate, cost
+estimate, audit trail). Do not depend on any third-party skill set for the SaaS plumbing.
 
 | Capability | How |
 | --- | --- |
@@ -158,8 +184,8 @@ audit trail). Do not depend on any third-party skill set for the SaaS plumbing.
 | IaC deploy (App Service / DB / Key Vault / Entra) | `@git-ape` (security gate, cost estimate, audit) |
 | Offer-type / pricing decisions | Use the Partner Center references (Layer 2) |
 
-This skill owns the decisions and the Partner Center technical-config values; `@git-ape` performs the
-Azure deployment.
+Either route: this skill owns the decisions and the Partner Center technical-config values; the
+Azure deployment is performed by the Accelerator installer (a) or by `@git-ape` (b).
 
 ## Shared-resources contract
 
@@ -213,6 +239,13 @@ Tax / payment layer:
 
 Delegated Azure deployment (not a Microsoft Learn source):
 - Git-Ape: https://azure.github.io/git-ape/
+
+Tier-1 build route (a) — Accelerator (not Microsoft Learn sources):
+- [saas-accelerator]: https://github.com/Azure/Commercial-Marketplace-SaaS-Accelerator (MIT; latest release 8.2.1; last updated 2026-06-10; targets .NET 8)
+- [saas-api-emulator]: https://github.com/microsoft/Commercial-Marketplace-SaaS-API-Emulator (Fulfillment API emulator for token-free A1 testing)
+
+Framework lifecycle:
+- [dotnet-lifecycle]: https://learn.microsoft.com/en-us/lifecycle/products/microsoft-net-and-net-core (.NET 8 LTS, EOL 2026-11-10; .NET 10 LTS to 2028-11-14)
 
 Not re-verified this session (do not cite as confirmed until fetched):
 - monetize-addins-through-microsoft-commercial-marketplace, artificial-intelligence-app-agent-publish-release, startups/build/ai/agents/intro-marketplace-agents — 未検証.
