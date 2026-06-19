@@ -1,6 +1,8 @@
 # partner-center-onboarding
 
-> **EXPERIMENTAL.** Guidance only. This plugin **never** signs in to Partner Center, assigns
+> 日本語版は [README.ja.md](README.ja.md) を参照してください。
+
+> **EXPERIMENTAL.** Guidance only.This plugin **never** signs in to Partner Center, assigns
 > roles, edits Microsoft Entra, or submits anything on your behalf — every portal action is
 > performed by you. It never asks for or stores passwords, verification codes, or secrets.
 
