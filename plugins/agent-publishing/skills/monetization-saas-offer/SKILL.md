@@ -102,8 +102,9 @@ defines scope, markets, and pricing; an offer must have at least one plan. ([pla
 
 - **Publisher-managed** entitlement: the publisher maps each subscription to user access in its own
   store/logic.
-- **Microsoft License Management Service**: the publisher integrates with Graph API to verify customer
-  eligibility so customers manage licenses in the Microsoft Admin Center. ([plan-saas-offer])
+- **Microsoft License Management Service**: the publisher integrates with the **usageRights Graph API**
+  to verify customer eligibility so customers manage licenses in the Microsoft Admin Center.
+  ([plan-saas-offer], [isv-app-license-saas])
 
 > No payout, withholding, or W-8/W-9 logic belongs in this layer. License management ≠ tax.
 
@@ -134,7 +135,7 @@ Tiers are additive. They live in Layers 1–2; Layer 3 is never code.
   connection webhook + Subscription/Operations API v2, backed by a **subscription-state store** that
   tracks the lifecycle states above. Satisfies the transactable-offer requirement. ([pc-saas-fulfillment-apis], [pc-saas-fulfillment-life-cycle], [create-new-saas-offer-technical])
 - **Tier 2 — Entitlement.** Publisher-managed mapping of subscription → user access, or integration
-  with the Microsoft License Management Service via Graph API. ([plan-saas-offer])
+  with the Microsoft License Management Service via the usageRights Graph API. ([plan-saas-offer], [isv-app-license-saas])
 - **Tier 3 — Metering (flat rate only).** Emit usage events via the Marketplace metering service API
   for custom dimensions. **Constraint: flat-rate plans only; never attach metering to a per-user plan.**
   Only emit usage above the base fee; one event per hour per dimension per resource (the SaaS
@@ -203,6 +204,7 @@ Fulfillment layer:
 
 Pricing / metering layer:
 - [create-new-saas-offer-plans]: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/create-new-saas-offer-plans
+- [isv-app-license-saas]: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/isv-app-license-saas
 - [saas-metered-billing]: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/saas-metered-billing
 - [marketplace-metering-service-apis]: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/marketplace-metering-service-apis
 
