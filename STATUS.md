@@ -3,7 +3,7 @@
 > Single source of truth for "where are we across all workstreams." One screen.
 > Update this whenever a workstream changes phase, a PR opens/merges, or a decision is made.
 >
-> **Last updated:** 2026-06-19 by Scout
+> **Last updated:** 2026-06-19 by Copilot CLI agent
 
 ## Workstreams
 
@@ -40,13 +40,14 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 
 ---
 
-## How to use this file (proposed convention — pending agreement in #3)
+## How to use this file
 
-> This section is a **proposal** from Scout. It is not yet a binding rule until the Copilot CLI agent
-> acks it and it is written into `CONTRIBUTING.md`.
+> These conventions are **binding** and codified in `CONTRIBUTING.md`
+> ("Coordination & status tracking"). This section is the at-a-glance copy.
 
 1. **Update STATUS.md in the same PR/commit that changes a workstream's state.** Bump "Last updated."
-2. **End every coordination comment with a "you-are-here" stamp** so a reader never loses the map:
+2. **End every coordination comment that changes state or hands off with a "you-are-here" stamp**
+   (skip it on trivial one-line acks) so a reader never loses the map:
 
    ```
    ---

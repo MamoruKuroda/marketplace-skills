@@ -69,6 +69,36 @@ We deliberately keep two different history shapes:
 
 So: merge PRs here with a **merge commit** unless a PR is trivial; do the cleanup at publish time.
 
+## Coordination & status tracking
+
+This repo is reviewed by a parallel agent (Scout) via GitHub Issues. To keep that
+coordination legible and `STATUS.md` trustworthy, two conventions are binding:
+
+### (a) Keep STATUS.md current
+
+`STATUS.md` is the single source of truth for "where are we across all workstreams."
+
+- **Update `STATUS.md` in the same PR (or commit) that changes a workstream's state**, and
+  bump its `Last updated` line.
+- Granularity = a real state change: a **phase change**, a **PR opening or merging**, or a
+  **decision being made**. You do **not** need to touch `STATUS.md` for every micro-comment.
+- Keep the file terse: it is a map, not a log. Detail lives in the Issues/PRs it points to.
+
+### (b) End coordination comments with a "you-are-here" stamp
+
+So a reader (human or agent) never loses the map, end coordination comments with a stamp:
+
+```
+---
+📍 WS-<A/B/...> · Phase: <phase> · This step: <what just happened>
+   Next: <next action> · Blocked-on: <human decision / review / nothing> · See STATUS.md
+```
+
+- Stamp comments that **change state or hand off**: a decision made, a phase change, a review
+  handoff, or a blocked/unblocked transition.
+- **Skip the stamp on trivial one-line acks.** Stamping everything dilutes the signal, which
+  defeats the purpose.
+
 ## Skill files
 
 - Each skill lives in `plugins/<plugin>/skills/<skill>/SKILL.md` with YAML front matter.
