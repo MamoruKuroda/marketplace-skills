@@ -10,25 +10,28 @@
 | WS | Theme | Phase | State | Issue | Next action |
 |----|-------|-------|-------|-------|-------------|
 | core | Plugin core (8 skills) | published v0.1.5 | ✅ live | — | — |
-| B | Declarative knowledge end-to-end verify | docs fix merged | ✅ usable-complete (A1) | #3 | optional: A2 live-purchase verify (opt-in) |
-| A | SaaS Tier-1 fulfillment backend | design ✓ → pre-build | ⏸ paused | #5 | maker confirms 3 open decisions + Azure sign-in |
+| B | Declarative knowledge end-to-end verify | docs fix merged | ✅ usable-complete | #3 | optional: attach a real (non-sample) source — or nothing |
+| A | SaaS Tier-1 fulfillment backend | decisions made → building | 🟡 building | #5 | Azure sign-in (in progress) → deploy SaaS Accelerator → A1 free fulfillment checks |
 
-State legend: ✅ done/live · 🟡 in review · ⏸ paused/blocked · 🔴 broken
+State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 🔴 broken
 
 ## Open PRs / Issues
 
-- #5 (WS-A) — **open, paused** on 3 maker decisions (below)
-- #3 (WS-B) — **open**, done-definition A1 met; keep open until A2 decision
-- Closed: #2 (SaaS 3-layer design, → PR #1 merged) · PR #1 · PR #4 (declarative docs fix)
+- #5 (WS-A) — **open, building** (3 decisions resolved in-session; see below)
+- #3 (WS-B) — **open**, done met; venue for the STATUS.md ops-rule agreement
+- Closed: #2 (SaaS 3-layer design → PR #1) · PR #1 · PR #4 (declarative docs fix)
 
-## Decisions waiting on the maker (Mamoru)
+## WS-A decisions (resolved 2026-06-19, in-session)
 
-- [ ] **WS-A pricing model** — flat rate or per user (changes the Tier-1 state-store schema; flat rate recommended for the spike)
-- [ ] **WS-A Azure identity + subscription + region** (separate from the M365 test tenant; pin a non-WAM sign-in)
-- [ ] **WS-A `@git-ape` onboarding** confirmed against that subscription (else run `git-ape-onboarding` first)
+- **Pricing model = flat rate** (metering-capable; per-user was rejected because metering is flat-rate-only). Tier-1 state store therefore needs no `quantity` branch; no `ChangeQuantity` webhooks.
+- **Azure identity + subscription = pinned** (IDs kept session-local, not posted publicly), region **East US 2**.
+- **Build route = (a) deploy the Microsoft SaaS Accelerator** (MIT-licensed, actively maintained) via its own installer; `@git-ape` onboarding is **optional** for route (a).
+
+> **A1 / A2 are the WS-A done-split** (not WS-B): **A1** = landing+webhook deployed & reachable 24/7, webhook validated with synthetic/replayed events + state store updated (free, local). **A2** = real purchase via a paid DEV offer (opt-in, incurs invoices). Tier-1 "done" = A1.
 
 ## Milestones (history)
 
+- 2026-06-19 — WS-A decisions locked (flat rate / Azure pinned East US 2 / route = Microsoft SaaS Accelerator); build started.
 - 2026-06-19 — WS-B declarative path **usable-complete**: triage → scaffold → author → wire knowledge (`OneDriveAndSharePoint`/`items_by_url`) → grounded answer + citation, with license/formatting traps documented (PR #4).
 - 2026-06-19 — SaaS skill **3-layer rewrite** merged (fulfillment / pricing+licensing / tax separation; state table mandatory; metering = flat-rate-only) (PR #1).
 - 2026-06-19 — Repo conventions added (`CONTRIBUTING.md`, PR template).
