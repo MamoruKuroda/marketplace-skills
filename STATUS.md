@@ -3,7 +3,7 @@
 > Single source of truth for "where are we across all workstreams." One screen.
 > Update this whenever a workstream changes phase, a PR opens/merges, or a decision is made.
 >
-> **Last updated:** 2026-06-19 by Copilot CLI agent
+> **Last updated:** 2026-06-22 by Scout
 
 ## Workstreams
 
@@ -19,8 +19,7 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 ## Open PRs / Issues
 
 - All PRs merged (#1, #4, #6, #7, #8, #9, #10). No open PRs.
-- #3 (WS-B) / #5 (WS-A) — open as coordination venues; the work is complete.
-- Closed: #2 (SaaS 3-layer design → PR #1).
+- All coordination issues closed: #2 (SaaS 3-layer design -> PR #1), #3 (WS-B), #5 (WS-A). Reopen as fresh issues if optional follow-ups are pursued.
 
 ## WS-A outcome (Tier-1, done 2026-06-19)
 
