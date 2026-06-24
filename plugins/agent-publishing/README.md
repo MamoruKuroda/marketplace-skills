@@ -144,7 +144,7 @@ copilot
 1. `@git-ape /triage-agent-type ...` → records `agentType=declarative`, `monetize=false` in `publishing-ledger.json`, routes to `path-declarative-atk`.
 2. `path-declarative-atk` scaffolds and packages:
    ```bash
-   atk new --capability declarative-agent --app-name my-hr-agent --programming-language typescript --interactive false
+   atk new --capability declarative-agent --app-name my-hr-agent --interactive false
    # author manifest + instructions + knowledge/actions
    atk package --env dev
    ```
