@@ -51,12 +51,15 @@ reporting OK does not establish which identity will be used. Before any step tha
 atk new \
   --capability declarative-agent \
   --app-name <appName> \
-  --programming-language typescript \
   --folder <outDir> \
   --interactive false
 ```
 - `--capability declarative-agent` selects the pure declarative template (instructions + knowledge
   + actions over Copilot's own model/orchestrator; no custom runtime).
+- **Do NOT pass `--programming-language`** for `declarative-agent`. Declarative agents have no custom
+  runtime/language, so the flag has no valid template and `atk new` fails with
+  `gen.TemplateNotFoundError` (observed on atk `1.1.11`). The flag only applies to custom-engine
+  capabilities that scaffold runtime code.
 - Use `atk list templates` to confirm available capabilities for the installed version.
 
 ### 2. Author the agent (DO THIS BEFORE PACKAGING — the scaffold is a blank template)
