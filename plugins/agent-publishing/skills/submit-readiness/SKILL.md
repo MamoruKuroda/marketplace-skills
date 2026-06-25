@@ -86,10 +86,13 @@ Block submission and list every missing item:
    - **Marketplace listing assets** (per language, on the Marketplace listings page): **Marketplace
      icon 300x300** (≤512 KB) and **Screenshots 1366x768** (up to 5, ≤1024 KB each), plus
      Name / Summary / Description text. These are required and are **not** the package icons.
-9. **Publisher Attestation** (App Compliance page) — see note below. Treat as a **required** gate for
-   Copilot agents; plan to complete it.
-10. **Responsible AI readiness** self-attestation (see below) — RAI is reviewed by humans
-    post-submission; ensure the agent meets RAI validation expectations.
+9. **Responsible AI readiness** self-attestation (see below) — RAI is reviewed by humans
+   post-submission; ensure the agent meets RAI validation expectations.
+
+> **Publisher Attestation / App Compliance is _not_ a blocker here.** All public sources mark the
+> Microsoft 365 App Compliance Program (including Publisher Attestation) as **Optional** — see the
+> note below. Do not list it as a required submission gate. Plan for it as an *optional, recommended*
+> step and flag the insider/未検証 nuance, but never BLOCK on it.
 
 For each item, verify what is verifiable (e.g., HTTP-check the EULA/privacy/support URLs are not 404).
 
@@ -98,16 +101,18 @@ For each item, verify what is verifiable (e.g., HTTP-check the EULA/privacy/supp
 The portal has an **App Compliance** page (Publisher Attestation self-assessment + optional Microsoft
 365 Certification third-party audit).
 
-- Public Learn ([userguide](https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/userguide),
-  and the [Publish agents](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/publish)
-  article) currently labels the **Microsoft 365 App Compliance Program certification as *(Optional)***.
-- **未検証 (insider, not in public docs):** per Microsoft contacts, **Publisher Attestation (the
-  self-assessment, Phase 1)** is a **required** step for Copilot agents (both declarative and custom
-  engine) somewhere in review, even though the public article does not separate it from the optional
-  Phase-2 certification.
-- Guidance: **plan to complete Publisher Attestation** (do not treat it as skippable for agents), but
-  flag that the public docs say "optional" and this should be confirmed with your Microsoft contact.
-- The full **Microsoft 365 Certification (Phase 2, third-party audit)** remains optional.
+- **All public sources mark it Optional.** The [Publish agents](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/publish)
+  article, the App Compliance [userguide](https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/userguide),
+  and the pre-publish [checklist](https://learn.microsoft.com/en-us/partner-center/marketplace-offers/checklist)
+  all label the **Microsoft 365 App Compliance Program (Publisher Attestation + certification) as
+  *Optional***. No public source establishes it as a required submission gate.
+- **未検証 (insider, not in public docs):** per a Microsoft contact, **Publisher Attestation (the
+  self-assessment, Phase 1)** may be expected for Copilot agents somewhere in review. This is
+  **unverified against public docs** and is **not** treated as a blocker by this skill.
+- Guidance: treat Publisher Attestation as an **optional, recommended** step. Surface it (and the
+  未検証 insider nuance) so the user can choose to complete it, but **never BLOCK** submission on it.
+  Confirm the agent-specific expectation with your Microsoft contact if it matters to you.
+- The full **Microsoft 365 Certification (Phase 2, third-party audit)** is likewise optional.
 
 ## Responsible AI readiness (manual, no CLI)
 
@@ -183,9 +188,9 @@ Availability
 Additional certification info
   Reviewer-testing PDF ....... <path/none>  (OPTIONAL supplement; carries forward) [optional]
 
-App Compliance
-  Publisher Attestation ...... REQUIRED for agents [未検証/insider — public docs
-                               say App Compliance is "optional"; confirm + plan it] [✅/❌]
+App Compliance  (OPTIONAL — not a blocker)
+  Publisher Attestation ...... Optional/recommended [未検証/insider — all public docs
+                               (publish/userguide/checklist) say Optional; do NOT block] [optional]
   M365 Certification (Phase 2)  optional (third-party audit)
 
 Review and publish
