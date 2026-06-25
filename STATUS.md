@@ -3,23 +3,32 @@
 > Single source of truth for "where are we across all workstreams." One screen.
 > Update this whenever a workstream changes phase, a PR opens/merges, or a decision is made.
 >
-> **Last updated:** 2026-06-22 by Scout
+> **Last updated:** 2026-06-25 by Copilot
 
 ## Workstreams
 
 | WS | Theme | Phase | State | Issue | Next action |
 |----|-------|-------|-------|-------|-------------|
-| core | Plugin core (agent-publishing, 8 skills) | published v0.1.5 | ✅ live | — | — |
+| core | Plugin core (agent-publishing, 8 skills) | published v0.1.7 | ✅ live | — | — |
 | B | Declarative knowledge end-to-end verify | docs fix merged | ✅ usable-complete | #3 | optional: attach a real (non-sample) source — or nothing |
 | A | SaaS Tier-1 fulfillment backend | live dry-run done + documented | ✅ Tier-1 (A1) complete | #5 | optional: live L2 emulator run; otherwise done |
+| P1b | Publish-path live portal walk (submit-readiness battle-test) | portal walk done + skills corrected | ✅ complete | #15 | optional: walk a second skill; otherwise done |
 | PC | partner-center-onboarding (account verification) | published v0.2.0 | ✅ live | — | optional refinements |
 
 State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 🔴 broken
 
 ## Open PRs / Issues
 
-- All PRs merged (#1, #4, #6, #7, #8, #9, #10). No open PRs.
-- All coordination issues closed: #2 (SaaS 3-layer design -> PR #1), #3 (WS-B), #5 (WS-A). Reopen as fresh issues if optional follow-ups are pursued.
+- All PRs merged (#1, #4, #6, #7, #8, #9, #10, #16, #17). No open PRs.
+- Coordination issues: #2/#3/#5 closed; **#15 (P1b portal walk) ready to close** — walk complete, both fix PRs merged.
+
+## WS-P1b outcome (publish-path portal walk, done 2026-06-25)
+
+- **Battle-test PASS:** a declarative `appPackage.dev.zip` built with the corrected `atk new` (no `--programming-language`) passed the Partner Center portal's **"Manifest checks passed"** (Office web / Windows / Teams). Negative control (no `manifest.json`) → `ManifestFileNotFound`. First live proof of `validate-package`/`submit-readiness`'s core claim.
+- **Irreversibility resolved:** Create locks **product type + publisher** permanently, but an **unpublished draft is deletable** (confirm dialog releases the reserved name + discards work). Full irreversibility only applies post-publish (Stop distribution only).
+- **submit-readiness corrected (PR #17):** worksheet restructured **page-driven**; Categories are functional (Legal+HR, not "AI Apps and Agents"); EULA/Privacy/Support live on Properties (field = "EULA link"); two icon systems (package 192/32 vs listing 300x300 + screenshots 1366x768); markets default to all 242; Entra/SSO/tenantId removed from the declarative path; no "Microsoft 365 and Copilot" tab (it's a +New offer choice).
+- **App Compliance / Publisher Attestation = Optional / non-blocker:** all public sources (publish article, App Compliance userguide, pre-publish checklist) mark it Optional; the insider "required for agents" claim is retained as **未検証** and explicitly does **not** block.
+- **atk fix (PR #16):** dropped `--programming-language` from declarative `atk new` (kept for custom-engine).
 
 ## WS-A outcome (Tier-1, done 2026-06-19)
 
@@ -31,6 +40,7 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 
 ## Milestones (history)
 
+- 2026-06-25 — **WS-P1b complete**: live Partner Center portal walk (S0–S9 incl. Delete cleanup); package validation battle-tested PASS; `submit-readiness` corrected to a page-driven worksheet and `path-declarative-atk` `atk new` flag fixed; App Compliance reframed Optional/非ブロッカー (PR #16 → #17, agent-publishing 0.1.7).
 - 2026-06-19 — **WS-A Tier-1 complete**: SaaS Accelerator deployed+verified+torn down; skill documents both routes, the 3-roles/3-tokens model, the A1 ladder, route-(a) prereqs + cost note (PR #7, #9).
 - 2026-06-19 — **partner-center-onboarding** shipped: `troubleshoot-account-verification` (4-condition convergence, triage A–D, escalation/role-owner forks) (PR #8, #10).
 - 2026-06-19 — WS-B declarative path **usable-complete**: triage → scaffold → author → wire knowledge (`OneDriveAndSharePoint`/`items_by_url`) → grounded answer + citation, with license/formatting traps documented (PR #4).
