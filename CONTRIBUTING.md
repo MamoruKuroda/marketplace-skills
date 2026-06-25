@@ -10,7 +10,8 @@
 - Write commits and PR titles as **Conventional Commits** (`docs:`, `feat:`, `fix:`, ...).
 - Open a PR using the template. Lead with **Why**, then **What changed**, then **Provenance / notes**.
 - Cite Microsoft Learn pages only after fetching them and confirming **HTTP 200** (no guessed URLs).
-- A maintainer merges. The agent never merges without explicit per-merge human approval.
+- **Every merge needs explicit, per-merge human authorization.** A human (or agent) may run the
+  merge command, but the *decision* to merge must always come from a human — see "Who may merge."
 
 ## Commit messages (Conventional Commits)
 
@@ -68,6 +69,19 @@ We deliberately keep two different history shapes:
    self-contained commits. The downstream repo wants a tidy history, not the experiment log.
 
 So: merge PRs here with a **merge commit** unless a PR is trivial; do the cleanup at publish time.
+
+### Who may merge (authorize vs execute)
+
+Separate the two acts:
+
+- **Authorize** (the decision to merge a specific PR) — this must **always** be a human. An agent
+  must never decide on its own that a PR is ready and merge it.
+- **Execute** (running `gh pr merge` / clicking the button) — this may be delegated to an agent
+  **only after** a human has authorized that specific merge.
+
+In practice: a human says "merge PR #N", and an agent may then run the merge on their behalf. An
+agent proposing, reviewing, and merging a PR with no human "go" in between is **not** allowed, even
+though it is mechanically capable of it.
 
 ## Coordination & status tracking
 
