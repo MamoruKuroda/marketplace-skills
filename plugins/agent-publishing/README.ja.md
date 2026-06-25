@@ -122,7 +122,7 @@ copilot
 1. `@git-ape /triage-agent-type ...` を実行すると、`publishing-ledger.json` に `agentType=declarative`／`monetize=false` を記録し、`path-declarative-atk` へ振り分けます。
 2. `path-declarative-atk` が scaffold とパッケージングを実行します。
    ```bash
-   atk new --capability declarative-agent --app-name my-hr-agent --programming-language typescript --interactive false
+   atk new --capability declarative-agent --app-name my-hr-agent --interactive false
    # manifest・instructions・knowledge／actions を編集
    atk package --env dev
    ```
