@@ -39,7 +39,7 @@
 ## 2. Agency Fee / Store Service Fee（手数料）
 
 - **Store Service Fee（取引手数料）= Microsoft が毎回の売上から差し引く店舗手数料**。MPA（Microsoft Publisher Agreement）に基づく。出典: marketplace-commercial-transaction-capabilities-and-considerations / marketplace-get-paid。
-- **標準率：一般に 3%**（ISV Partner Price に適用、CP マークアップには非適用）。※正確な率は MPA / Store fees ページで都度確認（本チートシートでは Mamoru 検証メモに基づき 3% と記載）。
+- **標準率：一般に 3% とされる**（ISV Partner Price に適用、CP マークアップには非適用）。ただし**正確な率は提示時点で必ず MPA（Microsoft Publisher Agreement）/ Store fees ページで確認**すること（率は契約・改定で変わり得る。本書では断定しない）。
 - **更新割引：Private Offer / MPO の更新は Agency Fee 50%off（→実効 1.5%）**。条件：
   - 更新の定義3種＝①既存 Private Offer/有償Marketplace取引の更新 ②Marketplace 外の既存有償契約の Marketplace 移行 ③既存有償顧客への Upsell。
   - **Private Offer 作成時に self-attest 必須**、自動適用。**遡及不可**。**2024-10-01 以降作成の Offer のみ対象**。

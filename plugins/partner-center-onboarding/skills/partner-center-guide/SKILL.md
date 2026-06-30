@@ -144,7 +144,7 @@ metadata:
 | 検証が終わらない（5日超） | 審査滞留 | サポートに連絡（3-5営業日が目安） | verification-responses ✅ |
 | Marketplace に Offer が出ない / 404 | 検証未完了 / 公開未完了 / 反映待ち | 検証ステータス＋公開ステータス確認 | verification-responses ✅ |
 | 有料プラン作成でエラー：`not publish eligible due to either an invalid payout, payout on hold, or invalid tax` | プロファイルが「Complete」でも **Account Verification(Legal info) が未 Authorized**、または税フォーム未送信／割当先が開発者プロファイルでない／48h検証待ち | **①最初に Legal info=Authorized を確認**（検証 Pending 中は税/支払更新も公開もブロック）→ ②税フォームを Finish→Done まで送信 →③Payout and tax profile assignment で開発者プロファイルが対象 Seller ID に割当 →④48h待ち →⑤なお残ればサポート起票 | verification-responses ✅ / set-up-your-payout-account ✅ / payout-faq ✅ |
-| ISV Success だけで適格か | 開発者プログラム適格 | 職場アカウントでサインインすると保有適格が自動表示 | — |
+| ISV Success だけで適格か | 開発者プログラム適格 | 職場アカウントでサインインすると保有適格が表示される（要確認・UI変動） | [要確認] |
 | Marketplace Offers ワークスペース／公開・編集操作が画面に出てこない | 開発者プログラムのロール（Owner/Manager/Developer）が未付与 | User management で付与（Submit中心=Developer、価格まで=Manager、全権=Owner）。付与は Owner/Manager（無ければ Global admin）。反映に最大1h | permissions-overview ✅ / user-roles ✅ |
 | 課金体系が複雑（従量/Private Offer/Agency Fee） | Marketplace 課金モデル理解 | リスティング種別ごとにモデルを整理（Subscription/Usage-based/BYOL）。Private Offer 更新は Agency Fee 50%off を作成時に self-attest | listing-type ✅ / agency-fee ✅ |
 

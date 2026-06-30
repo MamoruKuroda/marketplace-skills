@@ -19,7 +19,8 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 
 ## Open PRs / Issues
 
-- All PRs merged (#1, #4, #6, #7, #8, #9, #10, #16, #17). No open PRs.
+- Open: **PR #21** (partner-center-onboarding v0.3.0 -- guide entry skill + two-skill model) -- in Copilot review.
+- Earlier PRs merged (#1, #4, #6, #7, #8, #9, #10, #16, #17, #19).
 - Coordination issues: #2/#3/#5 closed; **#15 (P1b portal walk) ready to close** — walk complete, both fix PRs merged.
 
 ## WS-P1b outcome (publish-path portal walk, done 2026-06-25)
