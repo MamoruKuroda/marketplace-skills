@@ -6,37 +6,50 @@
 > roles, edits Microsoft Entra, or submits anything on your behalf — every portal action is
 > performed by you. It never asks for or stores passwords, verification codes, or secrets.
 
-A skill set that gets ISVs and partners **unstuck on Microsoft Partner Center account
-verification** when publishing a **Microsoft 365 Copilot agent** to the **Microsoft Commercial
-Marketplace**.
+A skill set that helps ISVs and partners **self-serve Microsoft Partner Center onboarding**
+when publishing to the **Microsoft Marketplace** -- from registration through to publishing a
+**Microsoft 365 Copilot agent** or **SaaS offer**.
 
 ## Why this exists
 
-Account verification — not the agent build — is where partners most often stall: sign-in and
-role confusion, tenant/App-ID mismatches, publisher/business-existence evidence, and "what stage
-am I at?" anxiety. These were distilled from real partner support threads (Teams + Slack) and
-collapsed into a single goal state.
+Partners most often stall at the onboarding *entrance*: registration, tenant association, the
+identity-verification order, publish-path choices (declarative vs custom-engine, offer types,
+billing), and channel/tax questions (REO/MPO/CSP, Japan consumption tax). Account verification in
+particular -- not the agent build -- is a frequent blocker: sign-in and role confusion,
+tenant/App-ID mismatches, publisher/business-existence evidence, and "what stage am I at?"
+anxiety. These were distilled from real partner support threads and collapsed into a single
+entry-point triage plus a deep verification specialist.
 
-## Design: converge from the endpoint
+## Two-skill model: one entrance, one specialist
 
-There is **one** goal — *a verified, publish-ready Partner Center account* — defined by four
-conditions:
+- **`partner-center-guide` (entry, `user-invocable: true`)** -- broad triage: registration,
+  tenant association, publish-path (agent type / offer type / billing), and channel/tax
+  (REO/MPO/CSP, Japan MoR). Carries four decision-flow images and a JP tax cheatsheet.
+- **`troubleshoot-account-verification` (internal, `user-invocable: false`)** -- the guide
+  delegates here when account *verification* is the actual blocker; converges four conditions and
+  emits `verification-ledger.json`.
 
-| # | Condition | Done when |
-| --- | --- | --- |
-| 1 | **Identity & roles** | Right person signs in with a role that can publish/manage users |
-| 2 | **Legal entity & publisher identity** | Microsoft App ID = Entra app (client) ID; publisher legal info consistent; tenant equality with Partner Center **not** required (publisher-verification badge = app tenant associated with the Partner Global Account) |
-| 3 | **Business existence** | Business/employment verification done; enrolled in Microsoft 365 & Copilot program; Partner One ID (MAICPP, formerly MPN) and primary contact present |
-| 4 | **Process visibility** | Knows the save→publish→submit order, the 4–6 week timeline, and how to escalate (Support Request) |
+Users always enter through the guide; verification depth is reached by delegation. One entrance,
+no "which skill do I use?" confusion.
 
-The four common failure classes are **triage axes into the same answer**, not separate
-destinations. One question routes the user to the blocking condition.
+## Try asking (starter prompts)
+
+- 「Partner Center にこれから登録したい。何から始めればいい?」
+- 「テナント (Entra ID) の関連付けができない。」
+- 「Copilot エージェントを公開したい。宣言型とカスタムエンジン、どっち?」
+- 「Publisher Attestation の項目が見当たらない。」
+- 「Developer 審査が通らない (登記簿と表記が違う)。」
+- 「代理店 / CSP 経由で売りたい。REO と MPO の違いと、日本の消費税は?」
+
+> Full starter list and routing live in
+> [`skills/partner-center-guide/SKILL.md`](skills/partner-center-guide/SKILL.md).
 
 ## Skills
 
-| Skill | Purpose |
-| --- | --- |
-| [`troubleshoot-account-verification`](skills/troubleshoot-account-verification) | Diagnose the blocking condition and emit a status checklist, a next action, and `verification-ledger.json` |
+| Skill | Invocable | Purpose |
+| --- | --- | --- |
+| [`partner-center-guide`](skills/partner-center-guide) | entry (true) | Broad onboarding triage + publish-path + REO/MPO + JP tax; flow images + cheatsheet |
+| [`troubleshoot-account-verification`](skills/troubleshoot-account-verification) | internal (false) | Deep account-verification diagnosis; 4-condition convergence + `verification-ledger.json` |
 
 ## Relationship to `agent-publishing`
 

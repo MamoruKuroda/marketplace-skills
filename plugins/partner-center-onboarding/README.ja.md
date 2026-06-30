@@ -1,4 +1,4 @@
-# partner-center-onboarding（Partner Center アカウント検証トラブルシュート）
+# partner-center-onboarding（Partner Center オンボーディング）
 
 > **実験的（EXPERIMENTAL）プロジェクトです。** ガイド専用です。本プラグインは Partner Center への
 > サインイン、ロール付与、Microsoft Entra の編集、提出のいずれも**代行しません**。ポータル上の操作は
@@ -6,35 +6,46 @@
 
 > このドキュメントは日本語版です。正本は英語版 [README.md](README.md) です。内容に差異がある場合は英語版を優先します。
 
-ISV・パートナーが **Microsoft 365 Copilot エージェント**を **Microsoft Commercial Marketplace** に
-公開しようとする際に、最もつまずきやすい **Microsoft Partner Center のアカウント検証**を前に進めるための
-スキル集です。
+ISV・パートナーが **Microsoft Marketplace** へ公開する際の **Partner Center オンボーディング**（アカウント登録
+〜テナント関連付け〜本人確認〜 **Microsoft 365 Copilot エージェント**／**SaaS Offer** の公開）を自走できるよう
+案内するスキル集です。
 
 ## なぜ必要か
 
-つまずきの多くはエージェントの作成ではなく**アカウント検証**で起きます——サインインとロールの混乱、
-テナント／App ID の不一致、発行元・会社実在の証明、「今どの段階？」という不安。これらを実際のパートナー
-サポートのやり取り（Teams＋Slack）から抽出し、ひとつのゴール状態に収束させました。
+つまずきの多くはオンボーディングの**入口**で起きます——登録、テナント関連付け、本人確認の順序、公開パスの選択
+（宣言型 vs カスタムエンジン、Offer 種別、課金）、商流・税務（REO/MPO/CSP、日本の消費税）。とりわけ
+**アカウント検証**はエージェント作成ではなく頻出のブロッカーです（サインイン／ロール混乱、テナント・App ID の
+不一致、発行元・会社実在の証明、「今どの段階？」の不安）。これらを実際のパートナーサポートのやり取りから抽出し、
+**ひとつの入口トリアージ＋検証の専門スキル**に集約しました。
 
-## 設計：終点から固める（converge-from-endpoint）
+## 2スキル構成：入口は1つ、専門家は1つ
 
-ゴールは**ひとつ**——「検証済みで公開可能な Partner Center アカウント」——で、次の4条件で定義します。
+- **`partner-center-guide`（入口・`user-invocable: true`）** — 広域トリアージ：登録、テナント関連付け、
+  公開パス（エージェント種別／Offer 種別／課金）、商流・税務（REO/MPO/CSP、日本 MoR）。意思決定フロー画像4枚と
+  日本税務チートシートを同梱。
+- **`troubleshoot-account-verification`（内部・`user-invocable: false`）** — アカウント*検証*が実際の
+  ブロッカーのとき入口から委譲。4条件へ収束させ `verification-ledger.json` を出力。
 
-| # | 条件 | 完了の判定 |
-| --- | --- | --- |
-| 1 | **識別とロール** | 正しい人が、公開／ユーザー管理ができるロールでサインインできる |
-| 2 | **法人と発行元アイデンティティ** | Microsoft App ID＝Entra アプリ（クライアント）ID、発行元の法的情報が整合。Partner Center とのテナント一致は**不要**（発行元確認の青バッジは「アプリ登録テナントが Partner Global Account に関連付け」） |
-| 3 | **会社の実在証明** | 法人／在籍の検証完了、Microsoft 365 and Copilot プログラムに登録、Partner One ID（MAICPP、旧 MPN）と第一連絡先が揃う |
-| 4 | **状況の可視化** | 保存→公開→送信の順序、4〜6週間の所要、詰まったら Support Request でエスカレーション、が分かる |
+ユーザーは常に入口（guide）から入り、検証の深掘りは委譲で到達します。「どのスキルを使う？」の迷いをなくす設計です。
 
-4つのつまずき分類は**同じ答えへ向かう triage（振り分け）の軸**であり、別々のゴールではありません。
-1つの質問で、詰まっている条件のブロックへ誘導します。
+## 試しに聞いてみる（スターター）
+
+- 「Partner Center にこれから登録したい。何から始めればいい?」
+- 「テナント (Entra ID) の関連付けができない。」
+- 「Copilot エージェントを公開したい。宣言型とカスタムエンジン、どっち?」
+- 「Publisher Attestation の項目が見当たらない。」
+- 「Developer 審査が通らない (登記簿と表記が違う)。」
+- 「代理店 / CSP 経由で売りたい。REO と MPO の違いと、日本の消費税は?」
+
+> 全リストとルーティングは
+> [`skills/partner-center-guide/SKILL.md`](skills/partner-center-guide/SKILL.md) を参照。
 
 ## 収録スキル
 
-| スキル | 役割 |
-| --- | --- |
-| [`troubleshoot-account-verification`](skills/troubleshoot-account-verification) | 詰まっている条件を診断し、状況チェックリスト・次の一手・`verification-ledger.json` を出力 |
+| スキル | 起動 | 役割 |
+| --- | --- | --- |
+| [`partner-center-guide`](skills/partner-center-guide) | 入口 (true) | 広域オンボーディングのトリアージ＋公開パス＋REO/MPO＋日本税務。フロー画像＋チートシート |
+| [`troubleshoot-account-verification`](skills/troubleshoot-account-verification) | 内部 (false) | アカウント検証の深掘り診断。4条件収束＋`verification-ledger.json` |
 
 ## `agent-publishing` との関係
 

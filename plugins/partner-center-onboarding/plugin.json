@@ -1,7 +1,7 @@
 {
   "name": "partner-center-onboarding",
-  "description": "Guided troubleshooting for Microsoft Partner Center account verification when publishing Microsoft 365 Copilot agents to the Microsoft Commercial Marketplace. Converges identity/roles, legal-entity & publisher identity (tenant equality NOT required; publisher verification = PGA association), business-existence, and process-visibility friction into one verified, publish-ready account state. Handles term drift (Publisher Verification badge vs business verification, MPN/Partner One ID, Account admin vs Owner/Manager/Developer). Authored as portable Agent Skills (SKILL.md) usable in GitHub Copilot CLI and packageable for Microsoft 365 Copilot Cowork.",
-  "version": "0.2.1",
+  "description": "Self-serve Microsoft Partner Center onboarding for ISVs and partners publishing to the Microsoft Marketplace. The entry skill (partner-center-guide) triages broadly -- account registration, tenant association, identity verification order, publish-path (declarative vs custom-engine agent, SaaS/VM offer types, listing/billing), and channel/tax (REO/MPO/CSP, Japan consumption tax/MoR) -- answering with symptom -> cause -> next action plus fetched Microsoft Learn links, four decision-flow images, and a JP tax cheatsheet. When account verification is the actual blocker it delegates to the internal specialist (troubleshoot-account-verification), which converges identity/roles, legal-entity & publisher identity, business-existence, and process-visibility into one verified, publish-ready account state and emits verification-ledger.json. Portable Agent Skills (SKILL.md) usable in GitHub Copilot CLI and packageable for Microsoft 365 Copilot Cowork.",
+  "version": "0.3.0",
   "author": {
     "name": "Mamoru Kuroda",
     "url": "https://github.com/MamoruKuroda"
@@ -18,6 +18,9 @@
     "marketplace",
     "onboarding",
     "troubleshooting",
+    "reo",
+    "mpo",
+    "japan-tax",
     "maicpp",
     "cowork"
   ],
