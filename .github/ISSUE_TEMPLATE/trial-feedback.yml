@@ -1,0 +1,77 @@
+name: "\U0001F9EA Trial feedback / 試用フィードバック"
+description: "partner-center-onboarding を試して気づいたこと（当たり/外し/抜け）を教えてください。Report what worked or missed when trying the skill."
+title: "[feedback] "
+labels: ["feedback", "partner-center-onboarding"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        試用ありがとうございます。**1回の相談＝1 Issue** で気軽にどうぞ（日本語/English どちらでも）。
+        機微情報（実在パートナー名・顧客名・テナントID・スクショ内の個人情報）は貼らないでください。
+        Thanks for testing. One conversation per issue is fine. Do not paste sensitive data (real partner/customer names, tenant IDs, PII).
+  - type: dropdown
+    id: surface
+    attributes:
+      label: どこで使った? / Where did you run it?
+      options:
+        - GitHub Copilot CLI
+        - Microsoft 365 Copilot Cowork
+        - その他 / Other
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: トピック領域 / Topic area
+      description: 一番近いものを1つ。 Pick the closest one.
+      options:
+        - "登録 / Registration (§1)"
+        - "テナント関連付け / Tenant association (§2)"
+        - "公開パス・Offer種別・課金 / Publish path (§3)"
+        - "本人確認の順序・Attestation / Verification order (§4)"
+        - "Developer 審査 / Developer review (§5)"
+        - "REO / MPO / CSP・商流 / Channel"
+        - "日本税務・消費税 / Japan tax (JCT)"
+        - "その他 / Other"
+    validations:
+      required: true
+  - type: textarea
+    id: prompt
+    attributes:
+      label: 聞いた質問 / The prompt you asked
+      description: 実際に入力した文（機微情報は伏せて）。 The text you typed (redact sensitive bits).
+      placeholder: "例: テナント（Entra ID）の関連付けができない"
+    validations:
+      required: true
+  - type: dropdown
+    id: verdict
+    attributes:
+      label: 総合評価 / Overall
+      options:
+        - "◎ 正確で役立った / Correct and helpful"
+        - "○ おおむね良いが要改善 / Mostly good, minor issues"
+        - "△ 部分的に誤り/古い / Partly wrong or outdated"
+        - "× 見当違い/発火せず / Off-target or did not trigger"
+    validations:
+      required: true
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: 応答の要点と気づき / What it answered + what stood out
+      description: 良かった点・誤り・抜け・出典の妥当性など。 Good points, errors, gaps, source quality.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: あるべき回答 / What the ideal answer would have been
+      description: 分かる範囲で。可能なら公式 Learn の URL も。 If known, include the official Learn URL.
+    validations:
+      required: false
+  - type: input
+    id: contact
+    attributes:
+      label: 補足連絡先 / Optional contact
+      description: 追って確認したい場合の連絡先（任意）。 Optional, for follow-up.
+    validations:
+      required: false

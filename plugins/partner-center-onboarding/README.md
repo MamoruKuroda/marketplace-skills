@@ -74,6 +74,12 @@ copilot plugin marketplace add MamoruKuroda/marketplace-skills
 copilot plugin install partner-center-onboarding@marketplace-skills
 ```
 
+## Feedback
+
+Tried it? Please file a quick **[Trial feedback issue](../../issues/new?template=trial-feedback.yml)**
+(one conversation per issue; do not paste sensitive data). A prebuilt Cowork sideload package is in
+[`dist/`](dist/).
+
 ## References (verify before quoting — labels drift)
 
 - Partner Center roles & permissions: https://learn.microsoft.com/en-us/partner-center/account-settings/permissions-overview

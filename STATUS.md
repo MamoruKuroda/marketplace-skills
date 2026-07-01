@@ -13,14 +13,14 @@
 | B | Declarative knowledge end-to-end verify | docs fix merged | ✅ usable-complete | #3 | optional: attach a real (non-sample) source — or nothing |
 | A | SaaS Tier-1 fulfillment backend | live dry-run done + documented | ✅ Tier-1 (A1) complete | #5 | optional: live L2 emulator run; otherwise done |
 | P1b | Publish-path live portal walk (submit-readiness battle-test) | portal walk done + skills corrected | ✅ complete | #15 | optional: walk a second skill; otherwise done |
-| PC | partner-center-onboarding (account verification) | PR open: guide entry skill v0.3.0 | 🟡 in review | (PR) | merge after Copilot review |
+| PC | partner-center-onboarding (onboarding triage + verification) | published v0.3.0 | ✅ live | — | collecting trial feedback (Issues) |
 
 State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 🔴 broken
 
 ## Open PRs / Issues
 
-- Open: **PR #21** (partner-center-onboarding v0.3.0 -- guide entry skill + two-skill model) -- in Copilot review.
-- Earlier PRs merged (#1, #4, #6, #7, #8, #9, #10, #16, #17, #19).
+- Open: none. **PR #21 merged** (partner-center-onboarding v0.3.0 -- guide entry skill + two-skill model).
+- Earlier PRs merged (#1, #4, #6, #7, #8, #9, #10, #16, #17, #19, #21).
 - Coordination issues: #2/#3/#5 closed; **#15 (P1b portal walk) ready to close** — walk complete, both fix PRs merged.
 
 ## WS-P1b outcome (publish-path portal walk, done 2026-06-25)
@@ -41,7 +41,7 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 
 ## Milestones (history)
 
-- 2026-07-01 — **partner-center-onboarding v0.3.0 (PR open)**: added entry skill `partner-center-guide` (broad onboarding triage + publish-path + REO/MPO/CSP + JP tax cheatsheet + 4 decision-flow images); refactored to a two-skill model (guide = entry/invocable, `troubleshoot-account-verification` = internal/non-invocable, reached by delegation); added a prebuilt Cowork app package under `dist/`.
+- 2026-07-01 — **partner-center-onboarding v0.3.0 merged (PR #21)**: added entry skill `partner-center-guide` (broad onboarding triage + publish-path + REO/MPO/CSP + JP tax cheatsheet + 4 decision-flow images); refactored to a two-skill model (guide = entry/invocable, `troubleshoot-account-verification` = internal/non-invocable, reached by delegation); added a prebuilt Cowork app package under `dist/`. Copilot code review: 3 comments, all addressed and resolved.
 - 2026-06-25 — **WS-P1b complete**: live Partner Center portal walk (S0–S9 incl. Delete cleanup); package validation battle-tested PASS; `submit-readiness` corrected to a page-driven worksheet and `path-declarative-atk` `atk new` flag fixed; App Compliance reframed Optional/非ブロッカー (PR #16 → #17, agent-publishing 0.1.7).
 - 2026-06-19 — **WS-A Tier-1 complete**: SaaS Accelerator deployed+verified+torn down; skill documents both routes, the 3-roles/3-tokens model, the A1 ladder, route-(a) prereqs + cost note (PR #7, #9).
 - 2026-06-19 — **partner-center-onboarding** shipped: `troubleshoot-account-verification` (4-condition convergence, triage A–D, escalation/role-owner forks) (PR #8, #10).
