@@ -13,18 +13,23 @@ description: |
   appearing, or how long verification takes (also Japanese: コードが届かない /
   ロールを割り当てられない / 審査が長い). Guidance only: never signs in, assigns roles, edits
   Entra, or submits, and never asks for passwords or codes.
-user-invocable: true
+user-invocable: false
 license: MIT
 metadata:
   author: Mamoru Kuroda
-  version: "0.2.1"
-  last_updated: "2026-06-19"
+  version: "0.2.2"
+  last_updated: "2026-07-01"
 ---
 
 # Troubleshoot: Partner Center Account Verification
 
 Gets an ISV/partner *unstuck* on Partner Center account verification so they can publish a
 Microsoft 365 Copilot agent to the Microsoft Commercial Marketplace.
+
+> **Internal specialist skill (`user-invocable: false`).** The plugin's entry point is
+> [`partner-center-guide`](../partner-center-guide); it triages broadly and delegates here when
+> account *verification* is the actual blocker. This skill goes deep on the four-condition
+> convergence and emits `verification-ledger.json`.
 
 > **EXPERIMENTAL — guidance only.** This skill diagnoses and prepares. It **never** signs in
 > to Partner Center, assigns roles, edits Microsoft Entra, or submits anything on the user's
