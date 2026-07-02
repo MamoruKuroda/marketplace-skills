@@ -1,13 +1,13 @@
 ---
 name: partner-center-guide
 description: |
-  Entry-point guide that helps a partner company contact or their account manager (PDM/PTS) self-serve Microsoft Partner Center onboarding -- from account registration, to tenant association, identity verification, and publishing a Copilot agent or SaaS offer to the Microsoft Marketplace. Triages where the user is stuck and answers with symptom -> cause -> next action plus an official Microsoft Learn link. Use for: registration / how to enroll, tenant (Entra ID) association failing, the order of Publisher Verification vs Attestation, Attestation item not found, Developer review failing (legal-name mismatch), verification stuck, offer/agent not appearing in Marketplace, publishing a Copilot agent (declarative vs custom engine), reselling via channel/CSP (REO / MPO), Marketplace fees / billing / Japan consumption tax. Also Japanese triggers: 登録方法 / テナント関連付けできない / Attestation が見つからない / 審査が通らない / REO MPO / 日本の消費税. Guidance only: never signs in, assigns roles, edits Entra, or submits on the user's behalf, and never asks for passwords or codes.
+  Entry-point guide that helps a partner company's point of contact, or the Microsoft account manager (PDM/PTS) working with them, self-serve Microsoft Partner Center onboarding -- from account registration, to tenant association, identity verification, and publishing a Copilot agent or SaaS offer to the Microsoft Marketplace. Triages where the user is stuck and answers with symptom -> cause -> next action plus an official Microsoft Learn link. Use for: registration / how to enroll, tenant (Entra ID) association failing, the order of Publisher Verification vs Attestation, Attestation item not found, Developer review failing (legal-name mismatch), verification stuck, offer/agent not appearing in Marketplace, publishing a Copilot agent (declarative vs custom engine), reselling via channel/CSP (REO / MPO), Marketplace fees / billing / Japan consumption tax. Also Japanese triggers: 登録方法 / テナント関連付けできない / Attestation が見つからない / 審査が通らない / REO MPO / 日本の消費税 / listing 審査で差し戻された / sign-up や Contact Us リンクが無いと指摘された / Store validation の Must-fix. Guidance only: never signs in, assigns roles, edits Entra, or submits on the user's behalf, and never asks for passwords or codes.
 user-invocable: true
 license: MIT
 metadata:
   author: Mamoru Kuroda
-  version: "1.0.0"
-  last_updated: "2026-07-01"
+  version: "1.1.0"
+  last_updated: "2026-07-02"
 ---
 
 # Partner Center 公開ガイド（入口トリアージ）
@@ -48,6 +48,7 @@ metadata:
 | 何をどう公開する？ エージェント / Offer 種別 / 課金 / 商流 | §3 公開パス判断（＋チートシート） | `pc_flow_publish.png` |
 | 検証・Verification・Attestation の順序／場所がわからない | §4 本人確認の順序 | `pc_flow_verification.png` |
 | Developer 審査が通らない・止まる / 提出物 | §5 Developer 審査 | — |
+| 提出したが審査（Store validation）で差し戻された / リスティング記載を直せと言われた | §8 リスティング/コンテンツ審査 | — |
 | 上記以外の個別症状・「とにかく動かない」 | §6 症状→原因→次アクション早見表 | — |
 
 ### Step 1｜該当章で「症状→原因→次アクション＋Link」を提示
@@ -120,6 +121,7 @@ metadata:
 1. **Account Verification（アカウント検証）**：Partner Center 登録時、会社名・住所・主要連絡先を Microsoft が検証。通常 **3〜5 営業日**、5日超で要サポート。**検証完了まで Marketplace 公開・税/支払いプロフィール更新・マルチテナント等がブロック**される。検証メールは会社ドメインの監視可能な業務メールで（個人メール不可）。出典: https://learn.microsoft.com/en-us/partner-center/enroll/verification-responses
 2. **Publisher Verification（Entra）**：PGA の verified **Partner One ID** をアプリ登録に関連付け。要件＝職場/学校アカウントで登録・publisher domain 設定（`*.onmicrosoft.com` 不可）・検証メールのドメイン一致・登録者は Entra と Partner Center 双方で必要ロール保持。出典: https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview
 3. **Publisher Attestation**：**先にアプリ/エージェントを Submit → 審査途中で Partner Center 上から Attestation を Submit**（「最初から見当たらない」が頻出）。80+ 項目の自己申告、約1時間、**Teams アプリは必須**、年次更新。対象＝Word/Excel/Outlook/Teams/Copilot/SharePoint/SaaS 等。出典: https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/attestation
+   - ★**「Attestation 項目が最初から見当たらない」の原因は2系統**：①**Submit 前**に探している（上記のとおり Submit 後に出る）②**Offer の種別が違う**（M365/Copilot 向けエージェントは「Apps and agents for Microsoft 365 and Copilot」系の種別で作成する必要があり、別種別だと Attestation 欄自体が出ない）。②の場合は正しい種別で Offer を作り直す（種別が違えば同名 Offer も作成可）。※オファー種別の正確な表記は Partner Center の「+ New offer」画面で提示前に再確認（UI 変動あり）。②は現場観測ベース（Learn 明記の裏取りは未確認）。
 
 ## 5. Developer 審査 & 提出物（最頻出ブロッカー③）
 
@@ -147,6 +149,7 @@ metadata:
 | ISV Success だけで適格か | 開発者プログラム適格 | 職場アカウントでサインインすると保有適格が表示される（要確認・UI変動） | [要確認] |
 | Marketplace Offers ワークスペース／公開・編集操作が画面に出てこない | 開発者プログラムのロール（Owner/Manager/Developer）が未付与 | User management で付与（Submit中心=Developer、価格まで=Manager、全権=Owner）。付与は Owner/Manager（無ければ Global admin）。反映に最大1h | permissions-overview ✅ / user-roles ✅ |
 | 課金体系が複雑（従量/Private Offer/Agency Fee） | Marketplace 課金モデル理解 | リスティング種別ごとにモデルを整理（Subscription/Usage-based/BYOL）。Private Offer 更新は Agency Fee 50%off を作成時に self-attest | listing-type ✅ / agency-fee ✅ |
+| 提出後、審査（Store validation）で差し戻し（sign-up/Contact 等のリンクが無い、説明文の指摘） | way forward が3か所に無い / manifest と Partner Center の説明文不一致 / 認証必須の URL | §8 へ（way forward は manifest 説明文に markdown リンクで＋長文＋初回起動体験の3か所、説明文は両者一致、Support/EULA/Privacy は認証不要） | teams-store-validation-guidelines ✅ / review-copilot-validation-guidelines ✅ |
 
 **エラー文の語句別マッピング**（`not publish eligible …` の3語句で原因を切り分ける／2026-06-29 実地検証）：
 - `invalid tax` → 税フォームが Finish→Done まで未送信／期限切れ／割当先が開発者プロファイルでない。
@@ -158,6 +161,66 @@ metadata:
 
 MPN→MAICPP / Azure AD→Entra ID / Commercial Marketplace→Microsoft Marketplace / PGA / Partner One ID / REO / MPO / CSP / Account Verification / Publisher Verification / Publisher Attestation / Developer・Manager・Owner ロール。
 
+## 8. リスティング/コンテンツ審査でよく落ちる点（Store validation・Must-fix）
+
+**アシスタントの動き方**：§1〜§5（登録・テナント・本人確認・審査）を越えて「**提出したが審査（Store validation）で差し戻された**」段階の相談。原因は Partner Center の設定値ではなく、**アプリ マニフェスト（app manifest）と AppSource/Partner Center のリスティング記載**の不備であることが多い。頻出の Must-fix だけを挙げ、詳細は一次ソース（末尾）へ導く。全ポリシーの逐条解説はしない（案内に徹する）。
+
+> **発端（実データ）**：「listing に sign-up / Get Started / Contact Us / Help のリンクが無い」という審査フィードバック。これは **Partner Center の入力欄を埋める話ではなく**、**マニフェストの説明文（description）に markdown リンクとして書く**もの（Partner Center 側に専用の入力フォームは無い）。
+
+### 8.1 way forward（サインアップ/問い合わせ導線）: 最頻出 Must-fix
+
+- 外部アカウント/サービスに依存するアプリは、新規ユーザーが **sign up** できる、または **publisher に問い合わせ**できる導線（way forward）を提供必須。
+- **3か所すべてに必要**：①アプリ マニフェスト ②AppSource の長い説明（long description）③**初回起動体験**（bot の welcome メッセージ / tab の setup / config ページ）。1か所でも欠けると差し戻し。
+- 管理者の事前同意（admin consent）が必要なアプリは、その依存を同じ3か所（＋必要な first-run 各所）に明記。
+- リンクを**クリック可能なハイパーリンク**にするのは推奨（Good-to-fix）。導線の**存在**が Must-fix。
+- ★**一般的な回答にありがちな誤りの訂正**：(a)「manifest と Partner Center の2か所」ではなく **3か所**（初回起動体験が抜けやすい）。(b) ポリシー番号は **1140.1.4（Access to services）**。1140.3 は Security、1140.4 系は Tabs で別物。
+- 出典: teams-store-validation-guidelines（Authentication / 1140.1.4）。
+
+### 8.2 マニフェストとリスティングの一致
+
+- **アプリ名**と**開発者名（developer name）**は manifest と AppSource で**一致必須**（Must-fix）。
+- **説明文（description）も、app configuration（manifest）と Partner Center で同一**であること（原文: "The descriptions in your app configuration and Partner Center must be the same."）。片方だけ直すと不一致で再度弾かれる。
+- アプリ名を変更したら、manifest・AppSource・オファー metadata の**すべて**で旧名を新名に置換。
+- 出典: teams-store-validation-guidelines（App name / App descriptions）。
+
+### 8.3 説明文の禁止事項（エージェント）
+
+- short description / パラメータ / コマンド説明 / semantic description / operation ID に、**命令句**（"if the user says X"、"ignore"、"reset" 等）・**URL**・**絵文字**・**隠し文字**・**文法/句読点の誤り**を入れない（Must-fix）。誇大・最上級表現（"#1"、"best"）は Good-to-fix。
+- 宣言型エージェントでは、上記が **`instructions` と `conversation_starters`** にも適用。
+- long description：Markdown 可・最大 4000 文字（推奨 ~1000、500 語超は不可）・help/support リンクを含める・AppSource へのリンク不可・"MS"/"MSFT" 略記不可。short description は 1 文で簡潔に。
+- 出典: review-copilot-validation-guidelines（Description / 1140.9）, teams-store-validation-guidelines（App descriptions）。
+
+### 8.4 EULA（利用規約）/ プライバシー / サポート URL
+
+- **EULA/利用規約**：そのオファーに**固有かつ適用可能**であること。汎用の他社/既存製品の規約を流用する場合は、**対象製品に当該アプリ/エージェント名が含まれる**形にする。自社ドメインで HTTPS ホスト、**認証不要**、manifest と AppSource で同一リンク。
+- **プライバシーポリシー**：**認証不要**、連絡先を含む、manifest と AppSource で同一リンク。
+- **サポート URL**：**認証不要**（サインインなしで連絡可能）。連絡先または問い合わせ導線を含めば、**問い合わせフォームのリンクでも可**。
+- 出典: teams-store-validation-guidelines（Terms of use / Privacy policy / Support links）。
+
+### 8.5 審査に落ちたら（初動）
+
+- 差し戻しレポートの**該当スクリーンショット/指摘項目を確認** → マニフェスト/リスティングを修正 → **バージョン番号を上げて**（App ID は据え置き）再提出。
+- 理由が読み取りにくい場合は Support Request（SR）で確認。登記名の不一致など §5 側の指摘なら、法的書類と完全一致で再提出。
+- 変更のたびに version を SemVer（MAJOR.MINOR.PATCH）で上げ、**production マニフェスト**を提出（名前に Beta/Dev/Preview/UAT 等を含めない）。
+
+### 8.6 パッケージ/技術要件で落ちやすい点
+
+- **manifest の `id`（GUID）は開発者が一意に生成**（他オファーと重複させない）。更新時は version のみ上げ、App ID は published と一致。
+- **`validDomains`**：nested 認証の `redirectURI` ドメインを含める（`redirectURI` は `brk-multihub://` プレフィックス・sub-path 不可、`validDomains` の app domain と一致）。
+- アイコン：カラー 192x192・アウトライン 32x32、リスティングのアイコンはパッケージのカラーアイコンと一致。スクリーンショット 1366x768（3〜5 枚）、エージェントは Copilot 画面のスクショを1枚以上。
+- サンプルプロンプト：コマンドごとに 3〜5 個、各 128 文字以内・機能すること。
+- 出典: teams-store-validation-guidelines（App package / Icons / Screenshots）, review-copilot-validation-guidelines（Prompts / Technical requirements）。
+
+### 8.7 正直な注記（Cowork の限界）
+
+- ページ単位の詳細な提出ワークシート（Partner Center の各画面をなぞる）は、CLI 専用スキル `agent-publishing/submit-readiness` にあるが、**Cowork には同梱されていない**（このプラグインは知識・ガイド型のため）。Cowork では本 §8 の要点で当たりを付け、詳細手順は下記 Learn を提示前に再 fetch して案内する。
+
+**§8 出典（一次ソース・fetch 検証 2026-07-02 / 提示前に再確認）**
+
+- Teams Store validation guidelines（way forward/説明文/アイコン/サポートURL/EULA）: https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/appsource/prepare/teams-store-validation-guidelines ✅
+- エージェント審査ガイドライン（説明文の禁止事項/プロンプト/技術要件）: https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/appsource/prepare/review-copilot-validation-guidelines ✅
+- 認証系ポリシー 1140（Teams）: https://learn.microsoft.com/en-us/legal/marketplace/certification-policies#1140-teams ✅
+
 ## Starter Conversations（このスキルの呼び水）
 
 ユーザーがそのまま選べる代表質問。アシスタントは選択された質問から Step 0 トリアージに入る：
@@ -168,8 +231,9 @@ MPN→MAICPP / Azure AD→Entra ID / Commercial Marketplace→Microsoft Marketpl
 4. 「Publisher Attestation の項目が見当たらない。」 → §4
 5. 「Developer 審査が通らない（登記簿と表記が違うと言われた）。」 → §5
 6. 「代理店／CSP 経由で売りたい。REO と MPO の違いと、日本の消費税はどうなる？」 → §3＋チートシート
+7. 「審査で『sign-up / Get Started / Contact Us / Help のリンクが無い』と差し戻された。どこを直す？」 → §8
 
-## 参照（一次ソース・fetch 検証済み 2026-06-29 / 提示前に再確認）
+## 参照（一次ソース・fetch 検証済み 2026-06-29、§8 追加分は 2026-07-02 / 提示前に再確認）
 
 - Marketplace アカウント作成/enroll（前提・2経路・CPP移行）: https://learn.microsoft.com/en-us/partner-center/marketplace/create-account ✅
 - Marketplace ユーザー/ロール（Owner/Manager がロール付与/付与手順）: https://learn.microsoft.com/en-us/partner-center/marketplace/user-roles ✅
@@ -182,6 +246,9 @@ MPN→MAICPP / Azure AD→Entra ID / Commercial Marketplace→Microsoft Marketpl
 - アカウント検証（ブロック機能/3-5営業日/ロール）: https://learn.microsoft.com/en-us/partner-center/enroll/verification-responses ✅
 - マルチテナント関連付け（Global admin/Associate 手順）: https://learn.microsoft.com/en-us/partner-center/multi-tenant-account ✅
 - Publisher Attestation（80+項目/年次/Teams必須）: https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/attestation ✅
+- Teams Store 審査ガイドライン（§8: way forward/説明文/アイコン/サポートURL/EULA）: https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/appsource/prepare/teams-store-validation-guidelines ✅
+- エージェント審査ガイドライン（§8: 説明文の禁止事項/プロンプト/技術要件）: https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/appsource/prepare/review-copilot-validation-guidelines ✅
+- 商業マーケットプレイス認証ポリシー 1140（Teams）: https://learn.microsoft.com/en-us/legal/marketplace/certification-policies#1140-teams ✅
 - Agents SDK ハブ: https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/ ✅
 - 商流・税務の詳細: 同梱 `REO_MPO_CSP_tax_cheatsheet_JP.md`（一次ソース10本を内包）
 

@@ -21,7 +21,8 @@ ISV・パートナーが **Microsoft Marketplace** へ公開する際の **Partn
 ## 2スキル構成：入口は1つ、専門家は1つ
 
 - **`partner-center-guide`（入口・`user-invocable: true`）** — 広域トリアージ：登録、テナント関連付け、
-  公開パス（エージェント種別／Offer 種別／課金）、商流・税務（REO/MPO/CSP、日本 MoR）。意思決定フロー画像4枚と
+  公開パス（エージェント種別／Offer 種別／課金）、商流・税務（REO/MPO/CSP、日本 MoR）、
+  リスティング/コンテンツ審査（Store validation の Must-fix、§8）。意思決定フロー画像4枚と
   日本税務チートシートを同梱。
 - **`troubleshoot-account-verification`（内部・`user-invocable: false`）** — アカウント*検証*が実際の
   ブロッカーのとき入口から委譲。4条件へ収束させ `verification-ledger.json` を出力。
@@ -35,6 +36,7 @@ ISV・パートナーが **Microsoft Marketplace** へ公開する際の **Partn
 - 「Copilot エージェントを公開したい。宣言型とカスタムエンジン、どっち?」
 - 「Publisher Attestation の項目が見当たらない。」
 - 「Developer 審査が通らない (登記簿と表記が違う)。」
+- 「審査 (Store validation) で sign-up / Contact のリンクが無いと差し戻された。どこを直す?」
 - 「代理店 / CSP 経由で売りたい。REO と MPO の違いと、日本の消費税は?」
 
 > 全リストとルーティングは
