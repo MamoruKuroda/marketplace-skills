@@ -3,7 +3,7 @@
 > Single source of truth for "where are we across all workstreams." One screen.
 > Update this whenever a workstream changes phase, a PR opens/merges, or a decision is made.
 >
-> **Last updated:** 2026-07-01 by Copilot
+> **Last updated:** 2026-07-02 by Copilot
 
 ## Workstreams
 
@@ -13,7 +13,7 @@
 | B | Declarative knowledge end-to-end verify | docs fix merged | ✅ usable-complete | #3 | optional: attach a real (non-sample) source — or nothing |
 | A | SaaS Tier-1 fulfillment backend | live dry-run done + documented | ✅ Tier-1 (A1) complete | #5 | optional: live L2 emulator run; otherwise done |
 | P1b | Publish-path live portal walk (submit-readiness battle-test) | portal walk done + skills corrected | ✅ complete | #15 | optional: walk a second skill; otherwise done |
-| PC | partner-center-onboarding (onboarding triage + verification) | published v0.3.0 | ✅ live | — | collecting trial feedback (Issues) |
+| PC | partner-center-onboarding (onboarding triage + verification) | v0.4.0 in review (adds §8 review/validation) | 🟡 PR open | — | merge §8, then keep collecting trial feedback |
 
 State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 🔴 broken
 
@@ -40,6 +40,8 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 - `.NET 8` (LTS, EOL 2026-11-10) intentional; framework upgrades left to upstream (target .NET 10 LTS).
 
 ## Milestones (history)
+
+- 2026-07-02 — **partner-center-guide §8 added (v0.4.0)**: new section "リスティング/コンテンツ審査でよく落ちる点 (Store validation Must-fix)" -- way forward links in 3 places (manifest + AppSource long description + first-run experience, policy 1140.1.4, put as markdown in the manifest description, no Partner Center form), manifest/listing name+description match, description prohibited content (1140.9), EULA/Privacy/Support URL auth-free, reject first-response, package (manifest id GUID / validDomains). Also §4 gains "wrong Offer type" as a second cause of a missing Attestation item. Driven by a real internal review case; all facts fetch-verified against Teams Store + agent validation guidelines. Cowork dist zip rebuilt.
 
 - 2026-07-01 — **partner-center-onboarding v0.3.0 merged (PR #21)**: added entry skill `partner-center-guide` (broad onboarding triage + publish-path + REO/MPO/CSP + JP tax cheatsheet + 4 decision-flow images); refactored to a two-skill model (guide = entry/invocable, `troubleshoot-account-verification` = internal/non-invocable, reached by delegation); added a prebuilt Cowork app package under `dist/`. Copilot code review: 3 comments, all addressed and resolved.
 - 2026-06-25 — **WS-P1b complete**: live Partner Center portal walk (S0–S9 incl. Delete cleanup); package validation battle-tested PASS; `submit-readiness` corrected to a page-driven worksheet and `path-declarative-atk` `atk new` flag fixed; App Compliance reframed Optional/非ブロッカー (PR #16 → #17, agent-publishing 0.1.7).
