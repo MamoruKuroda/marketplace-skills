@@ -19,8 +19,8 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 
 ## Open PRs / Issues
 
-- Open: none. **PR #21 merged** (partner-center-onboarding v0.3.0 -- guide entry skill + two-skill model).
-- Earlier PRs merged (#1, #4, #6, #7, #8, #9, #10, #16, #17, #19, #21).
+- **Open: PR #23** (partner-center-guide §8 Store validation Must-fix, v0.4.0) -- in review. See the PC row above.
+- Earlier PRs merged (#1, #4, #6, #7, #8, #9, #10, #16, #17, #19, #21, #22).
 - Coordination issues: #2/#3/#5 closed; **#15 (P1b portal walk) ready to close** — walk complete, both fix PRs merged.
 
 ## WS-P1b outcome (publish-path portal walk, done 2026-06-25)

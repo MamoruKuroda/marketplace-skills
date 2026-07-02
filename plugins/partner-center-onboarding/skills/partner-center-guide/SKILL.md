@@ -1,7 +1,7 @@
 ---
 name: partner-center-guide
 description: |
-  Entry-point guide that helps a partner company contact or their account manager (PDM/PTS) self-serve Microsoft Partner Center onboarding -- from account registration, to tenant association, identity verification, and publishing a Copilot agent or SaaS offer to the Microsoft Marketplace. Triages where the user is stuck and answers with symptom -> cause -> next action plus an official Microsoft Learn link. Use for: registration / how to enroll, tenant (Entra ID) association failing, the order of Publisher Verification vs Attestation, Attestation item not found, Developer review failing (legal-name mismatch), verification stuck, offer/agent not appearing in Marketplace, publishing a Copilot agent (declarative vs custom engine), reselling via channel/CSP (REO / MPO), Marketplace fees / billing / Japan consumption tax. Also Japanese triggers: 登録方法 / テナント関連付けできない / Attestation が見つからない / 審査が通らない / REO MPO / 日本の消費税 / listing 審査で差し戻された / sign-up や Contact Us リンクが無いと指摘された / Store validation の Must-fix. Guidance only: never signs in, assigns roles, edits Entra, or submits on the user's behalf, and never asks for passwords or codes.
+  Entry-point guide that helps a partner company's point of contact, or the Microsoft account manager (PDM/PTS) working with them, self-serve Microsoft Partner Center onboarding -- from account registration, to tenant association, identity verification, and publishing a Copilot agent or SaaS offer to the Microsoft Marketplace. Triages where the user is stuck and answers with symptom -> cause -> next action plus an official Microsoft Learn link. Use for: registration / how to enroll, tenant (Entra ID) association failing, the order of Publisher Verification vs Attestation, Attestation item not found, Developer review failing (legal-name mismatch), verification stuck, offer/agent not appearing in Marketplace, publishing a Copilot agent (declarative vs custom engine), reselling via channel/CSP (REO / MPO), Marketplace fees / billing / Japan consumption tax. Also Japanese triggers: 登録方法 / テナント関連付けできない / Attestation が見つからない / 審査が通らない / REO MPO / 日本の消費税 / listing 審査で差し戻された / sign-up や Contact Us リンクが無いと指摘された / Store validation の Must-fix. Guidance only: never signs in, assigns roles, edits Entra, or submits on the user's behalf, and never asks for passwords or codes.
 user-invocable: true
 license: MIT
 metadata:
@@ -233,7 +233,7 @@ MPN→MAICPP / Azure AD→Entra ID / Commercial Marketplace→Microsoft Marketpl
 6. 「代理店／CSP 経由で売りたい。REO と MPO の違いと、日本の消費税はどうなる？」 → §3＋チートシート
 7. 「審査で『sign-up / Get Started / Contact Us / Help のリンクが無い』と差し戻された。どこを直す？」 → §8
 
-## 参照（一次ソース・fetch 検証済み 2026-06-29 / 提示前に再確認）
+## 参照（一次ソース・fetch 検証済み 2026-06-29、§8 追加分は 2026-07-02 / 提示前に再確認）
 
 - Marketplace アカウント作成/enroll（前提・2経路・CPP移行）: https://learn.microsoft.com/en-us/partner-center/marketplace/create-account ✅
 - Marketplace ユーザー/ロール（Owner/Manager がロール付与/付与手順）: https://learn.microsoft.com/en-us/partner-center/marketplace/user-roles ✅
