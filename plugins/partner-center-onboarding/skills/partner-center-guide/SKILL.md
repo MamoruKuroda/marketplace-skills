@@ -246,9 +246,6 @@ MPN→MAICPP / Azure AD→Entra ID / Commercial Marketplace→Microsoft Marketpl
 - アカウント検証（ブロック機能/3-5営業日/ロール）: https://learn.microsoft.com/en-us/partner-center/enroll/verification-responses ✅
 - マルチテナント関連付け（Global admin/Associate 手順）: https://learn.microsoft.com/en-us/partner-center/multi-tenant-account ✅
 - Publisher Attestation（80+項目/年次/Teams必須）: https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/attestation ✅
-- Teams Store 審査ガイドライン（§8: way forward/説明文/アイコン/サポートURL/EULA）: https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/appsource/prepare/teams-store-validation-guidelines ✅
-- エージェント審査ガイドライン（§8: 説明文の禁止事項/プロンプト/技術要件）: https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/appsource/prepare/review-copilot-validation-guidelines ✅
-- 商業マーケットプレイス認証ポリシー 1140（Teams）: https://learn.microsoft.com/en-us/legal/marketplace/certification-policies#1140-teams ✅
 - Agents SDK ハブ: https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/ ✅
 - 商流・税務の詳細: 同梱 `REO_MPO_CSP_tax_cheatsheet_JP.md`（一次ソース10本を内包）
 
