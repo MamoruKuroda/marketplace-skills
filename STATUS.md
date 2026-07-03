@@ -3,7 +3,7 @@
 > Single source of truth for "where are we across all workstreams." One screen.
 > Update this whenever a workstream changes phase, a PR opens/merges, or a decision is made.
 >
-> **Last updated:** 2026-07-02 by Copilot
+> **Last updated:** 2026-07-04 by Copilot
 
 ## Workstreams
 
@@ -11,7 +11,7 @@
 |----|-------|-------|-------|-------|-------------|
 | core | Plugin core (agent-publishing, 8 skills) | published v0.1.7 | ✅ live | — | — |
 | B | Declarative knowledge end-to-end verify | docs fix merged | ✅ usable-complete | #3 | optional: attach a real (non-sample) source — or nothing |
-| A | SaaS Tier-1 fulfillment backend | live dry-run done + documented | ✅ Tier-1 (A1) complete | #5 | optional: live L2 emulator run; otherwise done |
+| A | SaaS Tier-1 fulfillment backend | L2 synthetic E2E proven + documented | ✅ Tier-1 (A1) + L2 complete | #20 | tear down live env; merge PR #25; upstream doc-gap filed (emulator #68) |
 | P1b | Publish-path live portal walk (submit-readiness battle-test) | portal walk done + skills corrected | ✅ complete | #15 | optional: walk a second skill; otherwise done |
 | PC | partner-center-onboarding (onboarding triage + verification) | v0.4.0 in review (adds §8 review/validation) | 🟡 PR open | — | merge §8, then keep collecting trial feedback |
 
@@ -19,8 +19,10 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 
 ## Open PRs / Issues
 
-- **Open: PR #23** (partner-center-guide §8 Store validation Must-fix, v0.4.0) -- in review. See the PC row above.
-- Earlier PRs merged (#1, #4, #6, #7, #8, #9, #10, #16, #17, #19, #21, #22).
+- **Open: PR #25** (monetization-saas-offer L2 emulator gotchas + done-checklist) -- in review. See the A row above.
+- **Open: PR #24** (cowork dist zip sideload validation) -- in review.
+- WS-A L2 tracking: **#20 open**; upstream doc-gap filed as `microsoft/Commercial-Marketplace-SaaS-API-Emulator#68` (emulator webhook needs Accelerator `ValidateWebhookJwtToken=false`).
+- Earlier PRs merged (#1, #4, #6, #7, #8, #9, #10, #16, #17, #19, #21, #22, #23).
 - Coordination issues: #2/#3/#5 closed; **#15 (P1b portal walk) ready to close** — walk complete, both fix PRs merged.
 
 ## WS-P1b outcome (publish-path portal walk, done 2026-06-25)
@@ -40,6 +42,8 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 - `.NET 8` (LTS, EOL 2026-11-10) intentional; framework upgrades left to upstream (target .NET 10 LTS).
 
 ## Milestones (history)
+
+- 2026-07-04 — **WS-A L2 synthetic E2E proven**: drove the SaaS Accelerator through Resolve → Activate → **webhook → state-store sync** with the official SaaS API Emulator (no purchase). Full audit chain `None → PendingFulfillmentStart → PendingActivation → Subscribed → Unsubscribed` (outbound Activate + inbound webhook both proven). Root-caused the emulator webhook **HTTP 401**: the Accelerator's `ValidateWebhookJwtToken` requires the caller token's `appid`/`azp` to equal the fixed Microsoft Marketplace app id, which the emulator cannot mint → set `false` for L2, keep `true` in production. Operational gotchas + L2 done-checklist added to `monetization-saas-offer` (PR #25); upstream doc-gap filed (emulator #68). Live env pending teardown.
 
 - 2026-07-02 — **partner-center-guide §8 added (v0.4.0)**: new section "リスティング/コンテンツ審査でよく落ちる点 (Store validation Must-fix)" -- way forward links in 3 places (manifest + AppSource long description + first-run experience, policy 1140.1.4, put as markdown in the manifest description, no Partner Center form), manifest/listing name+description match, description prohibited content (1140.9), EULA/Privacy/Support URL auth-free, reject first-response, package (manifest id GUID / validDomains). Also §4 gains "wrong Offer type" as a second cause of a missing Attestation item. Driven by a real internal review case; all facts fetch-verified against Teams Store + agent validation guidelines. Cowork dist zip rebuilt.
 
