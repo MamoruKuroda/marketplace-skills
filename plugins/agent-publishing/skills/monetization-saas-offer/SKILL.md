@@ -3,7 +3,7 @@ name: monetization-saas-offer
 description: "(Backend B) Provisions the linked SaaS offer transaction plane that monetizes a Microsoft 365 Copilot agent: Entra multitenant app, SaaS fulfillment landing page + connection webhook, subscription-state store, entitlement, and optional metering. Grounded in Microsoft Learn; deploys via the Microsoft SaaS Accelerator (recommended Tier-1 route) or hand-rolled IaC through @git-ape. Invoked only when monetize == true."
 argument-hint: "Pricing model (flat rate / per user; metering optional, flat rate only), license management (publisher / Microsoft), env. Reads/writes publishing-ledger.json backend.monetization."
 user-invocable: true
-last_updated: "2026-06-19"
+last_updated: "2026-07-04"
 ---
 
 # Backend B: Monetization via Linked SaaS Offer
@@ -179,6 +179,33 @@ does not list. Confirm these before deploying:
    can occur (in this run, East US and West US 2). **Check current SQL availability for your target
    region** and choose one that allows **both** App Service and SQL. In this run, West US 3 allowed both.
 
+### L2 emulator run — operational gotchas (from a real synthetic E2E)
+
+The prerequisites above get the Accelerator *deployed*; the items below are what surfaced while
+actually driving Resolve → Activate → **webhook → state-store sync** with the emulator. Each row is
+**symptom → fix (test) → why → production answer**. All values are anonymized — use placeholders
+(`NAME-portal`, `NAME-admin`, `<RG>`, `<region>`); never write real tenant/subscription/resource IDs.
+
+| Symptom | Fix (emulator run only) | Why | Production answer |
+| --- | --- | --- | --- |
+| **Webhook returns HTTP 401; the state store never syncs**, even though the emulator's own UI shows the change succeeded | Set `ValidateWebhookJwtToken=false` in the Accelerator's `ApplicationConfiguration` table, then **restart the portal app** | The Accelerator's webhook JWT validator requires the caller token's `appid`/`azp` to equal the fixed Microsoft Marketplace app id `20e940b3-4c77-4b0b-9a53-9e16a1b010a7`; the emulator cannot mint a token with that claim, so every emulator-fired webhook is rejected. ([pc-saas-fulfillment-webhook]) | **Keep `true`.** Real Microsoft-sent webhooks satisfy the check; this is an emulator-only concession. Filed upstream as [saas-emulator-issue-68]. |
+| Intermittent HTTP 500 after it was working (Key Vault `ForbiddenByConnection` / SQL firewall block) | Re-enable public network access on **both** Key Vault and SQL before each operation batch | A subscription-level governance policy periodically re-disables `publicNetworkAccess` | Use **private endpoints** for KV and SQL; do not depend on public network access |
+| App settings hold literal secrets (connection string, client secret) | For the throwaway spike these were set as **direct literal values** to sidestep KV-networking flakiness | Fastest way to unblock a disposable test env | Use **Key Vault references** for the connection string and client secret |
+| Admin/publisher portal (`NAME-admin`) returns 500 | Apply the **same** non-code fixes as the landing page (`NAME-portal`): literal connection string + client secret, repoint the fulfillment base URL at the emulator, restart — **no code rebuild** | AdminSite shares the same config surface and its sign-in authority already targets the specific tenant | Same as landing page (KV refs + private endpoints) |
+| Emulator serves HTTP but the Accelerator calls out over HTTPS | Put a small TLS reverse-proxy in front of the emulator and point `SaaSApiConfiguration__FulFillmentAPIBaseURL` at the HTTPS front | The Accelerator's outbound Fulfillment calls expect a TLS endpoint | N/A — production talks to the real Microsoft Fulfillment API over HTTPS |
+| A webhook action is rejected as invalid | Fire only actions valid for the current state: `Suspend`/`Renew` require `Subscribed`; `Reinstate` requires `Suspended`; `Unsubscribe` requires `Subscribed` or `Suspended` | The emulator enforces the same lifecycle state-machine | Same state-machine applies in production ([pc-saas-fulfillment-life-cycle]) |
+
+**L2 "done" checklist** (what proves the synthetic E2E, beyond mere liveness):
+
+1. The state-store subscription row walks the lifecycle — `→ PendingFulfillmentStart → …(Activate)… → Subscribed` — then a **webhook-driven** transition (e.g. `Subscribed → Unsubscribed`).
+2. The **emulator container log shows `Webhook response 200`** for that action. A `401` there means JWT validation is still on (see row 1) and the store did **not** sync.
+3. A new **audit-log row** records the webhook-driven transition — this is the inbound half (Microsoft→publisher state sync), distinct from the outbound Activate.
+
+> **Security note:** the literal-secret, public-access, and `ValidateWebhookJwtToken=false` states above
+> are **deliberate throwaway-test conveniences**. Never carry them into a persistent or internet-exposed
+> deployment — the *production answer* column is the target state. Tear the resource group down once the
+> L2 check is complete.
+
 
 
 ---
@@ -342,6 +369,7 @@ Delegated Azure deployment (not a Microsoft Learn source):
 Tier-1 build route (a) — Accelerator (not Microsoft Learn sources):
 - [saas-accelerator]: https://github.com/Azure/Commercial-Marketplace-SaaS-Accelerator (MIT; latest release 8.2.1; last updated 2026-06-10; targets .NET 8)
 - [saas-api-emulator]: https://github.com/microsoft/Commercial-Marketplace-SaaS-API-Emulator (Fulfillment API emulator for token-free A1 testing)
+- [saas-emulator-issue-68]: https://github.com/microsoft/Commercial-Marketplace-SaaS-API-Emulator/issues/68 (fetched 2026-07-04, HTTP 200 — upstream doc-gap report: emulator webhooks require the Accelerator's `ValidateWebhookJwtToken=false`)
 
 Framework lifecycle:
 - [dotnet-lifecycle]: https://learn.microsoft.com/en-us/lifecycle/products/microsoft-net-and-net-core (.NET 8 LTS, EOL 2026-11-10; .NET 10 LTS to 2028-11-14)
