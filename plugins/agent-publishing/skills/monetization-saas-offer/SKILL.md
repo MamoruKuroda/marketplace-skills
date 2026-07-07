@@ -3,7 +3,7 @@ name: monetization-saas-offer
 description: "(Backend B) Provisions the linked SaaS offer transaction plane that monetizes a Microsoft 365 Copilot agent: Entra multitenant app, SaaS fulfillment landing page + connection webhook, subscription-state store, entitlement, and optional metering. Grounded in Microsoft Learn; deploys via the Microsoft SaaS Accelerator (recommended Tier-1 route) or hand-rolled IaC through @git-ape. Invoked only when monetize == true."
 argument-hint: "Pricing model (flat rate / per user; metering optional, flat rate only), license management (publisher / Microsoft), env. Reads/writes publishing-ledger.json backend.monetization."
 user-invocable: true
-last_updated: "2026-07-04"
+last_updated: "2026-07-07"
 ---
 
 # Backend B: Monetization via Linked SaaS Offer
@@ -162,14 +162,21 @@ purchase. Verify at the level the dry-run allows:
 Standing up the Accelerator's `deployment/Deploy.ps1` surfaced prerequisites the upstream README
 does not list. Confirm these before deploying:
 
-1. **.NET 8 SDK** installed (the script aborts if `dotnet --version` isn't 8.x; `global.json` pins 8.0.x).
+1. **.NET 8 SDK** installed (the script aborts if `dotnet --version` isn't 8.x). On a machine with a
+   newer SDK **also** installed, bare `dotnet --version` returns the highest (e.g. `10.x`) and the
+   script's `.StartsWith('8.')` check aborts even though 8.x is present. The repo's `global.json` pins
+   8.0.x, so **run `Deploy.ps1` from inside the cloned repo** (where `global.json` applies) and confirm
+   with `dotnet --list-sdks` that an 8.x SDK is listed.
 2. **`dotnet-ef`** global tool (`dotnet tool install --global dotnet-ef`) — used to generate the DB schema.
 3. **PowerShell 7.x (pwsh), not Windows PowerShell 5.1.** Under `$ErrorActionPreference='Stop'`, the
    script's az pre-checks (e.g. `az keyvault show` on a not-yet-created RG) raise a terminating
    `NativeCommandError` in 5.1; pwsh 7 tolerates the non-zero exit.
 4. **DB schema apply:** the script's `Invoke-Sqlcmd` (SqlServer module) can throw a `TdsParser`
-   type-initializer error under pwsh 7. Workaround: apply `script.sql` with **go-sqlcmd**
-   (`sqlcmd --authentication-method ActiveDirectoryDefault -i script.sql`) using your `az login` context.
+   type-initializer error under pwsh 7 — and even on 8.2.1 the deploy can stop at *"Execute SQL
+   schema/data script"* before it publishes the app code. Workaround: apply `script.sql` (emitted
+   under `deployment/`) with **go-sqlcmd** using your `az login` context and the
+   **`ActiveDirectoryAzCli`** auth method (verified working — do **not** mix with `-G`):
+   `sqlcmd -S <prefix>-sql.database.windows.net -d <prefix>AMPSaaSDB --authentication-method=ActiveDirectoryAzCli -i script.sql`.
 5. **App Service quota is subscription/region/time-specific** — it is **not** a fixed regional fact.
    Some subscriptions show `Total VMs = 0` for App Service in a given region (in this dry-run, that
    was East US 2 and Japan East), so B1 creation fails there. **Verify your own quota** (e.g.
@@ -178,6 +185,152 @@ does not list. Confirm these before deploying:
 6. **SQL Server provisioning is also region-gated and time-varying** — `RegionDoesNotAllowProvisioning`
    can occur (in this run, East US and West US 2). **Check current SQL availability for your target
    region** and choose one that allows **both** App Service and SQL. In this run, West US 3 allowed both.
+   The SQL server FQDN the script emits follows `<prefix>-sql.database.windows.net` (confirmed).
+7. **Clone a release tag, not `main`.** `main` HEAD can carry post-release commits that break
+   `Deploy.ps1`; use the latest stable tag: `git clone --branch 8.2.1 --depth 1 <accelerator-repo>`.
+8. **`Deploy.ps1` line ~214 uses a retired AzureRM cmdlet.** In an otherwise all-`az`-CLI script it
+   calls `Get-AzureRmSqlServer` (AzureRM was retired 2024); with no Az PowerShell module present this
+   is a `CommandNotFound` that aborts the run right after *"Starting SaaS Accelerator Deployment"*.
+   One-line patch: replace it with
+   `$sql_exists = $(az sql server show --name $SQLServerName --resource-group $ResourceGroupForDeployment 2>$null)`.
+9. **Entra app-registration is subject to tenant governance.** `Deploy.ps1` registers three Entra apps
+   (Fulfillment single-tenant, Admin, and a **multi-tenant** "Landing" app) and resets a client secret.
+   Some org tenants enforce policies that **cap secret lifetime** (the script's default request, e.g.
+   `--years 2`, may be rejected) and/or **disallow multi-tenant audiences**
+   (`AzureADandPersonalMicrosoftAccount`) — leaving the Landing app uncreated and its client id empty.
+   **Before deploying, confirm with your tenant admin:** (a) you hold app-registration rights
+   (Application Administrator / Global Admin may be required), (b) your allowed secret lifetime, and
+   (c) whether multi-tenant audiences are permitted — then adjust the `Deploy.ps1` parameters to match.
+
+### L2 provisioning — exact command sequence (snapshot 2026-07-07)
+
+> **Snapshot — re-verify against upstream before running.** The commands below are a
+> point-in-time capture, **cold-start re-validated 2026-07-07** (a from-scratch rebuild following only
+> this runbook — which surfaced prereqs 7–9 and the emulator Dockerfile fix below). Treat them as a
+> *layer on top of* the upstream official installers, whose base steps and parameter defaults may
+> drift: the Accelerator [Installation-Instructions.md][saas-accelerator-install] and the emulator
+> [launching.md][saas-emulator-launching] / [integration.md][saas-emulator-integration]. Re-read those
+> first; use the sequence here for the parts they don't spell out. All identifiers are placeholders
+> (`<prefix>`, `<rg>`, `<region>`, `<admin-upn>`, `<tenant>`, `<sub>`) — never write real values.
+
+Prereqs (above) done and `az login` on the target subscription:
+
+**1. Deploy the Accelerator** (landing + admin portals, App Service Plan, SQL `AMPSaaSDB`, Key Vault,
+VNet, and the three Entra apps) via its own installer. Clone the **release tag** (see prereq 7) and
+apply the **line-214 patch** (prereq 8) first. From the cloned repo's `deployment/` folder:
+
+```powershell
+git clone --branch 8.2.1 --depth 1 https://github.com/Azure/Commercial-Marketplace-SaaS-Accelerator.git
+# then apply the prereq-8 one-line patch to deployment/Deploy.ps1 before running:
+./Deploy.ps1 `
+  -WebAppNamePrefix "<prefix>" `        # ≤21 chars, becomes <prefix>-portal / <prefix>-admin
+  -ResourceGroupForDeployment "<rg>" `
+  -PublisherAdminUsers "<admin-upn>" `
+  -Location "<region>" `                # region that allows BOTH App Service AND SQL (see prereqs 5–6)
+  -TenantID "<tenant>" `
+  -AzureSubscriptionID "<sub>"
+```
+
+**2. Apply the DB schema** if the script's `Invoke-Sqlcmd` step fails (see prereq 4) — use go-sqlcmd
+with your `az login` context (the script emits `script.sql` under `deployment/`):
+
+```powershell
+sqlcmd -S <prefix>-sql.database.windows.net -d <prefix>AMPSaaSDB `
+  --authentication-method=ActiveDirectoryAzCli -i script.sql
+```
+
+**3. Build & host the emulator** (image → ACR → ACI, port 80 exposed, capture FQDN). Clone the emulator
+repo; its `docker/Dockerfile` (`FROM node:18-alpine3.16`, `ENV PORT=80`) has a
+`RUN npm install -g npm` line that pulls **npm@11** (requires node ≥20) and breaks `az acr build`
+— **delete that one line** (the bundled npm 9 builds fine), then:
+
+```powershell
+az acr create -g <rg> -n <acrname> --sku Basic --admin-enabled true
+az acr build -r <acrname> -t marketplace-api-emulator:latest -f docker/Dockerfile .
+az container create -g <rg> -n <prefix>-emu `
+  --image <acrname>.azurecr.io/marketplace-api-emulator:latest `
+  --registry-login-server <acrname>.azurecr.io `
+  --registry-username $(az acr credential show -n <acrname> --query username -o tsv) `
+  --registry-password $(az acr credential show -n <acrname> --query 'passwords[0].value' -o tsv) `
+  --dns-name-label <prefix>emu --ports 80 --os-type Linux --cpu 1 --memory 1 `
+  --environment-variables PORT=80 `
+    LANDING_PAGE_URL=https://<prefix>emutls.<region>.azurecontainer.io/landing.html
+# emulator FQDN → http://<prefix>emu.<region>.azurecontainer.io  (port 80; this is <emulator-FQDN>)
+# LANDING_PAGE_URL must be the HTTPS TLS-front FQDN (step 4), not the http emulator FQDN — the
+# browser/Accelerator hit the front, not the emulator directly. (Set it up front; the front FQDN
+# is deterministic from <prefix>emutls.)
+```
+
+**4. Put a TLS front over the emulator** (the Accelerator calls Fulfillment over HTTPS; the emulator
+serves HTTP — see the gotcha table). A one-container Caddy ACI is enough. `Caddyfile`:
+
+```text
+<prefix>emutls.<region>.azurecontainer.io {
+    reverse_proxy http://<prefix>emu.<region>.azurecontainer.io {
+        header_up Host <prefix>emu.<region>.azurecontainer.io
+    }
+}
+```
+
+Deploy Caddy as a second ACI via `az container create -g <rg> --file caddy-aci.yaml`, where
+`caddy-aci.yaml` mounts the `Caddyfile` as a base64 secret volume (verified working — Caddy
+auto-provisions a Let's Encrypt cert, and `https://<prefix>emutls.../landing.html` returns 200):
+
+```yaml
+apiVersion: 2019-12-01
+location: <region>
+name: <prefix>-emutls
+properties:
+  osType: Linux
+  restartPolicy: Always
+  ipAddress:
+    type: Public
+    dnsNameLabel: <prefix>emutls
+    ports:
+    - { protocol: tcp, port: 80 }
+    - { protocol: tcp, port: 443 }
+  containers:
+  - name: caddy
+    properties:
+      image: caddy:2-alpine
+      resources: { requests: { cpu: 1, memoryInGB: 1.0 } }
+      ports:
+      - { port: 80 }
+      - { port: 443 }
+      volumeMounts:
+      - { name: caddyfile, mountPath: /etc/caddy }
+  volumes:
+  - name: caddyfile
+    secret:
+      Caddyfile: <base64 of the Caddyfile above>
+```
+
+The HTTPS front `https://<prefix>emutls.<region>.azurecontainer.io` is what G1 points the portal at.
+
+**5. Disable webhook JWT validation + restart** (the 401 gotcha — emulator-only), then restart both apps:
+
+```powershell
+sqlcmd -S <prefix>-sql.database.windows.net -d <prefix>AMPSaaSDB `
+  --authentication-method=ActiveDirectoryAzCli `
+  -Q "UPDATE ApplicationConfiguration SET Value='false' WHERE Name='ValidateWebhookJwtToken'"
+az webapp restart -g <rg> -n <prefix>-portal
+az webapp restart -g <rg> -n <prefix>-admin
+```
+
+**6. Prep a reset proc** so the synthetic run can be re-driven cleanly (optional but handy for demos):
+
+```sql
+CREATE OR ALTER PROCEDURE dbo.DataCleanup AS
+BEGIN
+  SET NOCOUNT ON;
+  DELETE FROM SubscriptionAuditLogs; DELETE FROM Subscriptions;
+  DELETE FROM Users; DELETE FROM Plans; DELETE FROM Offers;
+END
+```
+
+The four **UI wiring gates** (portal `FulFillmentAPIBaseURL` = `<emulator-TLS-FQDN>/api`; emulator
+Webhook + Landing Page URLs = the portal domain; synthetic purchase; webhook op) are in the
+done-checklist below and detailed in [integration.md][saas-emulator-integration].
 
 ### L2 emulator run — operational gotchas (from a real synthetic E2E)
 
@@ -266,6 +419,11 @@ Tiers are additive. They live in Layers 1–2; Layer 3 is never code.
   for custom dimensions. **Constraint: flat-rate plans only; never attach metering to a per-user plan.**
   Only emit usage above the base fee; one event per hour per dimension per resource (the SaaS
   `subscriptionId`); TLS 1.2; `api-version=2018-08-31`. ([saas-metered-billing], [marketplace-metering-service-apis])
+  > **Not demoable via the SaaS API Emulator.** The emulator implements only the Fulfillment APIs v2
+  > (landing / activate / update / suspend-reinstate / webhook); it has **no** metering / usage-event
+  > support. The Marketplace Metering Service API requires a real subscription and posts real usage to
+  > Microsoft's live metering endpoint. Keep metering **conceptual** at L2; a live metering demo is a
+  > separate L3 (real purchase) task, implemented against the real endpoint.
 
 WAF 5-pillar baseline still applies to the deployed backend: tenant isolation, IaC, Key Vault, CI/CD,
 encryption, compliance.
@@ -368,7 +526,10 @@ Delegated Azure deployment (not a Microsoft Learn source):
 
 Tier-1 build route (a) — Accelerator (not Microsoft Learn sources):
 - [saas-accelerator]: https://github.com/Azure/Commercial-Marketplace-SaaS-Accelerator (MIT; latest release 8.2.1; last updated 2026-06-10; targets .NET 8)
+- [saas-accelerator-install]: https://github.com/Azure/Commercial-Marketplace-SaaS-Accelerator/blob/main/docs/Installation-Instructions.md (fetched 2026-07-07, HTTP 200 — Deploy.ps1 base steps)
 - [saas-api-emulator]: https://github.com/microsoft/Commercial-Marketplace-SaaS-API-Emulator (Fulfillment API emulator for token-free A1 testing)
+- [saas-emulator-launching]: https://github.com/microsoft/Commercial-Marketplace-SaaS-API-Emulator/blob/main/docs/launching.md (fetched 2026-07-07, HTTP 200 — build image, host on ACI, port 80, LANDING_PAGE_URL)
+- [saas-emulator-integration]: https://github.com/microsoft/Commercial-Marketplace-SaaS-API-Emulator/blob/main/docs/integration.md (fetched 2026-07-07, HTTP 200 — wiring emulator ↔ Accelerator)
 - [saas-emulator-issue-68]: https://github.com/microsoft/Commercial-Marketplace-SaaS-API-Emulator/issues/68 (fetched 2026-07-04, HTTP 200 — upstream doc-gap report: emulator webhooks require the Accelerator's `ValidateWebhookJwtToken=false`)
 
 Framework lifecycle:
