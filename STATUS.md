@@ -3,7 +3,7 @@
 > Single source of truth for "where are we across all workstreams." One screen.
 > Update this whenever a workstream changes phase, a PR opens/merges, or a decision is made.
 >
-> **Last updated:** 2026-07-04 by Copilot
+> **Last updated:** 2026-07-07 by Copilot
 
 ## Workstreams
 
@@ -11,7 +11,7 @@
 |----|-------|-------|-------|-------|-------------|
 | core | Plugin core (agent-publishing, 8 skills) | published v0.1.7 | ✅ live | — | — |
 | B | Declarative knowledge end-to-end verify | docs fix merged | ✅ usable-complete | #3 | optional: attach a real (non-sample) source — or nothing |
-| A | SaaS Tier-1 fulfillment backend | L2 synthetic E2E proven + documented | ✅ Tier-1 (A1) + L2 complete | #20 | tear down live env; merge PR #25; upstream doc-gap filed (emulator #68) |
+| A | SaaS Tier-1 fulfillment backend | L2 proven + runbook cold-start re-validated | ✅ Tier-1 (A1) + L2 complete | #20 | merge PR #26 (self-complete provisioning runbook); env torn down |
 | P1b | Publish-path live portal walk (submit-readiness battle-test) | portal walk done + skills corrected | ✅ complete | #15 | optional: walk a second skill; otherwise done |
 | PC | partner-center-onboarding (onboarding triage + verification) | v0.4.0 in review (adds §8 review/validation) | 🟡 PR open | — | merge §8, then keep collecting trial feedback |
 
@@ -19,7 +19,8 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 
 ## Open PRs / Issues
 
-- **Open: PR #25** (monetization-saas-offer L2 emulator gotchas + done-checklist) -- in review. See the A row above.
+- **Open: PR #26** (monetization-saas-offer self-complete L2 provisioning command sequence) -- in review. See the A row above.
+- PR #25 (L2 emulator gotchas + done-checklist) -- **merged** (`f140189`).
 - **Open: PR #24** (cowork dist zip sideload validation) -- in review.
 - WS-A L2 tracking: **#20 open**; upstream doc-gap filed as `microsoft/Commercial-Marketplace-SaaS-API-Emulator#68` (emulator webhook needs Accelerator `ValidateWebhookJwtToken=false`).
 - Earlier PRs merged (#1, #4, #6, #7, #8, #9, #10, #16, #17, #19, #21, #22, #23).
@@ -42,6 +43,17 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 - `.NET 8` (LTS, EOL 2026-11-10) intentional; framework upgrades left to upstream (target .NET 10 LTS).
 
 ## Milestones (history)
+
+- 2026-07-07 — **WS-A runbook cold-start re-validated**: rebuilt L2 from scratch following only the
+  merged runbook, proving it was a gotchas-layer, not a self-sufficient provisioning guide. Surfaced
+  and fixed 6 blockers now folded into the runbook (PR #26): clone must pin release tag `8.2.1` (not
+  `main`); `Deploy.ps1` line ~214 uses retired `Get-AzureRmSqlServer` → patch to `az sql server show`;
+  tenant governance can block the multi-tenant Landing app registration + the `--years 2` secret
+  lifetime (new generalized Entra-app prereq); deploy can stop at "Execute SQL schema" before code
+  publish → apply `script.sql` via **go-sqlcmd `ActiveDirectoryAzCli`**; emulator `docker/Dockerfile`
+  `RUN npm install -g npm` breaks `az acr build` → remove the line; `LANDING_PAGE_URL` must be the
+  **https Caddy TLS-front FQDN**, not the http emulator FQDN. Real `caddy-aci.yaml` inlined. Billable
+  rebuild torn down same day (`az group exists`→false, AD apps deleted, billing stopped). Scout-brokered via #20.
 
 - 2026-07-04 — **WS-A L2 synthetic E2E proven**: drove the SaaS Accelerator through Resolve → Activate → **webhook → state-store sync** with the official SaaS API Emulator (no purchase). Full audit chain `None → PendingFulfillmentStart → PendingActivation → Subscribed → Unsubscribed` (outbound Activate + inbound webhook both proven). Root-caused the emulator webhook **HTTP 401**: the Accelerator's `ValidateWebhookJwtToken` requires the caller token's `appid`/`azp` to equal the fixed Microsoft Marketplace app id, which the emulator cannot mint → set `false` for L2, keep `true` in production. Operational gotchas + L2 done-checklist added to `monetization-saas-offer` (PR #25); upstream doc-gap filed (emulator #68). Live env pending teardown.
 
