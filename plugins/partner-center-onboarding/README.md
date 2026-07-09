@@ -20,6 +20,15 @@ tenant/App-ID mismatches, publisher/business-existence evidence, and "what stage
 anxiety. These were distilled from real partner support threads and collapsed into a single
 entry-point triage plus a deep verification specialist.
 
+## Who this is for
+
+For software companies and startups (SDC/ISV) onboarding to Partner Center and the
+Marketplace, and anyone helping those teams get set up. It's grounded entirely in
+**public Microsoft documentation**, so both the company publishing and the people
+helping them can use it freely. If your company is already onboarded or has an
+Offer live — or you're its Microsoft contact — you may not need it, though partners
+who help others publish still find it a useful reference.
+
 ## Two-skill model: one entrance, one specialist
 
 - **`partner-center-guide` (entry, `user-invocable: true`)** -- broad triage: registration,
