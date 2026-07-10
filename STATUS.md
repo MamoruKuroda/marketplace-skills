@@ -3,7 +3,7 @@
 > Single source of truth for "where are we across all workstreams." One screen.
 > Update this whenever a workstream changes phase, a PR opens/merges, or a decision is made.
 >
-> **Last updated:** 2026-07-07 by Copilot
+> **Last updated:** 2026-07-10 by Copilot
 
 ## Workstreams
 
@@ -11,7 +11,7 @@
 |----|-------|-------|-------|-------|-------------|
 | core | Plugin core (agent-publishing, 8 skills) | published v0.1.7 | ✅ live | — | — |
 | B | Declarative knowledge end-to-end verify | docs fix merged | ✅ usable-complete | #3 | optional: attach a real (non-sample) source — or nothing |
-| A | SaaS Tier-1 fulfillment backend | L2 proven + runbook cold-start re-validated | ✅ Tier-1 (A1) + L2 complete | #20 | merge PR #26 (self-complete provisioning runbook); env torn down |
+| A | SaaS Tier-1 fulfillment backend | L2 proven through product UI (cold-start) + runbook re-validated | ✅ Tier-1 (A1) + L2 complete | #20 | merge this PR (admin-URL G1 fix); re-run env torn down |
 | P1b | Publish-path live portal walk (submit-readiness battle-test) | portal walk done + skills corrected | ✅ complete | #15 | optional: walk a second skill; otherwise done |
 | PC | partner-center-onboarding (onboarding triage + verification) | v0.4.0 in review (adds §8 review/validation) | 🟡 PR open | — | merge §8, then keep collecting trial feedback |
 
@@ -19,11 +19,12 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 
 ## Open PRs / Issues
 
-- **Open: PR #26** (monetization-saas-offer self-complete L2 provisioning command sequence) -- in review. See the A row above.
+- PR #26 (monetization-saas-offer self-complete L2 provisioning command sequence) -- **merged**.
+- **Open:** admin-portal Fulfillment-URL G1 fix (repoint *both* portal + admin) + L2 re-run milestone -- this PR.
 - PR #25 (L2 emulator gotchas + done-checklist) -- **merged** (`f140189`).
 - **Open: PR #24** (cowork dist zip sideload validation) -- in review.
 - WS-A L2 tracking: **#20 open**; upstream doc-gap filed as `microsoft/Commercial-Marketplace-SaaS-API-Emulator#68` (emulator webhook needs Accelerator `ValidateWebhookJwtToken=false`).
-- Earlier PRs merged (#1, #4, #6, #7, #8, #9, #10, #16, #17, #19, #21, #22, #23).
+- Earlier PRs merged (#1, #4, #6, #7, #8, #9, #10, #16, #17, #19, #21, #22, #23, #25, #26).
 - Coordination issues: #2/#3/#5 closed; **#15 (P1b portal walk) ready to close** — walk complete, both fix PRs merged.
 
 ## WS-P1b outcome (publish-path portal walk, done 2026-06-25)
@@ -43,6 +44,15 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 - `.NET 8` (LTS, EOL 2026-11-10) intentional; framework upgrades left to upstream (target .NET 10 LTS).
 
 ## Milestones (history)
+
+- 2026-07-10 — **WS-A L2 re-run through the product UI (cold-start)** surfaced the admin-portal
+  Fulfillment-URL gap: on a fresh deploy, **Activate failed with HTTP 500 "Token invalid or expired"**
+  because the installer leaves the *admin* app's `SaaSApiConfiguration__FulFillmentAPIBaseURL` on the
+  real `marketplaceapi.microsoft.com` while G1 only repointed the customer portal — Resolve (portal)
+  worked, Activate (admin) did not. Promoted the fulfillment-URL repoint to an explicit **both-apps**
+  G1 step and sharpened the gotcha table in `monetization-saas-offer` (this PR). Re-confirmed the full
+  audit chain through the product (`None → PendingFulfillmentStart → PendingActivation → Subscribed →
+  Unsubscribed`). Billable re-run env torn down same day.
 
 - 2026-07-07 — **WS-A runbook cold-start re-validated**: rebuilt L2 from scratch following only the
   merged runbook, proving it was a gotchas-layer, not a self-sufficient provisioning guide. Surfaced

@@ -3,7 +3,7 @@ name: monetization-saas-offer
 description: "(Backend B) Provisions the linked SaaS offer transaction plane that monetizes a Microsoft 365 Copilot agent: Entra multitenant app, SaaS fulfillment landing page + connection webhook, subscription-state store, entitlement, and optional metering. Grounded in Microsoft Learn; deploys via the Microsoft SaaS Accelerator (recommended Tier-1 route) or hand-rolled IaC through @git-ape. Invoked only when monetize == true."
 argument-hint: "Pricing model (flat rate / per user; metering optional, flat rate only), license management (publisher / Microsoft), env. Reads/writes publishing-ledger.json backend.monetization."
 user-invocable: true
-last_updated: "2026-07-07"
+last_updated: "2026-07-10"
 ---
 
 # Backend B: Monetization via Linked SaaS Offer
@@ -328,9 +328,18 @@ BEGIN
 END
 ```
 
-The four **UI wiring gates** (portal `FulFillmentAPIBaseURL` = `<emulator-TLS-FQDN>/api`; emulator
-Webhook + Landing Page URLs = the portal domain; synthetic purchase; webhook op) are in the
-done-checklist below and detailed in [integration.md][saas-emulator-integration].
+The four **UI wiring gates** (`FulFillmentAPIBaseURL` = `<emulator-TLS-FQDN>/api` on **both**
+`<prefix>-portal` **and** `<prefix>-admin` — the installer leaves *admin* on the real
+Marketplace API, and **Activate is issued by the admin app**, so repointing only the portal makes
+Activate fail; see the admin-URL gotcha row below; emulator Webhook + Landing Page URLs = the portal
+domain; synthetic purchase; webhook op) are in the done-checklist below and detailed in
+[integration.md][saas-emulator-integration]. Explicitly:
+
+```powershell
+$emu = "https://<prefix>emutls.<region>.azurecontainer.io/api"
+az webapp config appsettings set -g <rg> -n <prefix>-portal --settings "SaaSApiConfiguration__FulFillmentAPIBaseURL=$emu"
+az webapp config appsettings set -g <rg> -n <prefix>-admin  --settings "SaaSApiConfiguration__FulFillmentAPIBaseURL=$emu"
+```
 
 ### L2 emulator run — operational gotchas (from a real synthetic E2E)
 
@@ -344,7 +353,7 @@ actually driving Resolve → Activate → **webhook → state-store sync** with 
 | **Webhook returns HTTP 401; the state store never syncs**, even though the emulator's own UI shows the change succeeded | Set `ValidateWebhookJwtToken=false` in the Accelerator's `ApplicationConfiguration` table, then **restart the portal app** | The Accelerator's webhook JWT validator requires the caller token's `appid`/`azp` to equal the fixed Microsoft Marketplace app id `20e940b3-4c77-4b0b-9a53-9e16a1b010a7`; the emulator cannot mint a token with that claim, so every emulator-fired webhook is rejected. ([pc-saas-fulfillment-webhook]) | **Keep `true`.** Real Microsoft-sent webhooks satisfy the check; this is an emulator-only concession. Filed upstream as [saas-emulator-issue-68]. |
 | Intermittent HTTP 500 after it was working (Key Vault `ForbiddenByConnection` / SQL firewall block) | Re-enable public network access on **both** Key Vault and SQL before each operation batch | A subscription-level governance policy periodically re-disables `publicNetworkAccess` | Use **private endpoints** for KV and SQL; do not depend on public network access |
 | App settings hold literal secrets (connection string, client secret) | For the throwaway spike these were set as **direct literal values** to sidestep KV-networking flakiness | Fastest way to unblock a disposable test env | Use **Key Vault references** for the connection string and client secret |
-| Admin/publisher portal (`NAME-admin`) returns 500 | Apply the **same** non-code fixes as the landing page (`NAME-portal`): literal connection string + client secret, repoint the fulfillment base URL at the emulator, restart — **no code rebuild** | AdminSite shares the same config surface and its sign-in authority already targets the specific tenant | Same as landing page (KV refs + private endpoints) |
+| **Admin portal Activate → HTTP 500 "Token invalid or expired"** (while Resolve on the landing page succeeded) | On `NAME-admin`, set `SaaSApiConfiguration__FulFillmentAPIBaseURL` to the emulator TLS front (`<emulator-TLS-FQDN>/api`) and restart — the installer leaves **admin** pointed at the real `https://marketplaceapi.microsoft.com/api` even after you repoint the portal | **Activate is issued by the admin app, Resolve by the portal** — so G1's fulfillment-URL repoint must hit *both* apps. While admin still targets the real Fulfillment API, its ISV client-credentials token (no Marketplace app-roles; the synthetic subscription is unknown to the real service) is rejected `401`, which `BaseApiService` surfaces to the UI as "Token invalid or expired" | Leave **admin** on the real Fulfillment API (`https://marketplaceapi.microsoft.com/api`); real Microsoft-issued tokens and real subscriptions succeed |
 | Emulator serves HTTP but the Accelerator calls out over HTTPS | Put a small TLS reverse-proxy in front of the emulator and point `SaaSApiConfiguration__FulFillmentAPIBaseURL` at the HTTPS front | The Accelerator's outbound Fulfillment calls expect a TLS endpoint | N/A — production talks to the real Microsoft Fulfillment API over HTTPS |
 | A webhook action is rejected as invalid | Fire only actions valid for the current state: `Suspend`/`Renew` require `Subscribed`; `Reinstate` requires `Suspended`; `Unsubscribe` requires `Subscribed` or `Suspended` | The emulator enforces the same lifecycle state-machine | Same state-machine applies in production ([pc-saas-fulfillment-life-cycle]) |
 
