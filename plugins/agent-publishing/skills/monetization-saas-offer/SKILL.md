@@ -494,13 +494,19 @@ Recommended shape for that follow-on work:
 - **Emulator strategy:** keep using the official emulator as the **token-free L2 test driver**;
   if modernization is needed there, prefer **upstream PRs** and keep a light fork only if the
   upstream stays unresponsive.
-- **Stack bias:** prefer **.NET** for the first sample so the landing page, webhook, state store,
-  and admin surface stay close to the Accelerator's C# lineage and the existing guidance in this
-  skill. A TypeScript-first rewrite is viable, but it widens the gap from the Tier-1 reference and
+- **Stack bias:** prefer **.NET 10 (LTS)** for the first sample so the landing page, webhook, state
+  store, and admin surface stay close to the Accelerator's C# lineage and the existing guidance in
+  this skill. The Accelerator targets .NET 8 today, but **.NET 8 LTS ends support on 2026-11-10**
+  while **.NET 10 LTS runs to 2028-11-14**, so a modernized sample should target .NET 10. A
+  TypeScript-first rewrite is viable, but it widens the gap from the Tier-1 reference and
   increases re-implementation work on day 1.
 - **LLM basis:** start with a **tool-calling chat layer over the sample's own fulfillment/admin
   endpoints**. Keep the tool boundary clean so a later move to a managed agent host remains
   possible without rewriting the fulfillment plane.
+- **Fulfillment API drift guardrail:** because the sample would re-implement the fulfillment
+  contract rather than inherit the Accelerator's code path, re-verify the Resolve / Activate /
+  webhook contract against the official Microsoft Learn docs at build time and treat the
+  Accelerator source as the behavioral reference so the sample does not drift from the real API.
 
 Minimal v0 "done" definition for that future sample:
 
