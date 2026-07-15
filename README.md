@@ -10,6 +10,33 @@ A [GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/agents/about-
 > submission-ready packages and checklists; they never submit to Partner Center for you, and never
 > deploy cloud resources without explicit confirmation.
 
+## Who this is for
+
+Built for anyone working through Partner Center toward publishing on the Microsoft
+Commercial Marketplace:
+
+- **Software companies and startups (SDC/ISV)** onboarding to Partner Center and the
+  Marketplace for the first time.
+- **Anyone helping those teams get set up** — for example a partner manager,
+  solution architect, or consultant supporting several companies at once.
+
+Everything here is grounded in **public Microsoft documentation** — no insider
+tools or private data — so you can read, share, and build on it freely, whether
+you're the company publishing or the person helping them publish.
+
+### Who this is not for
+
+If your company is already onboarded and signed up in Partner Center, or already
+has an Offer live on the Marketplace — or you're the Microsoft contact for such a
+company — you may not need this. Partners who help other companies publish, though,
+often find it a useful reference to keep on hand.
+
+The content is deliberately organized as small, focused skills rather than one
+large document, and captures the practical points that are easy to miss — what each
+Partner Center review step actually asks for, and country-specific company checks
+(in Japan, for example, submitting your official company registry extract and
+matching your registered address exactly).
+
 ## Plugins in this marketplace
 
 | Plugin | Purpose |
