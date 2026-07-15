@@ -3,7 +3,7 @@ name: monetization-saas-offer
 description: "(Backend B) Provisions the linked SaaS offer transaction plane that monetizes a Microsoft 365 Copilot agent: Entra multitenant app, SaaS fulfillment landing page + connection webhook, subscription-state store, entitlement, and optional metering. Grounded in Microsoft Learn; deploys via the Microsoft SaaS Accelerator (recommended Tier-1 route) or hand-rolled IaC through @git-ape. Invoked only when monetize == true."
 argument-hint: "Pricing model (flat rate / per user; metering optional, flat rate only), license management (publisher / Microsoft), env. Reads/writes publishing-ledger.json backend.monetization."
 user-invocable: true
-last_updated: "2026-07-10"
+last_updated: "2026-07-15"
 ---
 
 # Backend B: Monetization via Linked SaaS Offer
@@ -479,6 +479,54 @@ estimate, audit trail). Do not depend on any third-party skill set for the SaaS 
 
 Either route: this skill owns the decisions and the Partner Center technical-config values; the
 Azure deployment is performed by the Accelerator installer (a) or by `@git-ape` (b).
+
+## Planning note - modernized sample shape (issue #29)
+
+If a future milestone modernizes the **SaaS Accelerator + SaaS API Emulator** and adds an
+LLM/agent-assisted landing page plus publisher admin, treat that as a **planning/architecture**
+exercise first, not a deployment change to this skill.
+
+Recommended shape for that follow-on work:
+
+- **Deliverable home:** prefer a **new standalone sample repo**, not a long-lived fork of the
+  Accelerator. Use the Accelerator as the **MIT reference implementation** for the Tier-1
+  fulfillment plane, and keep the sample small enough that its own design stays legible.
+- **Emulator strategy:** keep using the official emulator as the **token-free L2 test driver**;
+  if modernization is needed there, prefer **upstream PRs** and keep a light fork only if the
+  upstream stays unresponsive.
+- **Stack bias:** prefer **.NET 10 (LTS)** for the first sample so the landing page, webhook, state
+  store, and admin surface stay close to the Accelerator's C# lineage and the existing guidance in
+  this skill. The Accelerator targets .NET 8 today, but **.NET 8 LTS ends support on 2026-11-10**
+  while **.NET 10 LTS runs to 2028-11-14**, so a modernized sample should target .NET 10. A
+  TypeScript-first rewrite is viable, but it widens the gap from the Tier-1 reference and
+  increases re-implementation work on day 1.
+- **LLM basis:** start with a **tool-calling chat layer over the sample's own fulfillment/admin
+  endpoints**. Keep the tool boundary clean so a later move to a managed agent host remains
+  possible without rewriting the fulfillment plane.
+- **Fulfillment API drift guardrail:** because the sample would re-implement the fulfillment
+  contract rather than inherit the Accelerator's code path, re-verify the Resolve / Activate /
+  webhook contract against the official Microsoft Learn docs at build time and treat the
+  Accelerator source as the behavioral reference so the sample does not drift from the real API.
+
+Minimal v0 "done" definition for that future sample:
+
+1. **Tier-1 flat-rate only** (no metering, no quantity branch).
+2. Buyer **SSO landing page** that explains the flow, resolves the purchase token, and activates
+   the subscription through the app's own backend.
+3. **Connection webhook + authoritative subscription-state store** with the same lifecycle checks
+   this skill already requires.
+4. Minimal **publisher admin**: read-only subscription inspection plus an explicit-confirm
+   **Activate** action.
+5. **Synthetic L2 proof** through the official emulator: Resolve -> Activate -> webhook ->
+   state-store sync.
+
+Guardrails for any LLM/agent layer:
+
+- The **state DB stays authoritative**; the model never invents entitlement or lifecycle state.
+- **State-changing actions require explicit confirmation** and call only the app's own backend
+  tools/endpoints.
+- Do **not** place purchase tokens, bearer tokens, secrets, or unnecessary PII in model context or
+  logs.
 
 ## Shared-resources contract
 

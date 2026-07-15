@@ -3,7 +3,7 @@
 > Single source of truth for "where are we across all workstreams." One screen.
 > Update this whenever a workstream changes phase, a PR opens/merges, or a decision is made.
 >
-> **Last updated:** 2026-07-10 by Copilot
+> **Last updated:** 2026-07-15 by Copilot
 
 ## Workstreams
 
@@ -12,6 +12,7 @@
 | core | Plugin core (agent-publishing, 8 skills) | published v0.1.7 | ✅ live | — | — |
 | B | Declarative knowledge end-to-end verify | docs fix merged | ✅ usable-complete | #3 | optional: attach a real (non-sample) source — or nothing |
 | A | SaaS Tier-1 fulfillment backend | L2 proven through product UI (cold-start) + runbook re-validated | ✅ Tier-1 (A1) + L2 complete | #20 | merge this PR (admin-URL G1 fix); re-run env torn down |
+| S | SaaS modernization + agent-first sample planning | repo-shape recommendation recorded; pending human ratification | 🟡 in progress | #29 | human ratifies with owner, then open a separate implementation issue/repo |
 | P1b | Publish-path live portal walk (submit-readiness battle-test) | portal walk done + skills corrected | ✅ complete | #15 | optional: walk a second skill; otherwise done |
 | PC | partner-center-onboarding (onboarding triage + verification) | v0.4.0 in review (adds §8 review/validation) | 🟡 PR open | — | merge §8, then keep collecting trial feedback |
 
@@ -53,6 +54,15 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
   G1 step and sharpened the gotcha table in `monetization-saas-offer` (this PR). Re-confirmed the full
   audit chain through the product (`None → PendingFulfillmentStart → PendingActivation → Subscribed →
   Unsubscribed`). Billable re-run env torn down same day.
+
+- 2026-07-15 — **WS-S planning recommendation recorded (#29)**: captured the planning-only recommendation in
+  `monetization-saas-offer`: for a future modernized sample with conversational landing + publisher
+  admin, prefer a **new standalone sample repo** over a long-lived Accelerator fork; keep the
+  official emulator as the **token-free L2 driver** and prefer upstream modernization PRs there; bias
+  the first sample toward **.NET 10 LTS** for parity with the Accelerator's Tier-1 plane while
+  avoiding the shorter .NET 8 support runway; define v0 as flat-rate-only landing + Resolve/Activate
+  + webhook/state-store sync + minimal read-mostly admin with explicit-confirm Activate. Recommendation
+  remains pending human ratification with the coordinating owner.
 
 - 2026-07-07 — **WS-A runbook cold-start re-validated**: rebuilt L2 from scratch following only the
   merged runbook, proving it was a gotchas-layer, not a self-sufficient provisioning guide. Surfaced
