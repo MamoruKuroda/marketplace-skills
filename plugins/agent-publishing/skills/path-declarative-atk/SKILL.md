@@ -172,8 +172,8 @@ atk install --file-path ./appPackage/build/appPackage.<env>.zip
 ## References (verify before quoting)
 
 - atk CLI command reference: https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/teams-toolkit-cli
-- App package anatomy: https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/agents-are-apps
-- Declarative agents overview: https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/agents-overview
+- App package anatomy: https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agents-are-apps
+- Declarative agents overview: https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agents-overview
 - CI/CD templates: https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/use-cicd-template
 - [declarative-agent-manifest-1.7] (capabilities array, `OneDriveAndSharePoint` `items_by_url`,
   `EmbeddedKnowledge` "not yet available", license note): https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/declarative-agent-manifest-1.7

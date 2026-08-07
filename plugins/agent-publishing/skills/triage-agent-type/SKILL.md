@@ -138,7 +138,7 @@ duplicate provisioning, and append an entry to `audit` for every state change.
 ## References (authoritative; verify before quoting)
 
 - Submission flow: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/add-in-submission-guide
-- Distribution matrix: https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/publish
-- Agent types (declarative vs custom engine): https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/agents-overview
+- Distribution matrix: https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/publish
+- Agent types (declarative vs custom engine): https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agents-overview
 - Monetization (linked SaaS offer): https://learn.microsoft.com/en-us/partner-center/marketplace-offers/artificial-intelligence-app-agent-publish-release
 - Monetize a Microsoft 365 agent: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/monetize-addins-through-microsoft-commercial-marketplace

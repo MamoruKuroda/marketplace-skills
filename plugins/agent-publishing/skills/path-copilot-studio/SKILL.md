@@ -55,6 +55,6 @@ then link it to the offer in Partner Center. Same Marketplace-program enrollment
 
 ## References (verify before quoting)
 
-- Distribution matrix (Copilot Studio rows): https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/publish
+- Distribution matrix (Copilot Studio rows): https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/publish
 - Make a multitenant agent available (Teams / M365 Copilot, preview): https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-microsoft-teams
 - Submission guide: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/add-in-submission-guide

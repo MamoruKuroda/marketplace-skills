@@ -85,5 +85,5 @@ atk package --env <env>   # -> ./appPackage/build/appPackage.<env>.zip
 
 - atk CLI (new/provision/deploy/validate/package): https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/teams-toolkit-cli
 - CI/CD (Azure SP auth, GitHub Actions): https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/use-cicd-template
-- Agents overview (custom engine): https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/agents-overview
-- Custom engine agent UX requirements: https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/publish
+- Agents overview (custom engine): https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agents-overview
+- Custom engine agent UX requirements: https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/publish

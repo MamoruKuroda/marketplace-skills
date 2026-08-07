@@ -189,8 +189,8 @@ in `publishing-ledger.json` (no secrets). The ledger is per-user/per-workspace.
 ## References
 
 - https://learn.microsoft.com/en-us/partner-center/marketplace-offers/add-in-submission-guide
-- https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/publish
-- https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/agents-overview
+- https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/publish
+- https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agents-overview
 - https://learn.microsoft.com/en-us/partner-center/marketplace-offers/artificial-intelligence-app-agent-publish-release
 - https://learn.microsoft.com/en-us/partner-center/marketplace-offers/monetize-addins-through-microsoft-commercial-marketplace
 
