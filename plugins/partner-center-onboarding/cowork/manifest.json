@@ -1,0 +1,29 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.28/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.28",
+  "version": "1.1.0",
+  "id": "fe619316-bf0b-43bf-b399-b6c9557df006",
+  "developer": {
+    "name": "Mamoru Kuroda",
+    "websiteUrl": "https://github.com/MamoruKuroda/marketplace-skills",
+    "privacyUrl": "https://github.com/MamoruKuroda/marketplace-skills",
+    "termsOfUseUrl": "https://learn.microsoft.com/en-us/legal/marketplace/msft-publisher-agreement"
+  },
+  "name": {
+    "short": "Partner Center Onboarding",
+    "full": "Partner Center Onboarding (Copilot Cowork skills)"
+  },
+  "description": {
+    "short": "Partner Center 登録〜本人確認〜公開を症状診断＋公式リンクで案内する日本語ガイド",
+    "full": "ISV やパートナーが Microsoft Marketplace へ公開する際の Partner Center オンボーディングを自走できるよう案内します。入口スキル partner-center-guide が広域トリアージ（登録・テナント関連付け・公開パス・REO/MPO/CSP・日本の消費税）を行い、アカウント検証が実際のブロッカーのときは内部スキル troubleshoot-account-verification に委譲して4条件へ収束させます。本人確認・審査は自動化できないため案内に徹する知識型スキルで、外部接続（コネクタ）は不要です。"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "accentColor": "#5C2D91",
+  "agentSkills": [
+    { "folder": "./skills/partner-center-guide" },
+    { "folder": "./skills/troubleshoot-account-verification" }
+  ]
+}

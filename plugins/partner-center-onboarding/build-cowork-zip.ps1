@@ -9,8 +9,9 @@ key outside name / description / license / metadata / compatibility, and caps ea
 SKILL.md at 20000 characters. This script strips the `user-invocable` line for the
 packaged copies only; the repo copies keep it for the CLI install path.
 
-Manifest + icons are taken from an existing dist zip (they are not stored loose in
-the repo). Run from anywhere; paths are resolved relative to this script.
+Manifest + icons are loose files under `cowork/` (manifest.json, color.png,
+outline.png) so packaging metadata such as the version bump is reviewable in a git
+diff. Run from anywhere; paths are resolved relative to this script.
 #>
 [CmdletBinding()]
 param(
@@ -20,6 +21,7 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
 $plugin = $PSScriptRoot
+$pkgsrc = Join-Path $plugin 'cowork'
 $dist   = Join-Path $plugin 'dist'
 $zip    = Join-Path $dist 'partner-center-onboarding-cowork.zip'
 $build  = Join-Path ([System.IO.Path]::GetTempPath()) ('pco-build-' + [guid]::NewGuid().ToString('N'))
@@ -28,14 +30,12 @@ $utf8   = New-Object System.Text.UTF8Encoding($false)   # no BOM
 try {
   New-Item -ItemType Directory -Path $build -Force | Out-Null
 
-  # 1) manifest.json + icons: pull from the current zip (source of truth for packaging metadata)
-  if (-not (Test-Path $zip)) { throw "Existing zip not found for manifest/icons: $zip" }
-  $tmpExtract = Join-Path $build '_from_zip'
-  [System.IO.Compression.ZipFile]::ExtractToDirectory($zip, $tmpExtract)
+  # 1) manifest.json + icons: loose files under cowork/ (source of truth for packaging metadata)
   foreach ($f in 'manifest.json','color.png','outline.png') {
-    Copy-Item (Join-Path $tmpExtract $f) (Join-Path $build $f) -Force
+    $srcFile = Join-Path $pkgsrc $f
+    if (-not (Test-Path $srcFile)) { throw "Packaging source file not found: $srcFile" }
+    Copy-Item $srcFile (Join-Path $build $f) -Force
   }
-  Remove-Item $tmpExtract -Recurse -Force
 
   # 2) skills: copy from repo, then strip disallowed frontmatter for Cowork
   Copy-Item (Join-Path $plugin 'skills') $build -Recurse -Force
