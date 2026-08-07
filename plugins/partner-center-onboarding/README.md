@@ -94,7 +94,7 @@ Tried it? Please file a quick **[Trial feedback issue](../../issues/new?template
 ## References (verify before quoting — labels drift)
 
 - Partner Center roles & permissions: https://learn.microsoft.com/en-us/partner-center/account-settings/permissions-overview
-- Distribution options: https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/publish
+- Distribution options: https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/publish
 - App submission guide: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/add-in-submission-guide
 - Open a developer account: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/open-a-developer-account
 - Cowork plugin development: https://learn.microsoft.com/en-us/microsoft-365/copilot/cowork/cowork-plugin-development

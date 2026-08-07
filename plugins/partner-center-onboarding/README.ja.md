@@ -82,7 +82,7 @@ copilot plugin install partner-center-onboarding@marketplace-skills
 ## 参考資料（引用前に必ず確認——表記は変わり得ます）
 
 - Partner Center のロールと権限: https://learn.microsoft.com/en-us/partner-center/account-settings/permissions-overview
-- 配布オプション: https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/publish
+- 配布オプション: https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/publish
 - アプリ提出ガイド: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/add-in-submission-guide
 - 開発者アカウントの開設: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/open-a-developer-account
 - Cowork プラグイン開発: https://learn.microsoft.com/en-us/microsoft-365/copilot/cowork/cowork-plugin-development

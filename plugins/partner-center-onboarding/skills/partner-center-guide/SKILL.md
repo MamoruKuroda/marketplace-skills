@@ -70,8 +70,8 @@ metadata:
   - **新規**（MAICPP 未登録）→ Partner Center enrollment ページで登録 → 職場アカウントでサインイン → Microsoft Publisher Agreement + MAICPP Agreement に同意。
   - **既存**（MAICPP もしくは Microsoft 365 & Copilot プログラム登録済み）→ 既存資格で Partner Center にサインインし、そこから Microsoft Marketplace を直接 enroll。
 - 旧 Cloud Partner Portal (CPP) アカウントは Partner Center に移行済み（新規作成不要）。
-- 出典: https://learn.microsoft.com/en-us/partner-center/marketplace/create-account （前提・2経路・同意）
-- ユーザー/ロール付与: https://learn.microsoft.com/en-us/partner-center/marketplace/user-roles （Marketplace/開発者プログラムは **Owner/Manager** がロール付与可）
+- 出典: https://learn.microsoft.com/en-us/partner-center/account-settings/create-account （前提・2経路・同意）
+- ユーザー/ロール付与: https://learn.microsoft.com/en-us/partner-center/account-settings/permissions-overview （Marketplace/開発者プログラムは **Owner/Manager** がロール付与可）
 
 ## 2. テナント関連付け & 権限（最頻出ブロッカー①）
 
@@ -87,7 +87,7 @@ metadata:
 - 1テナントは Partner Center で複数アカウントに関連付け不可。
 - アプリ登録テナントは PGA に関連付けられている必要（Publisher Verification 前提、§4）。
 - 詰まったら Support Request (SR) 発行も選択肢。
-- 出典: https://learn.microsoft.com/en-us/partner-center/multi-tenant-account （適切なロール=Global admin、Associate Microsoft Entra ID 手順）
+- 出典: https://learn.microsoft.com/en-us/partner-center/account-settings/multi-tenant-account （適切なロール=Global admin、Associate Microsoft Entra ID 手順）
 
 ## 3. 公開パスの判断（エージェント / Offer 種別）
 
@@ -118,7 +118,7 @@ metadata:
 ![§4 本人確認の順序フロー](pc_flow_verification.png)
 
 
-1. **Account Verification（アカウント検証）**：Partner Center 登録時、会社名・住所・主要連絡先を Microsoft が検証。通常 **3〜5 営業日**、5日超で要サポート。**検証完了まで Marketplace 公開・税/支払いプロフィール更新・マルチテナント等がブロック**される。検証メールは会社ドメインの監視可能な業務メールで（個人メール不可）。出典: https://learn.microsoft.com/en-us/partner-center/enroll/verification-responses
+1. **Account Verification（アカウント検証）**：Partner Center 登録時、会社名・住所・主要連絡先を Microsoft が検証。通常 **3〜5 営業日**、5日超で要サポート。**検証完了まで Marketplace 公開・税/支払いプロフィール更新・マルチテナント等がブロック**される。検証メールは会社ドメインの監視可能な業務メールで（個人メール不可）。出典: https://learn.microsoft.com/en-us/partner-center/enroll/understand-the-verification-process
 2. **Publisher Verification（Entra）**：PGA の verified **Partner One ID** をアプリ登録に関連付け。要件＝職場/学校アカウントで登録・publisher domain 設定（`*.onmicrosoft.com` 不可）・検証メールのドメイン一致・登録者は Entra と Partner Center 双方で必要ロール保持。出典: https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview
 3. **Publisher Attestation**：**先にアプリ/エージェントを Submit → 審査途中で Partner Center 上から Attestation を Submit**（「最初から見当たらない」が頻出）。80+ 項目の自己申告、約1時間、**Teams アプリは必須**、年次更新。対象＝Word/Excel/Outlook/Teams/Copilot/SharePoint/SaaS 等。出典: https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/attestation
    - ★**「Attestation 項目が最初から見当たらない」の原因は2系統**：①**Submit 前**に探している（上記のとおり Submit 後に出る）②**Offer の種別が違う**（M365/Copilot 向けエージェントは「Apps and agents for Microsoft 365 and Copilot」系の種別で作成する必要があり、別種別だと Attestation 欄自体が出ない）。②の場合は正しい種別で Offer を作り直す（種別が違えば同名 Offer も作成可）。※オファー種別の正確な表記は Partner Center の「+ New offer」画面で提示前に再確認（UI 変動あり）。②は現場観測ベース（Learn 明記の裏取りは未確認）。
@@ -130,24 +130,24 @@ metadata:
 > **委譲**：ロール権限の詳細（Owner/Manager/Developer vs Account admin の取り違え）やビジネス検証エビデンスは [`troubleshoot-account-verification`](../troubleshoot-account-verification)（Condition 1/3）へ。
 
 - ★**登記簿謄本の会社名・住所と Partner Center の表記が不一致だと Developer 審査に落ちる。** 設立書類・政府発行の登録証明と**完全一致**させて再提出。表記揺れ（全半角・旧新社名・住所表記）を解消。
-- **検証ペンディング中はブロックされる機能**（実害を案内）：Marketplace 公開、税/支払いプロフィール、ビリングプロファイル作成/更新、マルチテナント、会員購入/更新、co-sell、顧客追加。出典: verification-responses。
-- ロール（Developer programs=Marketplace/M365&Copilot 等は **Manager / Owner**）：**Developer=公開作業 / Manager=Developer付与+収益管理 / Owner=所有者**（過剰付与のリスク）。出典: verification-responses（Appropriate roles）。
+- **検証ペンディング中はブロックされる機能**（実害を案内）：Marketplace 公開、税/支払いプロフィール、ビリングプロファイル作成/更新、マルチテナント、会員購入/更新、co-sell、顧客追加。出典: understand-the-verification-process。
+- ロール（Developer programs=Marketplace/M365&Copilot 等は **Manager / Owner**）：**Developer=公開作業 / Manager=Developer付与+収益管理 / Owner=所有者**（過剰付与のリスク）。出典: understand-the-verification-process（Appropriate roles）。
 - 提出物：**manifest.json 構成**、ロケール、**Additional Certification Info（審査用テストアカウント/テスト実行方法）**、デモ動画。
-- Marketplace のユーザー/ロール追加（Learn 検証済み）：Partner Center → Settings → Account settings → **User management** から付与。Marketplace/開発者プログラムは **Owner/Manager** がロール付与可（MAICPP は Global admin/Account admin/User management admin）。出典: https://learn.microsoft.com/en-us/partner-center/marketplace/user-roles
-- 複数 Publisher を持つ場合の追加手順: https://learn.microsoft.com/en-us/partner-center/marketplace/add-publishers
+- Marketplace のユーザー/ロール追加（Learn 検証済み）：Partner Center → Settings → Account settings → **User management** から付与。Marketplace/開発者プログラムは **Owner/Manager** がロール付与可（MAICPP は Global admin/Account admin/User management admin）。出典: https://learn.microsoft.com/en-us/partner-center/account-settings/permissions-overview
+- 複数 Publisher を持つ場合の追加手順: https://learn.microsoft.com/en-us/partner-center/account-settings/add-publishers
 
 ## 6. 症状 → 原因 → 次アクション チートシート
 
 | 症状（ユーザーの声） | 原因 | 次アクション | Learn |
 |---|---|---|---|
 | テナント登録（関連付け）ができない | Guest で作業 / 権限不足 | Member+Global Admin で実施、ダメなら SR | multi-tenant-account ✅ |
-| Developer 審査が通らない/止まる | 登記簿と Partner Center の表記不一致 | 法的書類と完全一致で再提出 | verification-responses ✅ |
+| Developer 審査が通らない/止まる | 登記簿と Partner Center の表記不一致 | 法的書類と完全一致で再提出 | understand-the-verification-process ✅ |
 | Publisher Attestation の場所がない | Submit 前に探している | 先に Submit→審査中に Partner Center で Attestation | attestation ✅ |
-| 検証が終わらない（5日超） | 審査滞留 | サポートに連絡（3-5営業日が目安） | verification-responses ✅ |
-| Marketplace に Offer が出ない / 404 | 検証未完了 / 公開未完了 / 反映待ち | 検証ステータス＋公開ステータス確認 | verification-responses ✅ |
-| 有料プラン作成でエラー：`not publish eligible due to either an invalid payout, payout on hold, or invalid tax` | プロファイルが「Complete」でも **Account Verification(Legal info) が未 Authorized**、または税フォーム未送信／割当先が開発者プロファイルでない／48h検証待ち | **①最初に Legal info=Authorized を確認**（検証 Pending 中は税/支払更新も公開もブロック）→ ②税フォームを Finish→Done まで送信 →③Payout and tax profile assignment で開発者プロファイルが対象 Seller ID に割当 →④48h待ち →⑤なお残ればサポート起票 | verification-responses ✅ / set-up-your-payout-account ✅ / payout-faq ✅ |
+| 検証が終わらない（5日超） | 審査滞留 | サポートに連絡（3-5営業日が目安） | understand-the-verification-process ✅ |
+| Marketplace に Offer が出ない / 404 | 検証未完了 / 公開未完了 / 反映待ち | 検証ステータス＋公開ステータス確認 | understand-the-verification-process ✅ |
+| 有料プラン作成でエラー：`not publish eligible due to either an invalid payout, payout on hold, or invalid tax` | プロファイルが「Complete」でも **Account Verification(Legal info) が未 Authorized**、または税フォーム未送信／割当先が開発者プロファイルでない／48h検証待ち | **①最初に Legal info=Authorized を確認**（検証 Pending 中は税/支払更新も公開もブロック）→ ②税フォームを Finish→Done まで送信 →③Payout and tax profile assignment で開発者プロファイルが対象 Seller ID に割当 →④48h待ち →⑤なお残ればサポート起票 | understand-the-verification-process ✅ / set-up-your-payout-account ✅ / payout-faq ✅ |
 | ISV Success だけで適格か | 開発者プログラム適格 | 職場アカウントでサインインすると保有適格が表示される（要確認・UI変動） | [要確認] |
-| Marketplace Offers ワークスペース／公開・編集操作が画面に出てこない | 開発者プログラムのロール（Owner/Manager/Developer）が未付与 | User management で付与（Submit中心=Developer、価格まで=Manager、全権=Owner）。付与は Owner/Manager（無ければ Global admin）。反映に最大1h | permissions-overview ✅ / user-roles ✅ |
+| Marketplace Offers ワークスペース／公開・編集操作が画面に出てこない | 開発者プログラムのロール（Owner/Manager/Developer）が未付与 | User management で付与（Submit中心=Developer、価格まで=Manager、全権=Owner）。付与は Owner/Manager（無ければ Global admin）。反映に最大1h | permissions-overview ✅ |
 | 課金体系が複雑（従量/Private Offer/Agency Fee） | Marketplace 課金モデル理解 | リスティング種別ごとにモデルを整理（Subscription/Usage-based/BYOL）。Private Offer 更新は Agency Fee 50%off を作成時に self-attest | listing-type ✅ / agency-fee ✅ |
 | 提出後、審査（Store validation）で差し戻し（sign-up/Contact 等のリンクが無い、説明文の指摘） | way forward が3か所に無い / manifest と Partner Center の説明文不一致 / 認証必須の URL | §8 へ（way forward は manifest 説明文に markdown リンクで＋長文＋初回起動体験の3か所、説明文は両者一致、Support/EULA/Privacy は認証不要） | teams-store-validation-guidelines ✅ / review-copilot-validation-guidelines ✅ |
 
@@ -235,16 +235,16 @@ MPN→MAICPP / Azure AD→Entra ID / Commercial Marketplace→Microsoft Marketpl
 
 ## 参照（一次ソース・fetch 検証済み 2026-06-29、§8 追加分は 2026-07-02 / 提示前に再確認）
 
-- Marketplace アカウント作成/enroll（前提・2経路・CPP移行）: https://learn.microsoft.com/en-us/partner-center/marketplace/create-account ✅
-- Marketplace ユーザー/ロール（Owner/Manager がロール付与/付与手順）: https://learn.microsoft.com/en-us/partner-center/marketplace/user-roles ✅
-- Publisher 追加（複数 Publisher 運用）: https://learn.microsoft.com/en-us/partner-center/marketplace/add-publishers ✅
+- Marketplace アカウント作成/enroll（前提・2経路・CPP移行）: https://learn.microsoft.com/en-us/partner-center/account-settings/create-account ✅
+- Marketplace ユーザー/ロール（Owner/Manager がロール付与/付与手順）: https://learn.microsoft.com/en-us/partner-center/account-settings/permissions-overview ✅
+- Publisher 追加（複数 Publisher 運用）: https://learn.microsoft.com/en-us/partner-center/account-settings/add-publishers ✅
 - Marketplace 概要（公開可能な製品・販路）: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/overview ✅
 - リスティング/課金モデル対応表（Free Trial/Contact Me/Get It Now・Subscription/Usage-based/BYOL）: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/determine-your-listing-type ✅
 - Agency Fee 更新割引（Private Offer 更新で50%off・作成時 self-attest）: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/agency-fee-discount-for-renewals ✅
 - SaaS Offer 作成: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/create-new-saas-offer ✅
 - Publisher Verification: https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview ✅
-- アカウント検証（ブロック機能/3-5営業日/ロール）: https://learn.microsoft.com/en-us/partner-center/enroll/verification-responses ✅
-- マルチテナント関連付け（Global admin/Associate 手順）: https://learn.microsoft.com/en-us/partner-center/multi-tenant-account ✅
+- アカウント検証（ブロック機能/3-5営業日/ロール）: https://learn.microsoft.com/en-us/partner-center/enroll/understand-the-verification-process ✅
+- マルチテナント関連付け（Global admin/Associate 手順）: https://learn.microsoft.com/en-us/partner-center/account-settings/multi-tenant-account ✅
 - Publisher Attestation（80+項目/年次/Teams必須）: https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/attestation ✅
 - Agents SDK ハブ: https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/ ✅
 - 商流・税務の詳細: 同梱 `REO_MPO_CSP_tax_cheatsheet_JP.md`（一次ソース10本を内包）
