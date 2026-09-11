@@ -15,8 +15,8 @@ ISV・パートナーが **Microsoft Marketplace** へ公開する際の **Partn
 つまずきの多くはオンボーディングの**入口**で起きます——登録、テナント関連付け、本人確認の順序、公開パスの選択
 （宣言型 vs カスタムエンジン、Offer 種別、課金）、商流・税務（REO/MPO/CSP、日本の消費税）。とりわけ
 **アカウント検証**はエージェント作成ではなく頻出のブロッカーです（サインイン／ロール混乱、テナント・App ID の
-不一致、発行元・会社実在の証明、「今どの段階？」の不安）。これらを実際のパートナーサポートのやり取りから抽出し、
-**ひとつの入口トリアージ＋検証の専門スキル**に集約しました。
+不一致、発行元・会社実在の証明、「今どの段階？」の不安）。非公開事例ではなく公開 Microsoft ドキュメントを根拠に、
+**ひとつの入口トリアージ＋検証の専門スキル**へ集約しています。
 
 ## 想定ユーザー (Who this is for)
 
@@ -29,8 +29,8 @@ Microsoft のドキュメント** に基づくため、公開する企業側で�
 ## 2スキル構成：入口は1つ、専門家は1つ
 
 - **`partner-center-guide`（入口・`user-invocable: true`）** — 広域トリアージ：登録、テナント関連付け、
-  公開パス（エージェント種別／Offer 種別／課金）、商流・税務（REO/MPO/CSP、日本 MoR）、
-  リスティング/コンテンツ審査（Store validation の Must-fix、§8）。意思決定フロー画像4枚と
+  公開パス（エージェント種別／Offer 種別／課金）、商流・税務・購買（REO/MPO/CSP、FX、日本 MoR、PO 割当）、
+  SaaS 境界、リスティング/コンテンツ審査（Store validation の Must-fix）。意思決定フロー画像4枚と
   日本税務チートシートを同梱。
 - **`troubleshoot-account-verification`（内部・`user-invocable: false`）** — アカウント*検証*が実際の
   ブロッカーのとき入口から委譲。4条件へ収束させ `verification-ledger.json` を出力。
@@ -45,7 +45,7 @@ Microsoft のドキュメント** に基づくため、公開する企業側で�
 - 「Publisher Attestation の項目が見当たらない。」
 - 「Developer 審査が通らない (登記簿と表記が違う)。」
 - 「審査 (Store validation) で sign-up / Contact のリンクが無いと差し戻された。どこを直す?」
-- 「代理店 / CSP 経由で売りたい。REO と MPO の違いと、日本の消費税は?」
+- 「CSP 経由販売、円建て/FX、PO 割当の違いを整理したい。」
 
 > 全リストとルーティングは
 > [`skills/partner-center-guide/SKILL.md`](skills/partner-center-guide/SKILL.md) を参照。

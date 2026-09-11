@@ -17,8 +17,8 @@ identity-verification order, publish-path choices (declarative vs custom-engine,
 billing), and channel/tax questions (REO/MPO/CSP, Japan consumption tax). Account verification in
 particular -- not the agent build -- is a frequent blocker: sign-in and role confusion,
 tenant/App-ID mismatches, publisher/business-existence evidence, and "what stage am I at?"
-anxiety. These were distilled from real partner support threads and collapsed into a single
-entry-point triage plus a deep verification specialist.
+anxiety. The guidance is collapsed into a single entry-point triage plus a deep verification
+specialist and is grounded in public Microsoft documentation rather than private case narratives.
 
 ## Who this is for
 
@@ -33,7 +33,8 @@ who help others publish still find it a useful reference.
 
 - **`partner-center-guide` (entry, `user-invocable: true`)** -- broad triage: registration,
   tenant association, publish-path (agent type / offer type / billing), channel/tax
-  (REO/MPO/CSP, Japan MoR), and listing/content review (Store validation Must-fix, §8).
+  (REO/MPO/CSP, FX, Japan MoR, purchase-order allocation), SaaS boundary questions, and
+  listing/content review (Store validation Must-fix).
   Carries four decision-flow images and a JP tax cheatsheet.
 - **`troubleshoot-account-verification` (internal, `user-invocable: false`)** -- the guide
   delegates here when account *verification* is the actual blocker; converges four conditions and
@@ -50,7 +51,7 @@ no "which skill do I use?" confusion.
 - 「Publisher Attestation の項目が見当たらない。」
 - 「Developer 審査が通らない (登記簿と表記が違う)。」
 - 「審査 (Store validation) で sign-up / Contact のリンクが無いと差し戻された。どこを直す?」
-- 「代理店 / CSP 経由で売りたい。REO と MPO の違いと、日本の消費税は?」
+- 「CSP 経由販売、円建て/FX、PO 割当の違いを整理したい。」
 
 > Full starter list and routing live in
 > [`skills/partner-center-guide/SKILL.md`](skills/partner-center-guide/SKILL.md).
