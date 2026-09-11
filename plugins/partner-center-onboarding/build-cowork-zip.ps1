@@ -19,16 +19,17 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
+Add-Type -AssemblyName System.IO.Compression
 
 $plugin = $PSScriptRoot
 $pkgsrc = Join-Path $plugin 'cowork'
 $dist   = Join-Path $plugin 'dist'
 $zip    = Join-Path $dist 'partner-center-onboarding-cowork.zip'
-$build  = Join-Path ([System.IO.Path]::GetTempPath()) ('pco-build-' + [guid]::NewGuid().ToString('N'))
+$build  = Join-Path $dist ('.b-' + [guid]::NewGuid().ToString('N'))
 $utf8   = New-Object System.Text.UTF8Encoding($false)   # no BOM
 
 try {
-  New-Item -ItemType Directory -Path $build -Force | Out-Null
+  New-Item -ItemType Directory -Path $build | Out-Null
 
   # 1) manifest.json + icons: loose files under cowork/ (source of truth for packaging metadata)
   foreach ($f in 'manifest.json','color.png','outline.png') {
@@ -56,7 +57,24 @@ try {
 
   # 4) zip with forward-slash entries
   if (Test-Path $zip) { Remove-Item $zip -Force }
-  [System.IO.Compression.ZipFile]::CreateFromDirectory($build, $zip, [System.IO.Compression.CompressionLevel]::Optimal, $false)
+  $archive = [System.IO.Compression.ZipFile]::Open($zip, [System.IO.Compression.ZipArchiveMode]::Create)
+  try {
+    $dirSep = [System.IO.Path]::DirectorySeparatorChar.ToString()
+    $altSep = [System.IO.Path]::AltDirectorySeparatorChar.ToString()
+    $base = $build.TrimEnd([char[]]@([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)) + $dirSep
+    Get-ChildItem $build -Recurse -File | ForEach-Object {
+      $entryName = $_.FullName.Substring($base.Length).Replace($dirSep, '/').Replace($altSep, '/')
+      [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+        $archive,
+        $_.FullName,
+        $entryName,
+        [System.IO.Compression.CompressionLevel]::Optimal
+      ) | Out-Null
+    }
+  }
+  finally {
+    $archive.Dispose()
+  }
   Write-Host ("Built {0} ({1} bytes)" -f $zip, (Get-Item $zip).Length)
 }
 finally {

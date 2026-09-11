@@ -4,7 +4,7 @@
 
 ## 取り込み手順（サイドロード）
 
-1. このフォルダ一式を ZIP 化（`manifest.json` がルートに来るように）。
+1. このフォルダ一式を ZIP 化（`manifest.json` がルートに来るように）。配布 ZIP の app version は `cowork/manifest.json`（現在 1.2.0）で確認。
 2. Copilot / Teams の **アプリ管理（カスタムアプリのアップロード／サイドロード）** から ZIP をアップロード。
 3. Cowork で対象アプリを有効化すると、`manifest.json` の `agentSkills` 経由で本スキルが読み込まれます。
 4. 起動確認：「Partner Center に登録したい」「テナント関連付けができない」「Attestation が見つからない」などで発火します（Starter Conversations は `SKILL.md` 参照）。
