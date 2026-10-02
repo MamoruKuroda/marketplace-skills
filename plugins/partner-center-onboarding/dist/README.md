@@ -1,7 +1,7 @@
 # dist -- prebuilt Microsoft 365 Copilot Cowork package
 
 `partner-center-onboarding-cowork.zip` is a ready-to-sideload Microsoft 365 app package
-(Teams manifest v1.28, app version 1.2.0, icons + both skills) for **Microsoft 365 Copilot Cowork**.
+(Teams manifest v1.28, app version 1.3.0, icons + both skills) for **Microsoft 365 Copilot Cowork**.
 
 - Entry skill: `partner-center-guide` (broad triage).
 - Internal specialist: `troubleshoot-account-verification` (delegated to for verification depth).
