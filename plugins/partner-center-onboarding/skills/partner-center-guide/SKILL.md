@@ -212,6 +212,7 @@ publicSources:
 | CSP で売りたい/売れない | 相手が Direct Bill/Indirect Provider か、CSP status、target CSP tenant ID/name | §6 + cheatsheet |
 | FX/円建て/Private Offer currency | market currency、billing currency、payout currency、public price/private offer/private plan | §6 + cheatsheet |
 | 請求/部署/PO | billing account type、Azure subscription、SaaS subscription、publisher/offer ID、PO mapping scope | §6 |
+| 支援プログラム/ISV Success・Marketplace Rewards はどこ? | ISV Success・Marketplace Rewards・Azure IP co-sell・CSD は Frontier Accelerate for Marketplace（FAM、2026年9月 GA）へ統合。既存メンバーは移行。無償版と有償 Premium、Build and Publish→Grow→Differentiate | FAM overview/FAQ を fetch して案内。金銭インセンティブの条件は Incentives Guide。個別の適格可否・金額は断定せず Microsoft 担当へ |
 
 ## Starter Conversations
 
@@ -223,6 +224,7 @@ publicSources:
 6. 「日本円の Private Offer で FX リスクをどう説明する?」→ §6 + cheatsheet
 7. 「追加クレジットを売りたい。SaaS plan/meter/private offer のどれ?」→ §4
 8. 「請求書と PO と Azure subscription の関係が混乱している。」→ §6 + cheatsheet
+9. 「ISV Success や Marketplace Rewards は今どうなっている? 公開の支援策は?」→ §7（FAM）
 
 ## 参照（一次ソース・2026-09-12 fetch 確認。提示前に再 fetch）
 
@@ -235,6 +237,7 @@ publicSources:
 - Publisher Attestation: https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/attestation
 - Microsoft 365 Certification: https://learn.microsoft.com/en-us/microsoft-365-app-certification/docs/certification
 - Certified Software designation: https://learn.microsoft.com/en-us/partner-center/referrals/solutions-partner-certified-software-solution-area
+- Frontier Accelerate for Marketplace (2026-10-02 fetch): https://learn.microsoft.com/en-us/partner-center/frontier-accelerate-marketplace/overview / FAQ https://learn.microsoft.com/en-us/partner-center/frontier-accelerate-marketplace/faq / https://aka.ms/fa-for-marketplace / Resources https://aka.ms/FAM-Resources / Incentives Guide https://aka.ms/incentivesguide
 - SaaS planning/technical/lifecycle: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/plan-saas-offer
 - SaaS plans/pricing: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/create-new-saas-offer-plans
 - SaaS technical config: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/create-new-saas-offer-technical
