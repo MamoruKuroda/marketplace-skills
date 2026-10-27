@@ -1,7 +1,7 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.28/MicrosoftTeams.schema.json",
-  "manifestVersion": "1.28",
-  "version": "4.1.0",
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.29/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.29",
+  "version": "4.2.0",
   "id": "fe619316-bf0b-43bf-b399-b6c9557df006",
   "developer": {
     "name": "Mamoru Kuroda",
@@ -11,11 +11,11 @@
   },
   "name": {
     "short": "Partner Center Onboarding",
-    "full": "Partner Center Onboarding (Copilot Cowork skills)"
+    "full": "Partner Center Onboarding (Copilot Cowork)"
   },
   "description": {
-    "short": "Partner Center 登録〜本人確認〜公開を症状診断＋公式リンクで案内する日本語ガイド",
-    "full": "ISV やパートナーが Microsoft Marketplace へ公開する際の Partner Center オンボーディングを自走できるよう案内します。入口スキル partner-center-guide が広域トリアージ（登録・テナント関連付け・公開パス・REO/MPO/CSP・日本の消費税）を行い、アカウント検証が実際のブロッカーのときは内部スキル troubleshoot-account-verification に委譲して4条件へ収束させます。本人確認・審査は自動化できないため案内に徹する知識型スキルで、外部接続（コネクタ）は不要です。"
+    "short": "Partner Center 登録・検証ガイドと任意の Marketplace 公開ワークフロー",
+    "full": "ISV やパートナー向けの Partner Center オンボーディングです。partner-center-guide は登録・テナント関連付け・公開パス・REO/MPO/CSP・日本税務を案内し、本人確認の実ブロッカーは troubleshoot-account-verification で診断します。このアカウント案内はコネクタ不要で、サインイン・ロール変更・本人確認・提出を代行しません。別の任意スキル marketplace-publishing は公式 Marketplace Ingestion MCP でスキーマ確認・対象を限定した参照・検証を行い、変更は対象と変更前後を提示し操作ごとの承認後に限ります。販売者に関連付いたテナントでの本人による認証、必要ロール、Marketplace submission API アクセスが前提です。Cowork での実機接続は未確認で、利用できない場合は公開操作を停止し知識ガイドを継続します。"
   },
   "icons": {
     "color": "color.png",
@@ -24,6 +24,19 @@
   "accentColor": "#5C2D91",
   "agentSkills": [
     { "folder": "./skills/partner-center-guide" },
-    { "folder": "./skills/troubleshoot-account-verification" }
+    { "folder": "./skills/troubleshoot-account-verification" },
+    { "folder": "./skills/marketplace-publishing" }
+  ],
+  "agentConnectors": [
+    {
+      "id": "market-ingest",
+      "displayName": "Marketplace Ingestion",
+      "description": "Optional publisher-side offer workflow. Human sign-in in the seller-associated tenant, appropriate Partner Center roles, and Marketplace submission API access are required. Preview and separate confirmation are required for every change. Account onboarding guidance does not need this connector; live Cowork authentication has not been verified.",
+      "toolSource": {
+        "remoteMcpServer": {
+          "mcpServerUrl": "https://ingestion-mcp.marketplace-ingestion.mp.microsoft.com/mcp"
+        }
+      }
+    }
   ]
 }

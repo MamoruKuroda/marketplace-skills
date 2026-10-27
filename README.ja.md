@@ -5,7 +5,7 @@
 
 > このドキュメントは日本語版です。正本は英語版 [README.md](README.md) です。内容に差異がある場合は英語版を優先します。
 
-> **実験的（EXPERIMENTAL）プロジェクトです。** 本番運用向けの製品ではありません。提出可能な状態のパッケージとチェックリストを準備するためのガイド付きスキルであり、Partner Center への提出を代行することはなく、明示的な承認なしにクラウド リソースをデプロイすることもありません。
+> **実験的（EXPERIMENTAL）プロジェクトです。** 本番運用向けの製品ではありません。提出可能なパッケージとチェックリストを準備します。アカウント案内はサインイン・提出を代行しません。Partner Center Onboarding には任意の発行者向け MCP ワークフローもあり、本人による認証と、変更ごとの対象・変更前後の確認・個別承認が必須です。明示的な承認なしにクラウド リソースをデプロイしません。
 
 ## 想定ユーザー (Who this is for)
 
@@ -24,9 +24,9 @@ Microsoft Commercial Marketplace への公開を目指して Partner Center を�
 ### 想定していないユーザー (Who this is not for)
 
 すでに Partner Center にオンボード・サインアップされていたり、Marketplace に Offer を
-公開されている企業や、その企業の Microsoft 担当者にとっては必要がないかもしれません。
-一方で、そうした公開を支援するパートナー企業には、手元の参照資料として役立つことが多い
-はずです。
+公開されている企業や、その Microsoft 担当者にはアカウント案内が不要かもしれません。権限のある発行者は
+Partner Center Onboarding の Marketplace Ingestion ワークフローを別途選択できます。公開を支援するパートナーにも
+参照資料として役立つはずです。
 
 コンテンツは、すべてを一つの大きなドキュメントにまとめるのではなく、意図的に小さく
 焦点を絞ったスキルに分割しています。見落としがちな作業時のポイント——Partner Center の
@@ -38,7 +38,7 @@ Microsoft Commercial Marketplace への公開を目指して Partner Center を�
 | プラグイン | 役割 |
 | --- | --- |
 | [`agent-publishing`](plugins/agent-publishing/README.ja.md) | Microsoft 365 Copilot エージェント（宣言型／カスタムエンジン／Copilot Studio マルチテナント）の公開・収益化 |
-| [`partner-center-onboarding`](plugins/partner-center-onboarding/README.ja.md) | Partner Center アカウント検証（識別／ロール、テナント、会社実在、状況可視化）のトラブルシュート |
+| [`partner-center-onboarding`](plugins/partner-center-onboarding/README.ja.md) | ガイド専用の登録・検証と、任意の Marketplace Ingestion MCP 発行者ワークフロー（変更は操作ごとに承認、Cowork 実機認証は未検証） |
 
 今後の予定: `saas-publishing`、`container-publishing`、`managed-app-publishing`。
 

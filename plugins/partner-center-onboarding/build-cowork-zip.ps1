@@ -15,6 +15,7 @@ diff. Run from anywhere; paths are resolved relative to this script.
 #>
 [CmdletBinding()]
 param(
+  [ValidateRange(1, 20000)]
   [int]$MaxChars = 20000
 )
 $ErrorActionPreference = 'Stop'
@@ -26,13 +27,14 @@ $pkgsrc = Join-Path $plugin 'cowork'
 $dist   = Join-Path $plugin 'dist'
 $zip    = Join-Path $dist 'partner-center-onboarding-cowork.zip'
 $build  = Join-Path $dist ('.b-' + [guid]::NewGuid().ToString('N'))
+$zipStage = $build + '.zip'
 $utf8   = New-Object System.Text.UTF8Encoding($false)   # no BOM
 
 try {
   New-Item -ItemType Directory -Path $build | Out-Null
 
   # 1) manifest.json + icons: loose files under cowork/ (source of truth for packaging metadata)
-  foreach ($f in 'manifest.json','color.png','outline.png') {
+  foreach ($f in @('manifest.json','color.png','outline.png')) {
     $srcFile = Join-Path $pkgsrc $f
     if (-not (Test-Path $srcFile)) { throw "Packaging source file not found: $srcFile" }
     Copy-Item $srcFile (Join-Path $build $f) -Force
@@ -40,33 +42,37 @@ try {
 
   # 2) skills: copy from repo, then strip disallowed frontmatter for Cowork
   Copy-Item (Join-Path $plugin 'skills') $build -Recurse -Force
-  Get-ChildItem $build -Recurse -Filter SKILL.md | ForEach-Object {
-    $txt = [System.IO.File]::ReadAllText($_.FullName)
-    # remove only the frontmatter `user-invocable:` line (leaves any body prose intact)
-    $out = ($txt -split "`r?`n" | Where-Object { $_ -notmatch '^user-invocable:\s' }) -join "`n"
-    [System.IO.File]::WriteAllText($_.FullName, $out, $utf8)
+  $skillFiles = @(Get-ChildItem $build -Recurse -Filter SKILL.md -File)
+  foreach ($skillFile in $skillFiles) {
+    $txt = [System.IO.File]::ReadAllText($skillFile.FullName).Replace("`r`n", "`n")
+    $frontmatter = [regex]::Match($txt, '\A---\n(?<header>[\s\S]*?)\n---(?=\n|\z)')
+    if (-not $frontmatter.Success) { throw "Missing YAML frontmatter: $($skillFile.FullName)" }
+    $headerLines = @($frontmatter.Groups['header'].Value -split "`n")
+    $header = (@($headerLines | Where-Object { $_ -notmatch '^user-invocable:\s' })) -join "`n"
+    $out = "---`n" + $header + "`n---" + $txt.Substring($frontmatter.Length)
+    [System.IO.File]::WriteAllText($skillFile.FullName, $out, $utf8)
     if ($out.Length -ge $MaxChars) {
-      throw ("$($_.Directory.Name)/SKILL.md is $($out.Length) chars, exceeds Cowork max $MaxChars")
+      throw ("$($skillFile.Directory.Name)/SKILL.md is $($out.Length) chars, must be below $MaxChars")
     }
-    Write-Host ("  {0}: {1} chars (ok)" -f $_.Directory.Name, $out.Length)
+    Write-Host ("  {0}: {1} chars (ok)" -f $skillFile.Directory.Name, $out.Length)
   }
 
   # 3) normalize manifest.json to no-BOM
   $mf = Join-Path $build 'manifest.json'
   [System.IO.File]::WriteAllText($mf, ([System.IO.File]::ReadAllText($mf) -replace "^\uFEFF",''), $utf8)
 
-  # 4) zip with forward-slash entries
-  if (Test-Path $zip) { Remove-Item $zip -Force }
-  $archive = [System.IO.Compression.ZipFile]::Open($zip, [System.IO.Compression.ZipArchiveMode]::Create)
+  # 4) Replace the previous artifact only after the new archive closes successfully.
+  $archive = [System.IO.Compression.ZipFile]::Open($zipStage, [System.IO.Compression.ZipArchiveMode]::Create)
   try {
     $dirSep = [System.IO.Path]::DirectorySeparatorChar.ToString()
     $altSep = [System.IO.Path]::AltDirectorySeparatorChar.ToString()
     $base = $build.TrimEnd([char[]]@([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)) + $dirSep
-    Get-ChildItem $build -Recurse -File | ForEach-Object {
-      $entryName = $_.FullName.Substring($base.Length).Replace($dirSep, '/').Replace($altSep, '/')
+    $packageFiles = @(Get-ChildItem $build -Recurse -File | Sort-Object FullName)
+    foreach ($packageFile in $packageFiles) {
+      $entryName = $packageFile.FullName.Substring($base.Length).Replace($dirSep, '/').Replace($altSep, '/')
       [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
         $archive,
-        $_.FullName,
+        $packageFile.FullName,
         $entryName,
         [System.IO.Compression.CompressionLevel]::Optimal
       ) | Out-Null
@@ -75,8 +81,10 @@ try {
   finally {
     $archive.Dispose()
   }
+  Move-Item -LiteralPath $zipStage -Destination $zip -Force
   Write-Host ("Built {0} ({1} bytes)" -f $zip, (Get-Item $zip).Length)
 }
 finally {
   if (Test-Path $build) { Remove-Item $build -Recurse -Force }
+  if (Test-Path $zipStage) { Remove-Item $zipStage -Force }
 }
