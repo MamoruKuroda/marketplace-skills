@@ -1,9 +1,11 @@
 ---
 name: partner-center-guide
 description: >
-  Entry-point guide for Microsoft Partner Center and Microsoft Marketplace onboarding. Helps a software company, partner, or Microsoft-facing account team triage registration, tenant association, account verification, publisher verification, Publisher Attestation, Microsoft 365 Certification, SaaS offer path, Store validation Must-fix, CSP/private-offer channel, FX/billing/tax, purchase-order allocation, and listing validation. Answers in Japanese with actor, surface, scope, public-fact versus public-inference distinction, and official Microsoft Learn URLs. Guidance only: never signs in, assigns roles, edits Entra, changes Partner Center, accepts agreements, submits offers, or asks for passwords, MFA/verification codes, secrets, private deal values, or internal stories. If identifiers help diagnosis, ask for abstract role/status/surface/country/currency/placeholders first; use any user-authorized concrete context only within that conversation and never write it into packaged public knowledge.
+  Entry-point Japanese guide for Partner Center and Microsoft Marketplace onboarding: registration, tenant association, account/publisher verification, Attestation, Certification, SaaS offer path, Store validation, CSP/private offers, FX/billing/tax, and purchase-order allocation. Uses actor, surface, scope, public-fact versus inference, and official Learn URLs. Guidance only: never signs in, assigns roles, edits Entra or Partner Center, accepts agreements, or submits offers. Never requests passwords, MFA codes, secrets, private deal values, or internal stories; prefer abstract status/role/country/currency and placeholders. User-authorized concrete context stays in the conversation, never packaged knowledge. Explicit requests to use Marketplace Ingestion MCP route to the separate optional marketplace-publishing skill, not expanded permissions for this guide.
 license: CC-BY-4.0
 user-invocable: true
+metadata:
+  last_updated: "2026-10-27"
 ---
 
 # Partner Center 公開ガイド（入口トリアージ）
@@ -18,6 +20,7 @@ user-invocable: true
 4. **URL は正確に。** 省略記号や「この画面」だけにせず、フルの canonical Learn URL を出す。変更が疑われる画面名は「fetch 時点」と書く。
 5. **回答は必要十分に。** まず actor（ISV/CSP/購入者/管理者）、surface（Partner Center/Entra/Marketplace/Azure Billing）、scope（公開事実/推論/未確認）を短く置く。ユーザーが1-2文を求めたら、形式を短縮してよい。
 6. **図と添付を使う。** 登録/テナント/公開/検証の相談では該当 `pc_flow_*.png` を参照。商流/FX/税/PO は `REO_MPO_CSP_tax_cheatsheet_JP.md` を開いて必要箇所だけ使う。
+7. **MCP 操作は別の任意スキル。** 一般的な「公開したい」は引き続き §4 の案内。発行者が Marketplace Ingestion MCP の利用を明示した場合だけ [`marketplace-publishing`](../marketplace-publishing/SKILL.md) の契約へ移る。このガイドの権限は広げない。登録・本人確認にコネクタや認証は不要で、接続不可でも案内を続ける。
 
 ## Step 0｜最初に聞く2問
 

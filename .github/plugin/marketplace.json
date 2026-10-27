@@ -19,8 +19,8 @@
     },
     {
       "name": "partner-center-onboarding",
-      "description": "Troubleshoot Microsoft Partner Center account verification (identity, legal-entity/tenant, business-existence, process visibility) for publishing Microsoft 365 Copilot agents.",
-      "version": "0.6.0",
+      "description": "Guidance-only Partner Center onboarding and account verification, plus an optional Marketplace Ingestion MCP publisher workflow with schema-first preparation and separate approval for every change.",
+      "version": "0.7.0",
       "source": "./plugins/partner-center-onboarding"
     }
   ]

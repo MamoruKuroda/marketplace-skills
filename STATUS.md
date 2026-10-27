@@ -3,7 +3,7 @@
 > Single source of truth for "where are we across all workstreams." One screen.
 > Update this whenever a workstream changes phase, a PR opens/merges, or a decision is made.
 >
-> **Last updated:** 2026-07-15 by Copilot
+> **Last updated:** 2026-10-27 by Copilot
 
 ## Workstreams
 
@@ -14,7 +14,7 @@
 | A | SaaS Tier-1 fulfillment backend | L2 proven through product UI (cold-start) + runbook re-validated | ✅ Tier-1 (A1) + L2 complete | #20 | merge this PR (admin-URL G1 fix); re-run env torn down |
 | S | SaaS modernization + agent-first sample planning | repo-shape recommendation recorded; pending human ratification | 🟡 in progress | #29 | human ratifies with owner, then open a separate implementation issue/repo |
 | P1b | Publish-path live portal walk (submit-readiness battle-test) | portal walk done + skills corrected | ✅ complete | #15 | optional: walk a second skill; otherwise done |
-| PC | partner-center-onboarding (onboarding triage + verification) | v0.4.0 in review (adds §8 review/validation) | 🟡 PR open | — | merge §8, then keep collecting trial feedback |
+| PC | partner-center-onboarding (guidance + optional publisher MCP) | CLI 0.7.0 / Cowork 4.2.0 published; connector displayed | 🟡 human OAuth and seller operations untested | — | authorized publisher verifies seller-tenant authentication and a scoped read before any separately approved change |
 
 State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 🔴 broken
 
@@ -45,6 +45,16 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 - `.NET 8` (LTS, EOL 2026-11-10) intentional; framework upgrades left to upstream (target .NET 10 LTS).
 
 ## Milestones (history)
+
+- 2026-10-27 — **Partner Center Onboarding optional publisher workflow packaged**: Cowork
+  4.2.0 (manifest 1.29, unchanged app ID) adds the official Marketplace Ingestion MCP through
+  public-advertised DCR and a separate schema-first, per-operation approval workflow; CLI 0.7.0
+  keeps connector setup opt-in. Account guidance, verification specialist, diagrams and
+  cheatsheet remain intact. PowerShell 5.1 build and 15 targeted schema/package/static-contract
+  checks pass. Cowork accepted the package and published 4.2.0 under the existing app identity;
+  the enabled plugin displays three skills and the connector. The existing limited internal
+  audience was preserved. No seller calls or authentication were performed; live Cowork
+  auth/consent/tool discovery remains untested.
 
 - 2026-07-10 — **WS-A L2 re-run through the product UI (cold-start)** surfaced the admin-portal
   Fulfillment-URL gap: on a fresh deploy, **Activate failed with HTTP 500 "Token invalid or expired"**

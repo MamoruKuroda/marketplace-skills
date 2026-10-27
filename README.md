@@ -7,8 +7,10 @@ A [GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/agents/about-
 **Microsoft Commercial Marketplace**.
 
 > **EXPERIMENTAL.** These are guided-onboarding skills, not production products. They prepare
-> submission-ready packages and checklists; they never submit to Partner Center for you, and never
-> deploy cloud resources without explicit confirmation.
+> submission-ready packages and checklists. Account guidance never submits or signs in for you.
+> Partner Center Onboarding also has an optional publisher-side MCP workflow: human authentication
+> and separate preview/confirmation for every change are required. No cloud resources are deployed
+> without explicit confirmation.
 
 ## Who this is for
 
@@ -28,8 +30,9 @@ you're the company publishing or the person helping them publish.
 
 If your company is already onboarded and signed up in Partner Center, or already
 has an Offer live on the Marketplace — or you're the Microsoft contact for such a
-company — you may not need this. Partners who help other companies publish, though,
-often find it a useful reference to keep on hand.
+company — you may not need account guidance. Authorized publishers can separately opt into the
+Partner Center Onboarding plugin's Marketplace Ingestion workflow. Partners helping others
+publish may still find the guidance useful.
 
 The content is deliberately organized as small, focused skills rather than one
 large document, and captures the practical points that are easy to miss — what each
@@ -42,7 +45,7 @@ matching your registered address exactly).
 | Plugin | Purpose |
 | --- | --- |
 | [`agent-publishing`](plugins/agent-publishing) | Publish & monetize Microsoft 365 Copilot agents (declarative, custom engine, Copilot Studio multitenant) |
-| [`partner-center-onboarding`](plugins/partner-center-onboarding) | Troubleshoot Partner Center account verification (identity/roles, tenant, business existence, process visibility) |
+| [`partner-center-onboarding`](plugins/partner-center-onboarding) | Guidance-only registration/verification + optional Marketplace Ingestion MCP workflow with separately approved publisher operations (live Cowork auth untested) |
 
 Planned: `saas-publishing`, `container-publishing`, `managed-app-publishing`.
 
