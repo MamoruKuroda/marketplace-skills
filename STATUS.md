@@ -3,7 +3,7 @@
 > Single source of truth for "where are we across all workstreams." One screen.
 > Update this whenever a workstream changes phase, a PR opens/merges, or a decision is made.
 >
-> **Last updated:** 2026-10-27 by Copilot
+> **Last updated:** 2026-10-28 by Copilot
 
 ## Workstreams
 
@@ -14,7 +14,7 @@
 | A | SaaS Tier-1 fulfillment backend | L2 proven through product UI (cold-start) + runbook re-validated | ✅ Tier-1 (A1) + L2 complete | #20 | merge this PR (admin-URL G1 fix); re-run env torn down |
 | S | SaaS modernization + agent-first sample planning | repo-shape recommendation recorded; pending human ratification | 🟡 in progress | #29 | human ratifies with owner, then open a separate implementation issue/repo |
 | P1b | Publish-path live portal walk (submit-readiness battle-test) | portal walk done + skills corrected | ✅ complete | #15 | optional: walk a second skill; otherwise done |
-| PC | partner-center-onboarding (guidance + optional publisher MCP) | CLI 0.7.0 / Cowork 4.2.0 published; connector displayed | 🟡 human OAuth and seller operations untested | — | authorized publisher verifies seller-tenant authentication and a scoped read before any separately approved change |
+| PC | partner-center-onboarding (guidance + optional publisher MCP) | 4.2.0 live: fresh-task runtime-tool gap; Cowork 4.2.1 / CLI 0.7.1 diagnostic candidate validated locally | 🟡 candidate not published; native comparison pre-auth only | — | human-led native OAuth comparison and actual Cowork metadata/log evidence still pending; no silent sign-in or changes to live app/audience |
 
 State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 🔴 broken
 
@@ -45,6 +45,23 @@ State legend: ✅ done/live · 🟡 in progress/review · ⏸ paused/blocked · 
 - `.NET 8` (LTS, EOL 2026-11-10) intentional; framework upgrades left to upstream (target .NET 10 LTS).
 
 ## Milestones (history)
+
+- 2026-10-28 — **Partner Center Onboarding diagnostic-only candidate**: preserved the 4.2.0
+  baseline outside the repository and verified it against the current official 1.29 schema and
+  15 repository tests. Cowork 4.2.1 / CLI 0.7.1 now separates connector availability from actual
+  runtime tools/auth; absent tools report only the observed BLOCKED symptom. EN/JA known-issue
+  docs distinguish checked UI/runtime observations from unverified H2/H3/H4/H5 causes. Reported
+  public-wire origin DCR advertising differs from the checked Entra OAuth/OIDC discovery paths;
+  that difference and protected 401 responses are observations, not proof of Cowork's chosen
+  path or root cause. Actual metadata selection and client/server logs remain unverified.
+  A new Cowork task also returns zero tool-search matches despite active configuration; an old
+  conversation alone does not explain that reproduction, but backend cache remains unexcluded.
+  Native CLI 1.0.101 structured host events report pending-to-needs-auth only: no browser auth,
+  seller-account selection, authenticated tool listing, or same-seller-account login was tested.
+  Candidate build and 20 targeted tests pass, including unchanged connector/account-skill/asset
+  comparisons. Installed Microsoft manifest helper 1.0.6 also passes offline schema-only checks;
+  no wiqd deep/AppValidationLibrary run is claimed. App ID, 1.29 connector and live publication
+  unchanged. No authentication, seller calls, publishing or sharing performed by this change.
 
 - 2026-10-27 — **Partner Center Onboarding optional publisher workflow packaged**: Cowork
   4.2.0 (manifest 1.29, unchanged app ID) adds the official Marketplace Ingestion MCP through

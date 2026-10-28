@@ -1,7 +1,7 @@
 {
   "name": "partner-center-onboarding",
-  "description": "Self-serve Partner Center onboarding with guidance-only registration, tenant association, account verification, publish-path, and REO/MPO/CSP/Japan-tax triage. Includes four decision-flow images, a JP tax cheatsheet, and the internal account-verification specialist. A separate, optional marketplace-publishing skill uses the official Marketplace Ingestion MCP for publisher-side schema discovery, scoped reads, payload validation, and individually approved changes. Human sign-in in the seller-associated tenant and Marketplace submission API access are required; missing access leaves publishing blocked without widening account-guidance permissions. Portable Agent Skills for GitHub Copilot CLI and Microsoft 365 Copilot Cowork; live Cowork connector authentication is not yet verified.",
-  "version": "0.7.0",
+  "description": "Self-serve Partner Center onboarding with guidance-only registration, tenant association, account verification, publish-path, and REO/MPO/CSP/Japan-tax triage. Preserves four decision-flow images, a JP tax cheatsheet, and the verification specialist. The separate optional marketplace-publishing skill requires actual runtime tools, human seller-tenant authentication, roles, and submission API access; every change needs its own preview and approval. A connector availability label is not runtime discovery or authentication. When tools are absent, stop as BLOCKED and report only the observed missing-tool symptom, not an assumed auth or seller-rights failure. Portable Agent Skills for GitHub Copilot CLI and Microsoft 365 Copilot Cowork. This diagnostic release does not fix or establish the cause of the known Cowork runtime-tool gap.",
+  "version": "0.7.1",
   "author": {
     "name": "Mamoru Kuroda",
     "url": "https://github.com/MamoruKuroda"

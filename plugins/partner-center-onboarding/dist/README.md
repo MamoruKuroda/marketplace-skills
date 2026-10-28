@@ -1,8 +1,9 @@
 # dist -- prebuilt Microsoft 365 Copilot Cowork package
 
-`partner-center-onboarding-cowork.zip` is a ready-to-sideload Microsoft 365 app package
-(manifest v1.29, app version 4.2.0, icons + three skills + optional connector) for
-**Microsoft 365 Copilot Cowork**. This is a built package, not proof of live connector compatibility.
+`partner-center-onboarding-cowork.zip` is a candidate Microsoft 365 app package
+(manifest v1.29, app version 4.2.1, CLI 0.7.1, icons + three skills + optional connector) for
+**Microsoft 365 Copilot Cowork**. This diagnostic-only candidate is not live and does not
+claim to fix connector compatibility or the known runtime-tool gap.
 
 - Entry skill: `partner-center-guide` (broad triage).
 - Internal specialist: `troubleshoot-account-verification` (delegated to for verification depth).
@@ -12,8 +13,22 @@
 - Connector: official Marketplace Ingestion HTTPS endpoint, ID `market-ingest`, URL-only DCR
   configuration. Public OAuth discovery advertises a registration endpoint; no anonymous auth,
   placeholder OAuth registration, embedded credentials, or invented tool-description file.
-- Human seller-tenant authentication, roles and submission API access are required for publishing.
-  Live Cowork auth/consent/tool discovery and all seller operations remain untested.
+- Runtime tools, human seller-tenant authentication, roles and submission API access are required
+  for publishing. Available connector/package labels do not establish discovery or authentication.
+  When no tools/server are exposed, stop with `BLOCKED: 接続ツールが会話に出ていない`;
+  do not infer auth failure, seller-rights failure, hidden logs, or a sign-in UI.
+- The reported 2026-10-28 UI/runtime gap is VERIFIED only within the checked surfaces;
+  H2/H3/H4/H5 causes remain UNVERIFIED. The publisher workflow is BLOCKED without tools,
+  while account guidance remains useful.
+- A genuinely new Cowork task reproduces zero tool-search matches despite active configuration;
+  an old conversation alone is not the explanation, but backend cache remains unexcluded.
+  Native CLI 1.0.101 session-only comparison reports structured `pending -> needs-auth` events,
+  not authenticated success. No browser auth or seller-account selection occurred; this is not
+  a same-seller-account login test. Human OAuth/consent and authenticated tool listing remain pending.
+- Reported public-wire origin DCR advertising differs from the checked Entra issuer metadata
+  paths (OAuth 404 versus OIDC 200 without registration metadata). That difference is VERIFIED,
+  not proof of Cowork's selected discovery path or root cause. Unauthenticated protocol POSTs
+  return 401 for both checked User-Agents; 401 alone is normal protected behavior.
 - App ID remains `fe619316-bf0b-43bf-b399-b6c9557df006`. Update the existing app; do not create
   a new identity or change the internal audience as part of packaging.
 
@@ -46,6 +61,13 @@ fixed identity, version/description consistency, the DCR-only connector configur
 guidance/images/cheatsheet, absence of credential material, and static safety contracts.
 They do not register an OAuth client, authenticate, call seller tools, publish, install, or share,
 and are not live-model approval enforcement tests.
+With `COWORK_BASELINE_ZIP` pointing to the preserved 4.2.0 ZIP, tests also compare the unchanged
+connector and all non-diagnostic skill/assets byte-for-byte; without it that comparison is skipped.
+They are not `wiqd plugin validate --mode deep` / AppValidationLibrary validation.
+`wiqd` is absent; ATK 1.1.11 package-rule validation uses M365 auth and a remote portal
+and was not called. The installed Microsoft manifest helper 1.0.6 passed offline schema-only
+checks with the current official 1.29 schema supplied locally; it does not check platform rules.
+The unchanged 4.2.0 ZIP was preserved outside the repository before rebuilding.
 
 ## Version history (Cowork package)
 
@@ -57,5 +79,6 @@ and are not live-model approval enforcement tests.
 | 1.3.0 | 2026-10-02 | Repo-only build (FAM routing). Superseded the same day: lower than the already published 4.0.1, so never uploaded. |
 | 4.1.0 | 2026-10-02 | 4.0.1 `cowork-setup.md` brought into the repo + FAM routing from 1.3.0. Must be higher than the published Cowork version. |
 | 4.2.0 | 2026-10-27 | Published to Cowork with manifest 1.29, optional official Marketplace Ingestion DCR connector and a separate approval-gated publisher workflow; CLI 0.7.0. Existing app identity, limited internal audience, account guidance, and attachments preserved. Connector display verified; live OAuth and seller operations remain untested. |
+| 4.2.1 | 2026-10-28 | Candidate only, not published. CLI 0.7.1. Diagnostic wording separates availability from runtime tools/auth; absent tools report only the observed BLOCKED symptom. Records fresh-task reproduction, pre-auth native host status and public-wire differences without asserting a Cowork root cause, authenticated success or a same-seller-account test. H2/H3/H4/H5 causes remain pending. App ID, 1.29 connector, account guidance and assets unchanged; no seller operations. |
 
 Before bumping, check the version currently published in Cowork (plugin details -> Version), not only this file.

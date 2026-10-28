@@ -21,8 +21,8 @@ ZIP = PLUGIN / "dist" / "partner-center-onboarding-cowork.zip"
 SCHEMA_URL = "https://developer.microsoft.com/json-schemas/teams/v1.29/MicrosoftTeams.schema.json"
 ENDPOINT = "https://ingestion-mcp.marketplace-ingestion.mp.microsoft.com/mcp"
 APP_ID = "fe619316-bf0b-43bf-b399-b6c9557df006"
-APP_VERSION = "4.2.0"
-CLI_VERSION = "0.7.0"
+APP_VERSION = "4.2.1"
+CLI_VERSION = "0.7.1"
 SKILLS = {"partner-center-guide", "troubleshoot-account-verification", "marketplace-publishing"}
 FRONTMATTER = re.compile(r"\A---\n(?P<header>.*?)\n---(?=\n|\Z)", re.DOTALL)
 ALLOWED_FRONTMATTER = {"name", "description", "license", "metadata", "compatibility"}
@@ -228,6 +228,148 @@ class PackageTests(unittest.TestCase):
         ):
             with self.subTest(required=required):
                 self.assertIn(required, self.publisher)
+
+    def test_missing_runtime_tools_exit_before_auth_and_reads(self):
+        start = self.publisher.index("## 0. Runtime tool availability")
+        end = self.publisher.index("## 1. Scope and access gate")
+        gate = self.publisher[start:end]
+        normalized = re.sub(r"\s+", " ", gate)
+        self.assertIn(
+            "```text\nBLOCKED: 接続ツールが会話に出ていない\n```",
+            gate,
+        )
+        for required in (
+            "return exactly",
+            "This early exit overrides the generic response contract",
+            "Do not call `getSchema` or `fetch`",
+            "Do not infer an authentication or seller-permission failure",
+            "Do not claim access to hidden logs",
+            "Do not promise a sign-in/consent control",
+            "or direct the user to a screen not verified to contain that control",
+            "availability is not runtime discovery or authentication",
+            "distinguish checked from unchecked surfaces",
+            "only describes that sandbox path",
+            "Knowledge-only account guidance remains available",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, normalized)
+        self.assertLess(end, self.publisher.index("## 2. Schema-first, read-only smoke test"))
+        self.assertIn(
+            "When no tools/server are exposed, use only the exact BLOCKED response in section 0 instead",
+            self.publisher,
+        )
+
+    def test_known_issue_documents_observed_and_unverified_surfaces_not_auth_cause(self):
+        paths = (
+            PLUGIN / "README.md",
+            PLUGIN / "README.ja.md",
+            PLUGIN / "skills" / "partner-center-guide" / "references" / "cowork-setup.md",
+        )
+        for path in paths:
+            text = source_text(path)
+            with self.subTest(path=path):
+                for required in (
+                    "2026-10-28", "VERIFIED", "UNVERIFIED", "BLOCKED",
+                    "H1", "H2", "H3", "H4", "H5", "Sources & Skills",
+                    "接続ツールが会話に出ていない", APP_VERSION,
+                    "wiqd plugin validate --mode deep", "AppValidationLibrary", "1.1.11",
+                ):
+                    self.assertIn(required, text)
+                self.assertRegex(text, r"(?:candidate|候補)")
+        english = source_text(PLUGIN / "README.md")
+        japanese = source_text(PLUGIN / "README.ja.md")
+        setup = source_text(paths[-1])
+        self.assertIn("**Checked:**", english)
+        self.assertIn("**Unchecked:**", english)
+        self.assertIn("**確認済みの面:**", japanese)
+        self.assertIn("**未確認の面:**", japanese)
+        self.assertIn("No visible sign-in/consent control was found", english)
+        self.assertIn("sign-in screen", english)
+        self.assertIn("会話に server/ツールがなく、可視のサインイン/同意 UI もない", setup)
+        self.assertNotIn(
+            "| Marketplace 接続・認証・ツール検出が失敗する |",
+            setup,
+        )
+
+    def test_public_wire_difference_does_not_establish_client_path_or_root_cause(self):
+        setup = source_text(
+            PLUGIN / "skills" / "partner-center-guide" / "references" / "cowork-setup.md"
+        )
+        for required in (
+            "https://login.microsoftonline.com/.well-known/oauth-authorization-server/common/v2.0",
+            "https://login.microsoftonline.com/common/v2.0/.well-known/oauth-authorization-server",
+            "https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration",
+            "authorization_servers", "registration_endpoint", "/{tenantid}/v2.0", "S256",
+            "404", "200", "401", "`initialize` / `tools/list`", "`copilot-cowork`",
+            "実際に選択した", "失敗した証明ではありません",
+            "実際の選択経路とクライアント/サーバーログが必要",
+            "401 単独は保護された通常の挙動", "認証後のツール可視性",
+            "接続ツール不在時に同じプローブを行う指示ではありません",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, setup)
+        english = re.sub(r"\s+", " ", source_text(PLUGIN / "README.md"))
+        japanese = re.sub(r"\s+", " ", source_text(PLUGIN / "README.ja.md"))
+        for text in (english, japanese):
+            for required in (
+                "VERIFIED", "UNVERIFIED", "H2/H3/H4/H5", "404", "200", "401",
+                "openid-configuration", "registration_endpoint", "copilot-cowork",
+            ):
+                with self.subTest(required=required):
+                    self.assertIn(required, text)
+        self.assertIn("not proof a client can discover or use DCR", english)
+        self.assertIn("not a root cause", english)
+        self.assertIn("Actual selected metadata path plus client/server logs are still needed", english)
+        self.assertIn("Cowork の根本原因の証明ではありません", japanese)
+
+    def test_fresh_task_and_native_needs_auth_do_not_claim_authenticated_success(self):
+        english = re.sub(r"\s+", " ", source_text(PLUGIN / "README.md"))
+        japanese = re.sub(r"\s+", " ", source_text(PLUGIN / "README.ja.md"))
+        setup = re.sub(
+            r"\s+", " ",
+            source_text(PLUGIN / "skills" / "partner-center-guide" / "references" / "cowork-setup.md"),
+        )
+        for text in (english, japanese, setup):
+            for required in (
+                "2026-10-28", "1.0.101", "--additional-mcp-config",
+                "session.mcp_server_status_changed", "pending -> needs-auth",
+                "enabled/active", "BLOCKED / UNVERIFIED",
+            ):
+                with self.subTest(required=required):
+                    self.assertIn(required, text)
+        self.assertIn("old pre-update conversation alone does not explain", english)
+        self.assertIn("Backend cache is not ruled out", english)
+        self.assertIn("Structured host events take precedence over model narrative", english)
+        self.assertIn("No browser auth or seller-account selection occurred", english)
+        self.assertIn("not a same-seller-account login test", english)
+        self.assertIn("must not silently initiate sign-in", english)
+        self.assertIn("not a claim about unverified host UI behavior", english)
+        for text in (japanese, setup):
+            self.assertIn("新規タスク", text)
+            self.assertIn("バックエンドのキャッシュは除外していません", text)
+            self.assertIn("同じ販売者アカウントでのログインを試したものではありません", text)
+            self.assertIn("構造化ホスト", text)
+
+    @unittest.skipUnless(os.environ.get("COWORK_BASELINE_ZIP"), "Preserved 4.2.0 ZIP not provided")
+    def test_diagnostic_release_preserves_baseline_connector_and_other_skills(self):
+        with zipfile.ZipFile(os.environ["COWORK_BASELINE_ZIP"]) as archive:
+            baseline = {entry.filename: archive.read(entry) for entry in archive.infolist()}
+        manifest = json.loads(baseline["manifest.json"].decode("utf-8"))
+        self.assertEqual(manifest["version"], "4.2.0")
+        self.assertEqual(self.manifest["manifestVersion"], manifest["manifestVersion"])
+        self.assertEqual(self.manifest["id"], manifest["id"])
+        self.assertEqual(self.manifest["agentConnectors"], manifest["agentConnectors"])
+        self.assertEqual(self.manifest["agentSkills"], manifest["agentSkills"])
+        self.assertEqual(set(self.files), set(baseline))
+        allowed_changes = {
+            "manifest.json",
+            "skills/marketplace-publishing/SKILL.md",
+            "skills/partner-center-guide/references/cowork-setup.md",
+        }
+        for name, data in baseline.items():
+            if name not in allowed_changes:
+                with self.subTest(name=name):
+                    self.assertEqual(self.files[name], data)
 
     def test_static_per_operation_preview_and_confirmation_contract(self):
         for required in (
