@@ -1,13 +1,13 @@
 ---
 name: marketplace-publishing
 description: >
-  Optional publisher-side Microsoft Marketplace workflow using the official Marketplace Ingestion MCP. Use only when the user explicitly chooses this connector to inspect their seller offers, discover offer/plan/listing schemas, build and validate a payload, or request a particular draft, upload, or publishing action. Not for account registration, identity verification, Entra administration, public catalog research, PMX, partner-iq, or Partner Radar. Human authentication, seller-associated tenant membership, required Partner Center roles, and Marketplace submission API access are prerequisites. Start with schemas and scoped reads; preview the exact target and before/after change and obtain separate confirmation for every mutation. Never collect secrets or treat an end-to-end publishing request as blanket consent.
+  Optional publisher-side Microsoft Marketplace workflow using the official Marketplace Ingestion MCP. Use only when the user explicitly chooses this connector to inspect their seller offers, discover offer/plan/listing schemas, build and validate a payload, or request a particular draft, upload, or publishing action. Not for account registration, identity verification, Entra administration, public catalog research, PMX, partner-iq, or Partner Radar. Human authentication, seller-associated tenant membership, required Partner Center roles, and Marketplace submission API access are prerequisites. Start with schemas and scoped reads; preview the exact target and before/after change and obtain separate confirmation for every mutation. Never collect secrets or treat an end-to-end publishing request as blanket consent. If runtime tools are absent, report the missing-tool BLOCKED state only; do not infer auth failure or a sign-in UI.
 license: CC-BY-4.0
 user-invocable: true
 metadata:
   author: Mamoru Kuroda
-  version: "0.1.0"
-  last_updated: "2026-10-27"
+  version: "0.1.1"
+  last_updated: "2026-10-28"
 ---
 
 # Optional Marketplace publishing
@@ -22,6 +22,32 @@ Use only a client connection to that endpoint, not a similarly named public cata
 PMX, partner-iq, or Partner Radar connector. The endpoint is a publisher API, not an
 onboarding or account-verification API. Do not fetch seller records for a guidance question.
 
+## 0. Runtime tool availability
+
+First inspect only the actual server/tools exposed to this conversation. Connector/package
+availability is not runtime discovery or authentication. An enabled plugin, three listed skills,
+or a connector labelled available does not establish that its tools are callable.
+
+If Marketplace Ingestion tools/server are absent from this conversation, return exactly:
+
+```text
+BLOCKED: 接続ツールが会話に出ていない
+```
+
+Then stop this connector workflow. This early exit overrides the generic response contract.
+Do not call `getSchema` or `fetch`, invent a server/tool invocation, ask for seller identifiers,
+or continue to seller access or writes. Knowledge-only account guidance remains available.
+Do not infer an authentication or seller-permission failure from missing tools.
+Do not claim access to hidden logs or imply that an OAuth request was attempted.
+Do not promise a sign-in/consent control in chat, Sources & Skills, or plugin details,
+or direct the user to a screen not verified to contain that control.
+
+For diagnostic evidence, distinguish checked from unchecked surfaces. Record a UI or runtime
+observation only when the user or host actually checked it; do not claim to have inspected UI,
+backend discovery, OAuth, or server logs from a conversation sandbox. A sandbox DNS/HTTP failure
+only describes that sandbox path, not the Cowork connector backend or the seller's rights.
+No visible sign-in UI on checked surfaces does not establish an authentication failure or cause.
+
 ## 1. Scope and access gate
 
 1. Establish that the user represents the publisher and explicitly wants connector access.
@@ -29,16 +55,19 @@ onboarding or account-verification API. Do not fetch seller records for a guidan
    environment, and requested operation. Prefer placeholders until a real target is needed.
    Read access is not permission to change anything, and package installation is not consent.
 2. Before any seller access, check the selected connection and its runtime-discovered tool
-   input schemas. A human must sign in and consent through the client's native secure OAuth
-   flow with an account in the **seller-associated tenant**, appropriate Partner Center roles,
-   and access to the **Marketplace submission APIs**. An account from another tenant will not
-   work. App-registration tenant/PGA guidance elsewhere does not relax this API requirement.
+   input schemas. A human must sign in and consent through a verified native secure OAuth
+   flow when the client actually exposes one, with an account in the **seller-associated tenant**,
+   appropriate Partner Center roles, and access to the **Marketplace submission APIs**.
+   Do not assume where the client exposes authentication. An account from another tenant will
+   not work. App-registration tenant/PGA guidance elsewhere does not relax this API requirement.
    Never start sign-in, register a client, grant roles, or obtain consent on the user's behalf.
-3. If authentication, roles, seller scope, API access, required tools, or client support are
-   missing or uncertain, report **BLOCKED** for publishing and the exact missing prerequisite.
-   Keep knowledge guidance available as **DEGRADED: guidance only**. Never invent tool calls,
-   claim a connection is tested, substitute a different connector, use anonymous auth, or
-   bypass tenant policy. Cowork compatibility and human OAuth consent need live verification;
+3. Only after the runtime availability gate passes, use explicit client/server evidence to
+   describe an access or compatibility error. Report **BLOCKED** for publishing when a required
+   prerequisite is explicitly missing; leave untested auth, roles, seller scope, and API access
+   **UNVERIFIED**, not failed. Do not turn a generic absence into a seller-rights diagnosis.
+   Keep knowledge guidance available as **DEGRADED: guidance only**. Never claim a connection
+   is tested, substitute a different connector, use anonymous auth, or bypass tenant policy.
+   Successful Cowork discovery and human OAuth consent require separate verification;
    the public server documentation currently names VS Code and GitHub Copilot CLI.
 
 ## 2. Schema-first, read-only smoke test
@@ -132,7 +161,8 @@ packaged skills, shared examples, public knowledge, source control, or telemetry
 
 ## Response contract
 
-Always distinguish the intended goal from actual execution:
+After the runtime availability gate passes, distinguish the intended goal from actual execution.
+When no tools/server are exposed, use only the exact BLOCKED response in section 0 instead:
 
 | Field | Report |
 | --- | --- |

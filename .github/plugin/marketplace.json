@@ -20,7 +20,7 @@
     {
       "name": "partner-center-onboarding",
       "description": "Guidance-only Partner Center onboarding and account verification, plus an optional Marketplace Ingestion MCP publisher workflow with schema-first preparation and separate approval for every change.",
-      "version": "0.7.0",
+      "version": "0.7.1",
       "source": "./plugins/partner-center-onboarding"
     }
   ]

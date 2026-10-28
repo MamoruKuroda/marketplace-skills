@@ -4,7 +4,7 @@
 
 > **EXPERIMENTAL.** Account registration and verification remain **guidance only**: no
 > automatic sign-in, role grants, Entra edits, agreements, or submissions. An independent,
-> **optional publisher workflow** can use Marketplace Ingestion MCP after human authentication;
+> **optional publisher workflow** needs actual runtime tools and human authentication;
 > every change requires its own target/before-and-after preview and explicit confirmation.
 > No skill asks for or stores passwords, verification codes, or secrets.
 
@@ -56,8 +56,11 @@ verification, public Marketplace catalog search, PMX, partner-iq, or Partner Rad
 - A human must sign in and consent in a native secure client flow using an account in the
   **seller-associated tenant**, with appropriate Partner Center roles and **Marketplace
   submission API access**. Other tenants do not work. The plugin does not obtain these rights.
-- Start with `getSchema` and a minimal authorized `fetch`. Missing auth, tools, roles, schemas,
-  or client support means **BLOCKED** for publishing and **DEGRADED: guidance only**, not success.
+- Check runtime tool availability first. When no tools/server are exposed to the conversation,
+  stop with `BLOCKED: 接続ツールが会話に出ていない`; do not infer an auth or seller-rights failure.
+  Only after tools are available, start with `getSchema` and a minimal authorized `fetch`.
+  Explicit access errors can block publishing; untested prerequisites stay **UNVERIFIED**.
+  Account guidance remains **DEGRADED: guidance only**, not a claim that the connector works.
 - Every `create`, `update`, `delete`, lifecycle `doAction`, upload-URL request, file upload, and
   supported secure credential step needs a separate exact-target/before-and-after preview and
   confirmation. Drafts and price/billing changes count. "Publish my offer" is not blanket
@@ -67,14 +70,66 @@ verification, public Marketplace catalog search, PMX, partner-iq, or Partner Rad
 - Surface validation/errors/job status; verify every write by read-back. Pending is not
   published, and an uncertain write must not be retried automatically.
 
-**Cowork package 4.2.0** uses manifest **1.29** and the actual official endpoint
+**Cowork package 4.2.1 / CLI 0.7.1 is a diagnostic-only candidate, not a live release.**
+It retains manifest **1.29**, the existing app ID and connector, and the actual official endpoint
 `https://ingestion-mcp.marketplace-ingestion.mp.microsoft.com/mcp`. Public discovery on
 2026-10-27 advertised Dynamic Client Registration (DCR), so the connector intentionally omits
 `authorization`; it is **not anonymous**, and contains no placeholder OAuth registration.
 No fabricated tool-description file is needed at 1.29. Public metadata is not proof of working
-Cowork authentication: **live Cowork connection, consent, tool discovery, and seller access
-remain untested**. Microsoft currently documents VS Code and GitHub Copilot CLI clients.
+Cowork authentication: **successful runtime discovery, consent, and seller access remain
+unverified**. The availability/runtime gap below is observed, not fixed by this candidate.
+Microsoft currently documents VS Code and GitHub Copilot CLI clients.
 See [setup and authentication evidence](skills/partner-center-guide/references/cowork-setup.md).
+
+## Known issue: available connector, no runtime tools
+
+Evidence boundary as of **2026-10-28**; this is a generic technical observation, not an account
+or tenant diagnosis. Package/connector availability is not discovered, runtime, or authenticated
+tool access. This candidate corrects diagnostics only; it does not claim to repair the connection.
+
+| Track | State | What is established |
+| --- | --- | --- |
+| Earlier reported UI/runtime observation | **VERIFIED** | Plugin enabled, three skills and Marketplace Ingestion shown as available; no server/tools exposed to the conversation. No visible sign-in/consent control was found in the checked chat, Sources & Skills, or plugin-details surfaces. |
+| Reported fresh Cowork task | **VERIFIED**, limited | A genuinely new task created on 2026-10-28 reports enabled/active configuration, three skills and connector availability, but actual tool-search for Ingestion/MCP names finds zero matching servers/tools. No visible sign-in or error appears in that conversation; no seller tool/auth is called. |
+| H1: static package/schema checks | **VERIFIED**, limited | The unchanged 4.2.0 baseline passes the current first-party 1.29 schema and 15 repository tests; the installed Microsoft manifest helper also passes offline schema validation. This is not platform deep validation or proof of runtime tool discovery. |
+| Reported public-wire discovery difference | **VERIFIED**, limited | Origin metadata advertises DCR, but the two checked OAuth metadata locations at its advertised Entra issuer return 404. The issuer's OIDC `openid-configuration` returns 200 without `registration_endpoint`. This does not establish which path Cowork selects or a runtime failure there. |
+| Reported unauthenticated protocol responses | **VERIFIED**, limited | `initialize` and `tools/list` POSTs return 401 for both `copilot-cowork` and the comparison User-Agent; no distinguishing User-Agent response was observed. 401 alone is normal protected behavior, not a root cause. |
+| Reported native CLI host status | **VERIFIED**, pre-auth only | GitHub Copilot CLI 1.0.101, with session-only `--additional-mcp-config` and unrelated MCPs disabled, repeatedly emits `session.mcp_server_status_changed` with `pending -> needs-auth`. This is a host-state observation, not successful login or tool listing. |
+| H2/H3/H4/H5 | **UNVERIFIED** | The discovery-path/metadata difference is observed, but Cowork's selected metadata path, actual DCR/OAuth execution, permissions, policy and root cause still need client/server evidence. |
+| Publisher workflow without runtime tools | **BLOCKED** | Report only `BLOCKED: 接続ツールが会話に出ていない` and stop before schema calls, seller access or writes. Existing account guidance remains useful. |
+
+**Checked:** the reported UI/runtime surfaces, fresh-task tool search, public unauthenticated wire
+observations and native CLI structured host-status events above.
+**Unchecked:** Cowork's selected metadata path and transport/backend traces, server logs,
+authenticated OAuth/DCR outcomes, seller-role/API access, other sign-in surfaces, and authenticated
+native-client/tool-listing results. Do not claim access to hidden logs,
+promise a sign-in control in Sources & Skills or plugin details, or send the user to an unverified
+sign-in screen. A conversation-sandbox DNS/HTTP failure describes that sandbox path only;
+it does not establish what the Cowork connector backend can reach or which prerequisite failed.
+No seller access or writes were performed in the reported test.
+
+An old pre-update conversation alone does not explain the fresh-task reproduction.
+Backend cache is not ruled out. The new-task configuration/availability flags still do not
+establish runtime tools, and the earlier panel checks are not a claim that every panel was
+rechecked in that fresh task.
+
+Structured host events take precedence over model narrative for the native `needs-auth` status,
+even if model prose reports no startup information. No browser auth or seller-account selection
+occurred, and no seller tools were executed. This is not a same-seller-account login test.
+Authenticated native-client success and tool listing remain **BLOCKED / UNVERIFIED** pending a
+separately authorized human OAuth/consent action in a verified native flow. The skill must not
+silently initiate sign-in, open an auth browser, select an account, or grant consent.
+That is a skill safety rule, not a claim about unverified host UI behavior.
+
+The reported 2026-10-28 origin protected-resource metadata returns 200 and advertises
+`https://login.microsoftonline.com/common/v2.0`; origin authorization-server metadata returns
+200 with that issuer, the origin `/register` endpoint, and PKCE `S256` (the same listed fields as
+2026-10-27). That advertisement is not proof a client can discover or use DCR.
+The [setup evidence](skills/partner-center-guide/references/cowork-setup.md) records the exact
+two 404 OAuth paths and the 200 OIDC path. The OIDC issuer uses a `/{tenantid}/v2.0` template and
+does not advertise a registration endpoint. Actual selected metadata path plus client/server
+logs are still needed; the unauthenticated 401 comparison does not establish post-auth tool visibility.
+No authentication or client registration was performed in those probes.
 
 **CLI remains opt-in:** the legacy plugin format supports `.mcp.json`/`mcpServers`, but this
 release deliberately does not auto-enable a connector for every CLI guidance user. Publishers
@@ -133,6 +188,16 @@ Tests check the actual ZIP, official 1.29 JSON schema, fixed app ID, versions, f
 skill/companion limits, preserved guidance/assets, connector/auth configuration, and static
 behavior contracts. They fetch only the public manifest schema, make no seller calls, and do
 not prove live client behavior or enforce approvals independently of the host.
+Set `COWORK_BASELINE_ZIP` to a preserved 4.2.0 ZIP to also compare connector configuration,
+account skills and assets byte-for-byte; that comparison is reported as skipped when no baseline
+is provided. `COWORK_MANIFEST_SCHEMA` can point to a previously downloaded official schema for
+an offline rerun.
+These checks are **not** `wiqd plugin validate --mode deep` or an **AppValidationLibrary** run.
+`wiqd` is not installed in the validation environment. Installed ATK **1.1.11** package-rule
+validation requests an M365 token and remote portal validation, so it was not invoked.
+The installed `@microsoft/app-manifest` **1.0.6** helper was used with an explicit local schema;
+it covers schema only, not skills/connector platform rules. No schema downgrade was made to
+accommodate older tooling.
 `RemoteSigned` is process-scoped, does not change persistent settings, and does not override
 organization-enforced execution policy.
 
